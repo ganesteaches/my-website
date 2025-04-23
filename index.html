@@ -1,16 +1,15 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8"/>
+  <meta charset="utf-8"/>
   <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
   <title>Ganes Assess | Primers | Revise</title>
   <style>
-    /* ---------- Layout & card styling ---------- */
     body {
       margin: 0;
       padding: 20px;
       font-family: 'Segoe UI', Tahoma, sans-serif;
-      background-color: transparent;   /* completely transparent now */
+      background-color: transparent;
       color: #FFF;
       text-align: center;
     }
@@ -26,13 +25,13 @@
 
     .card {
       position: relative;
-      overflow: hidden;
+      overflow: visible;               /* allow subjects to scatter outside */
       background-color: rgba(0,0,0,0.65);
       border-radius: 12px;
       padding: 20px;
       width: 300px;
       box-shadow: 0 0 20px rgba(255,255,255,0.15);
-      transition: transform .3s ease, box-shadow .3s ease;
+      transition: transform .3s ease,box-shadow .3s ease;
       border: 1px solid #444;
     }
     .card:hover {
@@ -57,7 +56,7 @@
       align-items: center;
       justify-content: center;
       transition: box-shadow .3s ease;
-      box-shadow: 0 0 10px rgba(255,255,255,0.2), 0 0 20px rgba(255,255,255,0.15);
+      box-shadow: 0 0 10px rgba(255,255,255,0.2),0 0 20px rgba(255,255,255,0.15);
     }
     .icon-wrapper img {
       max-width: 80%;
@@ -66,14 +65,14 @@
       transition: transform .3s ease;
     }
     .card:hover .icon-wrapper {
-      box-shadow: 0 0 25px rgba(255,255,255,0.5), 0 0 40px rgba(255,255,255,0.3);
+      box-shadow: 0 0 25px rgba(255,255,255,0.5),0 0 40px rgba(255,255,255,0.3);
     }
     .card:hover .icon-wrapper img {
       transform: scale(1.1);
     }
 
     .card h2 {
-      margin: 0.5rem 0;
+      margin: .5rem 0;
       font-size: 1.4rem;
       color: #FFF;
     }
@@ -82,6 +81,23 @@
       font-size: 1rem;
       color: #FFD580;
       font-weight: bold;
+    }
+
+    /* ---------- scattered-subjects styling ---------- */
+    .subject-item {
+      position: absolute;
+      top: 100px;                       /* just under subtitle */
+      left: 50%;
+      transform: translate(-50%,0);
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      transition: transform .8s ease-out;
+      pointer-events: none;
+    }
+    .subject-item img {
+      width: 24px;
+      height: 24px;
     }
 
     table {
@@ -93,11 +109,11 @@
       margin: 0 auto;
       animation: glow-in 1s ease forwards;
     }
-    th, td {
+    th,td {
       border: 1px solid #444;
       background-color: #2A2A2A;
       padding: 12px;
-      font-size: 0.95em;
+      font-size: .95em;
       text-align: left;
     }
     th {
@@ -107,7 +123,6 @@
       color: #FFD5A0;
     }
 
-    /* ---------- Dynamic highlight ---------- */
     .highlight {
       background: transparent;
       border: 1px solid transparent;
@@ -127,18 +142,18 @@
     }
 
     @keyframes glow-in {
-      0%   { box-shadow: 0 0 0 rgba(255,255,255,0); opacity: 0; transform: scale(0.98); }
+      0%   { box-shadow: 0 0 0 rgba(255,255,255,0);   opacity: 0; transform: scale(0.98); }
       50%  { box-shadow: 0 0 20px rgba(255,255,255,0.25); opacity: 0.7; }
       100% { box-shadow: 0 0 20px rgba(255,255,255,0.35); opacity: 1; transform: scale(1); }
     }
 
-    /* ---------- Particle canvas ---------- */
+    /* ---------- particle canvas (unchanged) ---------- */
     .particle-canvas {
       position: absolute;
       top: 0; left: 0;
       width: 100%; height: 100%;
       pointer-events: none;
-      background: transparent;    /* ensure no grey backdrop */
+      background: transparent;
     }
   </style>
 </head>
@@ -146,10 +161,10 @@
 
   <div class="three-columns">
 
-    <!-- Ganes Assess -->
-    <div class="card">
+    <!-- repeat this .card for each panel -->
+    <div class="card" data-panel="assess">
       <canvas class="particle-canvas"></canvas>
-      <a href="https://www.ganesteaches.com/ganes-assess" target="_blank">
+      <a href="#" target="_blank">
         <div class="icon-wrapper">
           <img src="ganes_assess.png" alt="Ganes Assess Icon">
         </div>
@@ -164,10 +179,9 @@
       </a>
     </div>
 
-    <!-- Ganes Primers -->
-    <div class="card">
+    <div class="card" data-panel="primers">
       <canvas class="particle-canvas"></canvas>
-      <a href="https://www.ganesteaches.com/ganes-primers" target="_blank">
+      <a href="#" target="_blank">
         <div class="icon-wrapper">
           <img src="ganes_primers.png" alt="Ganes Primers Icon">
         </div>
@@ -182,10 +196,9 @@
       </a>
     </div>
 
-    <!-- Ganes Revise -->
-    <div class="card">
+    <div class="card" data-panel="revise">
       <canvas class="particle-canvas"></canvas>
-      <a href="https://www.ganesteaches.com/ganes-revise" target="_blank">
+      <a href="#" target="_blank">
         <div class="icon-wrapper">
           <img src="ganes_revise.png" alt="Ganes Revise Icon">
         </div>
@@ -203,66 +216,44 @@
   </div>
 
   <script>
+    const SUBJECTS = [
+      { name: 'Mathematics',    icon: 'math.png' },
+      { name: 'Chemistry',      icon: 'chemistry.png' },
+      { name: 'Physics',        icon: 'physics.png' },
+      { name: 'Biology',        icon: 'biology.png' },
+      { name: 'Further Mathematics', icon: 'further_math.png' }
+    ];
+
     document.querySelectorAll('.card').forEach(card => {
-      const canvas = card.querySelector('.particle-canvas');
-      const ctx = canvas.getContext('2d');
-      let particles = [], animId;
-
-      function resize() {
-        canvas.width = card.clientWidth;
-        canvas.height = card.clientHeight;
-      }
-
-      class Particle {
-        constructor() {
-          this.x = Math.random() * canvas.width;
-          this.y = Math.random() * canvas.height;
-          this.vx = (Math.random() - 0.5) * 1;
-          this.vy = (Math.random() - 0.5) * 1;
-          this.radius = Math.random() * 2 + 1;
-          this.life = 100;
-          this.color = Math.random() < 0.5 ? '#00E5FF' : '#FF8C00';
-        }
-        update() {
-          this.x += this.vx;
-          this.y += this.vy;
-          this.life--;
-        }
-        draw() {
-          ctx.globalAlpha = 0.4;          // fixed 40% opacity
-          ctx.beginPath();
-          ctx.arc(this.x, this.y, this.radius, 0, Math.PI * 2);
-          ctx.fillStyle = this.color;
-          ctx.fill();
-        }
-      }
-
-      function animate() {
-        ctx.clearRect(0, 0, canvas.width, canvas.height);
-        particles.push(new Particle());
-        if (particles.length > 200) particles.shift();
-
-        particles.forEach((p, i) => {
-          p.update();
-          p.draw();
-          if (p.life <= 0) particles.splice(i, 1);
-        });
-
-        animId = requestAnimationFrame(animate);
-      }
+      let spawned = [];
 
       card.addEventListener('mouseenter', () => {
-        resize();
-        animate();
-      });
-      card.addEventListener('mouseleave', () => {
-        cancelAnimationFrame(animId);
-        particles = [];
-        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        // spawn each with a stagger
+        SUBJECTS.forEach((sub,i) => {
+          setTimeout(() => {
+            const el = document.createElement('div');
+            el.className = 'subject-item';
+            el.innerHTML = `<img src="${sub.icon}" alt="${sub.name}"><span>${sub.name}</span>`;
+            card.appendChild(el);
+            spawned.push(el);
+
+            // compute final scatter offset
+            const angle = (Math.random()*Math.PI) - Math.PI/2;  // left or right
+            const radius = 80 + Math.random()*40;               // drop 80–120px
+            const x = Math.cos(angle)*radius;
+            const y = Math.sin(angle)*radius + 40;              // ensure downward
+            // trigger the transition
+            requestAnimationFrame(() => {
+              el.style.transform = `translate(${x}px, ${y}px)`;
+            });
+          }, i * 200);  // 200ms between each
+        });
       });
 
-      window.addEventListener('resize', () => {
-        if (card.matches(':hover')) resize();
+      card.addEventListener('mouseleave', () => {
+        // clean up all spawned items
+        spawned.forEach(el => el.remove());
+        spawned = [];
       });
     });
   </script>
