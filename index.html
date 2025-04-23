@@ -10,7 +10,7 @@
       margin: 0;
       padding: 20px;
       font-family: 'Segoe UI', Tahoma, sans-serif;
-      background-color: #000;
+      background-color: transparent;   /* completely transparent now */
       color: #FFF;
       text-align: center;
     }
@@ -25,7 +25,7 @@
     }
 
     .card {
-      position: relative;          /* for the canvas overlay */
+      position: relative;
       overflow: hidden;
       background-color: rgba(0,0,0,0.65);
       border-radius: 12px;
@@ -75,7 +75,7 @@
     .card h2 {
       margin: 0.5rem 0;
       font-size: 1.4rem;
-      color: #FFF;                  /* titles now white */
+      color: #FFF;
     }
     .card p.subtitle {
       margin: 0 0 1rem;
@@ -138,6 +138,7 @@
       top: 0; left: 0;
       width: 100%; height: 100%;
       pointer-events: none;
+      background: transparent;    /* ensure no grey backdrop */
     }
   </style>
 </head>
@@ -202,14 +203,11 @@
   </div>
 
   <script>
-    // Particle background effect
     document.querySelectorAll('.card').forEach(card => {
       const canvas = card.querySelector('.particle-canvas');
       const ctx = canvas.getContext('2d');
-      let particles = [];
-      let animId;
+      let particles = [], animId;
 
-      // ensure canvas is full-size
       function resize() {
         canvas.width = card.clientWidth;
         canvas.height = card.clientHeight;
@@ -231,7 +229,7 @@
           this.life--;
         }
         draw() {
-          ctx.globalAlpha = this.life / 100;
+          ctx.globalAlpha = 0.4;          // fixed 40% opacity
           ctx.beginPath();
           ctx.arc(this.x, this.y, this.radius, 0, Math.PI * 2);
           ctx.fillStyle = this.color;
@@ -241,7 +239,6 @@
 
       function animate() {
         ctx.clearRect(0, 0, canvas.width, canvas.height);
-        // emit new
         particles.push(new Particle());
         if (particles.length > 200) particles.shift();
 
