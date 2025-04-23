@@ -5,7 +5,6 @@
   <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
   <title>Ganes Assess | Primers | Revise</title>
   <style>
-    /* ---------- Global resets ---------- */
     body {
       margin: 0;
       padding: 20px;
@@ -15,7 +14,6 @@
       text-align: center;
     }
 
-    /* remove underlines on any links inside cards */
     .card a,
     .card a:link,
     .card a:visited,
@@ -25,7 +23,6 @@
       color: inherit;
     }
 
-    /* ---------- Layout ---------- */
     .three-columns {
       display: flex;
       flex-wrap: wrap;
@@ -35,10 +32,9 @@
       margin: 0 auto;
     }
 
-    /* ---------- Card styling ---------- */
     .card {
       position: relative;
-      overflow: visible;               /* allow dropdown below */
+      overflow: visible;
       background-color: rgba(0,0,0,0.65);
       border-radius: 12px;
       padding: 20px;
@@ -46,7 +42,7 @@
       box-shadow: 0 0 20px rgba(255,255,255,0.15);
       transition: transform .3s ease, box-shadow .3s ease;
       border: 1px solid #444;
-      margin-bottom: 60px;             /* reserve space for dropdown */
+      margin-bottom: 60px;
     }
     .card:hover {
       transform: translateY(-6px) scale(1.02);
@@ -55,8 +51,7 @@
 
     .icon-wrapper {
       margin: 0 auto 1rem;
-      width: 140px;
-      height: 140px;
+      width: 140px; height: 140px;
       background-color: #111;
       border-radius: 50%;
       overflow: hidden;
@@ -64,16 +59,15 @@
       align-items: center;
       justify-content: center;
       transition: box-shadow .3s ease;
-      box-shadow: 0 0 10px rgba(255,255,255,0.2), 0 0 20px rgba(255,255,255,0.15);
+      box-shadow: 0 0 10px rgba(255,255,255,0.2),0 0 20px rgba(255,255,255,0.15);
     }
     .icon-wrapper img {
-      max-width: 80%;
-      max-height: 80%;
+      max-width: 80%; max-height: 80%;
       object-fit: contain;
       transition: transform .3s ease;
     }
     .card:hover .icon-wrapper {
-      box-shadow: 0 0 25px rgba(255,255,255,0.5), 0 0 40px rgba(255,255,255,0.3);
+      box-shadow: 0 0 25px rgba(255,255,255,0.5),0 0 40px rgba(255,255,255,0.3);
     }
     .card:hover .icon-wrapper img {
       transform: scale(1.1);
@@ -91,7 +85,6 @@
       font-weight: bold;
     }
 
-    /* ---------- Feature table ---------- */
     table {
       width: 100%;
       border-collapse: separate;
@@ -115,7 +108,6 @@
       color: #FFD5A0;
     }
 
-    /* dynamic highlights inside table */
     .highlight {
       background: transparent;
       border: 1px solid transparent;
@@ -140,7 +132,6 @@
       100% { box-shadow: 0 0 20px rgba(255,255,255,0.35); opacity: 1; transform: scale(1); }
     }
 
-    /* ---------- Subjects dropdown ---------- */
     .subjects-dropdown {
       position: absolute;
       top: 100%;
@@ -153,7 +144,7 @@
         transform .6s ease,
         opacity .6s ease,
         visibility .6s;
-      pointer-events: none; /* prevent clicks outside the lists themselves */
+      pointer-events: none;
     }
     .card:hover .subjects-dropdown {
       transform: translateX(-50%) translateY(0);
@@ -161,55 +152,38 @@
       visibility: visible;
     }
 
-    /* Sciences group */
-    .subjects-dropdown .sciences {
-      border: 1px solid #FFD8B0; /* pastel orange */
+    .subjects-dropdown .sciences,
+    .subjects-dropdown .maths {
+      background-color: rgba(0,0,0,0.5);
       border-radius: 8px;
       padding: 8px;
       margin-bottom: 8px;
-      background-color: rgba(0,0,0,0.5);
     }
-    /* Maths group */
-    .subjects-dropdown .maths {
-      border: 1px solid #B0D8FF; /* pastel blue */
-      border-radius: 8px;
-      padding: 8px;
-      background-color: rgba(0,0,0,0.5);
-    }
+    .subjects-dropdown .sciences { border: 1px solid #FFD8B0; }
+    .subjects-dropdown .maths    { border: 1px solid #B0D8FF; }
 
     .subjects-dropdown ul {
       list-style: none;
       margin: 0;
       padding: 0;
-    }
-    .subjects-dropdown li {
       display: flex;
-      align-items: center;
-      gap: 6px;
-      padding: 4px 0;
+      gap: 8px;
+      justify-content: center;
     }
     .subjects-dropdown img {
-      width: 24px;
-      height: 24px;
+      width: 32px;
+      height: 32px;
+      display: block;
     }
-    /* re-enable clicks on links */
     .subjects-dropdown a {
       pointer-events: auto;
-      text-decoration: none;
-      color: #FFF;
-      font-weight: bold;
-      display: flex;
-      align-items: center;
-      gap: 6px;
-      width: 100%;
+      display: inline-block;
     }
 
-    /* ---------- Particle canvas ---------- */
     .particle-canvas {
       position: absolute;
       top: 0; left: 0;
-      width: 100%;
-      height: 100%;
+      width: 100%; height: 100%;
       pointer-events: none;
       background: transparent;
     }
@@ -237,13 +211,13 @@
       </a>
       <div class="subjects-dropdown">
         <ul class="sciences">
-          <li><a href="/biology.html"><img src="biology.png" alt="Biology">Biology</a></li>
-          <li><a href="/chemistry.html"><img src="chemistry.png" alt="Chemistry">Chemistry</a></li>
-          <li><a href="/physics.html"><img src="physics.png" alt="Physics">Physics</a></li>
+          <li><a href="/biology.html"><img src="biology.png" alt="Biology"></a></li>
+          <li><a href="/chemistry.html"><img src="chemistry.png" alt="Chemistry"></a></li>
+          <li><a href="/physics.html"><img src="physics.png" alt="Physics"></a></li>
         </ul>
         <ul class="maths">
-          <li><a href="/maths.html"><img src="math.png" alt="Mathematics">Mathematics</a></li>
-          <li><a href="/further-maths.html"><img src="further_math.png" alt="Further Mathematics">Further Mathematics</a></li>
+          <li><a href="/maths.html"><img src="math.png" alt="Mathematics"></a></li>
+          <li><a href="/further-maths.html"><img src="further_math.png" alt="Further Mathematics"></a></li>
         </ul>
       </div>
     </div>
@@ -266,13 +240,13 @@
       </a>
       <div class="subjects-dropdown">
         <ul class="sciences">
-          <li><a href="/biology.html"><img src="biology.png" alt="Biology">Biology</a></li>
-          <li><a href="/chemistry.html"><img src="chemistry.png" alt="Chemistry">Chemistry</a></li>
-          <li><a href="/physics.html"><img src="physics.png" alt="Physics">Physics</a></li>
+          <li><a href="/biology.html"><img src="biology.png" alt="Biology"></a></li>
+          <li><a href="/chemistry.html"><img src="chemistry.png" alt="Chemistry"></a></li>
+          <li><a href="/physics.html"><img src="physics.png" alt="Physics"></a></li>
         </ul>
         <ul class="maths">
-          <li><a href="/maths.html"><img src="math.png" alt="Mathematics">Mathematics</a></li>
-          <li><a href="/further-maths.html"><img src="further_math.png" alt="Further Mathematics">Further Mathematics</a></li>
+          <li><a href="/maths.html"><img src="math.png" alt="Mathematics"></a></li>
+          <li><a href="/further-maths.html"><img src="further_math.png" alt="Further Mathematics"></a></li>
         </ul>
       </div>
     </div>
@@ -295,13 +269,13 @@
       </a>
       <div class="subjects-dropdown">
         <ul class="sciences">
-          <li><a href="/biology.html"><img src="biology.png" alt="Biology">Biology</a></li>
-          <li><a href="/chemistry.html"><img src="chemistry.png" alt="Chemistry">Chemistry</a></li>
-          <li><a href="/physics.html"><img src="physics.png" alt="Physics">Physics</a></li>
+          <li><a href="/biology.html"><img src="biology.png" alt="Biology"></a></li>
+          <li><a href="/chemistry.html"><img src="chemistry.png" alt="Chemistry"></a></li>
+          <li><a href="/physics.html"><img src="physics.png" alt="Physics"></a></li>
         </ul>
         <ul class="maths">
-          <li><a href="/maths.html"><img src="math.png" alt="Mathematics">Mathematics</a></li>
-          <li><a href="/further-maths.html"><img src="further_math.png" alt="Further Mathematics">Further Mathematics</a></li>
+          <li><a href="/maths.html"><img src="math.png" alt="Mathematics"></a></li>
+          <li><a href="/further-maths.html"><img src="further_math.png" alt="Further Mathematics"></a></li>
         </ul>
       </div>
     </div>
@@ -309,12 +283,10 @@
   </div>
 
   <script>
-    // Particle sparkle at 20% opacity
     document.querySelectorAll('.card').forEach(card => {
       const canvas = card.querySelector('.particle-canvas');
       const ctx = canvas.getContext('2d');
       let particles = [], animId;
-
       function resize() {
         canvas.width = card.clientWidth;
         canvas.height = card.clientHeight;
@@ -329,39 +301,31 @@
           this.life = 100;
           this.color = Math.random() < 0.5 ? '#00E5FF' : '#FF8C00';
         }
-        update() {
-          this.x += this.vx;
-          this.y += this.vy;
-          this.life--;
-        }
+        update() { this.x += this.vx; this.y += this.vy; this.life--; }
         draw() {
-          ctx.globalAlpha = 0.2; // 20% opacity
+          ctx.globalAlpha = 0.2;
           ctx.beginPath();
-          ctx.arc(this.x, this.y, this.radius, 0, Math.PI * 2);
+          ctx.arc(this.x, this.y, this.radius, 0, Math.PI*2);
           ctx.fillStyle = this.color;
           ctx.fill();
         }
       }
       function animate() {
-        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        ctx.clearRect(0,0,canvas.width,canvas.height);
         particles.push(new Particle());
-        if (particles.length > 200) particles.shift();
-        particles.forEach((p, i) => {
-          p.update();
-          p.draw();
-          if (p.life <= 0) particles.splice(i, 1);
+        if (particles.length>200) particles.shift();
+        particles.forEach((p,i) => {
+          p.update(); p.draw();
+          if (p.life<=0) particles.splice(i,1);
         });
         animId = requestAnimationFrame(animate);
       }
       card.addEventListener('mouseenter', () => { resize(); animate(); });
       card.addEventListener('mouseleave', () => {
         cancelAnimationFrame(animId);
-        particles = [];
-        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        particles=[]; ctx.clearRect(0,0,canvas.width,canvas.height);
       });
-      window.addEventListener('resize', () => {
-        if (card.matches(':hover')) resize();
-      });
+      window.addEventListener('resize', () => { if(card.matches(':hover')) resize(); });
     });
   </script>
 </body>
