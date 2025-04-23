@@ -1,0 +1,273 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+  <title>Ganes Assess | Primers | Revise</title>
+  <style>
+    /* ---------- Layout & card styling ---------- */
+    body {
+      margin: 0;
+      padding: 20px;
+      font-family: 'Segoe UI', Tahoma, sans-serif;
+      background-color: #000;
+      color: #FFF;
+      text-align: center;
+    }
+
+    .three-columns {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 20px;
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+
+    .card {
+      position: relative;          /* for the canvas overlay */
+      overflow: hidden;
+      background-color: rgba(0,0,0,0.65);
+      border-radius: 12px;
+      padding: 20px;
+      width: 300px;
+      box-shadow: 0 0 20px rgba(255,255,255,0.15);
+      transition: transform .3s ease, box-shadow .3s ease;
+      border: 1px solid #444;
+    }
+    .card:hover {
+      transform: translateY(-6px) scale(1.02);
+      box-shadow: 0 0 25px rgba(255,255,255,0.25);
+    }
+
+    .card a {
+      display: block;
+      text-decoration: none;
+      color: inherit;
+    }
+
+    .icon-wrapper {
+      margin: 0 auto 1rem;
+      width: 140px;
+      height: 140px;
+      background-color: #111;
+      border-radius: 50%;
+      overflow: hidden;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: box-shadow .3s ease;
+      box-shadow: 0 0 10px rgba(255,255,255,0.2), 0 0 20px rgba(255,255,255,0.15);
+    }
+    .icon-wrapper img {
+      max-width: 80%;
+      max-height: 80%;
+      object-fit: contain;
+      transition: transform .3s ease;
+    }
+    .card:hover .icon-wrapper {
+      box-shadow: 0 0 25px rgba(255,255,255,0.5), 0 0 40px rgba(255,255,255,0.3);
+    }
+    .card:hover .icon-wrapper img {
+      transform: scale(1.1);
+    }
+
+    .card h2 {
+      margin: 0.5rem 0;
+      font-size: 1.4rem;
+      color: #FFF;                  /* titles now white */
+    }
+    .card p.subtitle {
+      margin: 0 0 1rem;
+      font-size: 1rem;
+      color: #FFD580;
+      font-weight: bold;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: separate;
+      border-spacing: 0;
+      border-radius: 8px;
+      overflow: hidden;
+      margin: 0 auto;
+      animation: glow-in 1s ease forwards;
+    }
+    th, td {
+      border: 1px solid #444;
+      background-color: #2A2A2A;
+      padding: 12px;
+      font-size: 0.95em;
+      text-align: left;
+    }
+    th {
+      background-color: #333;
+      text-align: center;
+      font-weight: bold;
+      color: #FFD5A0;
+    }
+
+    /* ---------- Dynamic highlight ---------- */
+    .highlight {
+      background: transparent;
+      border: 1px solid transparent;
+      color: inherit;
+      padding: 2px 4px;
+      border-radius: 4px;
+      transition: background-color .2s ease,
+                  border-color .2s ease,
+                  color .2s ease,
+                  font-weight .2s ease;
+    }
+    .card:hover .highlight {
+      background-color: #FFE5B4;
+      border-color: #FFA500;
+      color: #000;
+      font-weight: bold;
+    }
+
+    @keyframes glow-in {
+      0%   { box-shadow: 0 0 0 rgba(255,255,255,0); opacity: 0; transform: scale(0.98); }
+      50%  { box-shadow: 0 0 20px rgba(255,255,255,0.25); opacity: 0.7; }
+      100% { box-shadow: 0 0 20px rgba(255,255,255,0.35); opacity: 1; transform: scale(1); }
+    }
+
+    /* ---------- Particle canvas ---------- */
+    .particle-canvas {
+      position: absolute;
+      top: 0; left: 0;
+      width: 100%; height: 100%;
+      pointer-events: none;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="three-columns">
+
+    <!-- Ganes Assess -->
+    <div class="card">
+      <canvas class="particle-canvas"></canvas>
+      <a href="https://www.ganesteaches.com/ganes-assess" target="_blank">
+        <div class="icon-wrapper">
+          <img src="ganes_assess.png" alt="Ganes Assess Icon">
+        </div>
+        <h2>Ganes Assess</h2>
+        <p class="subtitle">Exam-Style Question Bank</p>
+        <table>
+          <tr><th>📦 Feature</th></tr>
+          <tr><td>🧊 Exam board-aligned content (<span class="highlight">AQA, Edexcel, OCR</span>)</td></tr>
+          <tr><td>🧊 <span class="highlight">Targeted by topic</span> for focused revision</td></tr>
+          <tr><td>🧊 <span class="highlight">Difficulty ramps up</span> to prepare for real exam conditions</td></tr>
+        </table>
+      </a>
+    </div>
+
+    <!-- Ganes Primers -->
+    <div class="card">
+      <canvas class="particle-canvas"></canvas>
+      <a href="https://www.ganesteaches.com/ganes-primers" target="_blank">
+        <div class="icon-wrapper">
+          <img src="ganes_primers.png" alt="Ganes Primers Icon">
+        </div>
+        <h2>Ganes Primers</h2>
+        <p class="subtitle">Revision Guides & Flash Cards</p>
+        <table>
+          <tr><th>📦 Feature</th></tr>
+          <tr><td>🧊 Concise <span class="highlight">topic summaries</span> for quick revision</td></tr>
+          <tr><td>🧊 Flash-card style recall to <span class="highlight">strengthen memory</span></td></tr>
+          <tr><td>🧊 <span class="highlight">Colour-coded prompts</span> to reinforce key patterns</td></tr>
+        </table>
+      </a>
+    </div>
+
+    <!-- Ganes Revise -->
+    <div class="card">
+      <canvas class="particle-canvas"></canvas>
+      <a href="https://www.ganesteaches.com/ganes-revise" target="_blank">
+        <div class="icon-wrapper">
+          <img src="ganes_revise.png" alt="Ganes Revise Icon">
+        </div>
+        <h2>Ganes Revise</h2>
+        <p class="subtitle">Notes & Worked Solution</p>
+        <table>
+          <tr><th>📦 Feature</th></tr>
+          <tr><td>🧊 <span class="highlight">Step-by-step walkthroughs</span> of real exam questions</td></tr>
+          <tr><td>🧊 <span class="highlight">Exam technique tips</span> for top-grade accuracy</td></tr>
+          <tr><td>🧊 <span class="highlight">Summary notes</span></td></tr>
+        </table>
+      </a>
+    </div>
+
+  </div>
+
+  <script>
+    // Particle background effect
+    document.querySelectorAll('.card').forEach(card => {
+      const canvas = card.querySelector('.particle-canvas');
+      const ctx = canvas.getContext('2d');
+      let particles = [];
+      let animId;
+
+      // ensure canvas is full-size
+      function resize() {
+        canvas.width = card.clientWidth;
+        canvas.height = card.clientHeight;
+      }
+
+      class Particle {
+        constructor() {
+          this.x = Math.random() * canvas.width;
+          this.y = Math.random() * canvas.height;
+          this.vx = (Math.random() - 0.5) * 1;
+          this.vy = (Math.random() - 0.5) * 1;
+          this.radius = Math.random() * 2 + 1;
+          this.life = 100;
+          this.color = Math.random() < 0.5 ? '#00E5FF' : '#FF8C00';
+        }
+        update() {
+          this.x += this.vx;
+          this.y += this.vy;
+          this.life--;
+        }
+        draw() {
+          ctx.globalAlpha = this.life / 100;
+          ctx.beginPath();
+          ctx.arc(this.x, this.y, this.radius, 0, Math.PI * 2);
+          ctx.fillStyle = this.color;
+          ctx.fill();
+        }
+      }
+
+      function animate() {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        // emit new
+        particles.push(new Particle());
+        if (particles.length > 200) particles.shift();
+
+        particles.forEach((p, i) => {
+          p.update();
+          p.draw();
+          if (p.life <= 0) particles.splice(i, 1);
+        });
+
+        animId = requestAnimationFrame(animate);
+      }
+
+      card.addEventListener('mouseenter', () => {
+        resize();
+        animate();
+      });
+      card.addEventListener('mouseleave', () => {
+        cancelAnimationFrame(animId);
+        particles = [];
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+      });
+
+      window.addEventListener('resize', () => {
+        if (card.matches(':hover')) resize();
+      });
+    });
+  </script>
+</body>
+</html>
