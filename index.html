@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="utf-8"/>
-  <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Ganes Assess | Primers | Revise</title>
   <style>
     /* ---------- Global resets ---------- */
@@ -41,10 +41,10 @@
       border-radius: 12px;
       padding: 20px;
       width: 300px;
-      box-shadow: 0 0 20px rgba(255,255,255,0.15);
-      transition: transform .3s ease, box-shadow .3s ease;
-      border: 1px solid #444;
       margin-bottom: 60px;
+      box-shadow: 0 0 20px rgba(255,255,255,0.15);
+      border: 1px solid #444;
+      transition: transform .3s ease, box-shadow .3s ease;
     }
     .card:hover {
       transform: translateY(-6px) scale(1.02);
@@ -52,28 +52,25 @@
     }
     .icon-wrapper {
       margin: 0 auto 1rem;
-      width: 140px;
-      height: 140px;
+      width: 140px; height: 140px;
       background-color: #111;
       border-radius: 50%;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      box-shadow: 0 0 10px rgba(255,255,255,0.2), 0 0 20px rgba(255,255,255,0.15);
+      display: flex; align-items: center; justify-content: center;
+      box-shadow: 0 0 10px rgba(255,255,255,0.2),
+                  0 0 20px rgba(255,255,255,0.15);
       transition: box-shadow .3s ease;
     }
     .card:hover .icon-wrapper {
-      box-shadow: 0 0 25px rgba(255,255,255,0.5), 0 0 40px rgba(255,255,255,0.3);
+      box-shadow: 0 0 25px rgba(255,255,255,0.5),
+                  0 0 40px rgba(255,255,255,0.3);
     }
     .icon-wrapper img {
-      max-width: 80%;
-      max-height: 80%;
-      transition: transform .3s ease;
+      max-width: 80%; max-height: 80%;
+      transition: transform .3s ease, filter .2s ease;
     }
     .card:hover .icon-wrapper img {
       transform: scale(1.1);
     }
-
     .card h2 {
       margin: .5rem 0;
       font-size: 1.4rem;
@@ -81,8 +78,8 @@
     .card p.subtitle {
       margin: 0 0 1rem;
       font-size: 1rem;
-      color: #FFD580;
       font-weight: bold;
+      color: #FFD580;
     }
 
     /* ---------- Feature table ---------- */
@@ -92,7 +89,7 @@
       border-spacing: 0;
       border-radius: 8px;
       overflow: hidden;
-      margin: 0 auto;
+      margin: 0 auto 0;
       animation: glow-in 1s ease forwards;
     }
     th, td {
@@ -108,36 +105,21 @@
       text-align: center;
       font-weight: bold;
     }
-    .highlight {
-      background: transparent;
-      border: 1px solid transparent;
-      padding: 2px 4px;
-      border-radius: 4px;
-      transition: background-color .2s, border-color .2s, color .2s, font-weight .2s;
-    }
-    .card:hover .highlight {
-      background-color: #FFE5B4;
-      border-color: #FFA500;
-      color: #000;
-      font-weight: bold;
-    }
+    .highlight { /* feature highlight */ }
     @keyframes glow-in {
-      0%   { box-shadow:0 0 0 rgba(255,255,255,0); opacity:0; transform:scale(0.98) }
-      50%  { box-shadow:0 0 20px rgba(255,255,255,0.25); opacity:0.7 }
-      100% { box-shadow:0 0 20px rgba(255,255,255,0.35); opacity:1; transform:scale(1) }
+      0%   { box-shadow:0 0 0 rgba(255,255,255,0); opacity:0; transform:scale(0.98); }
+      50%  { box-shadow:0 0 20px rgba(255,255,255,0.25); opacity:0.7; }
+      100% { box-shadow:0 0 20px rgba(255,255,255,0.35); opacity:1; transform:scale(1); }
     }
 
-    /* ---------- Subjects dropdown (single column, aligned left) ---------- */
+    /* ---------- Subjects dropdown (single column) ---------- */
     .subjects-dropdown {
       position: absolute;
-      top: 100%;
-      left: 50%;
+      top: 100%; left: 50%;
       transform: translateX(-50%) translateY(10px);
-      width: 100%;
-      max-width: 220px;
       opacity: 0;
       visibility: hidden;
-      transition: transform .4s ease, opacity .4s ease, visibility .4s ease;
+      transition: transform .4s ease, opacity .4s ease;
     }
     .card:hover .subjects-dropdown {
       transform: translateX(-50%) translateY(0);
@@ -147,63 +129,82 @@
     .subjects-dropdown ul {
       list-style: none;
       margin: 0;
-      padding: 8px 0;
+      padding: 12px;
       background-color: rgba(0,0,0,0.6);
       border-radius: 8px;
-      border: 1px solid #555;
+      overflow: hidden;        /* clip the rounded item backgrounds */
       display: flex;
       flex-direction: column;
-      gap: 8px;
-      align-items: stretch;
-    }
-    .subjects-dropdown li {
-      width: 100%;
+      gap: 6px;
+      align-items: flex-start;
     }
     .subjects-dropdown a {
       display: flex;
       align-items: center;
       gap: 10px;
-      width: 100%;
       padding: 6px 12px;
-      justify-content: flex-start;
-      color: inherit;
+      border-radius: 8px;      /* enlarged corner radius */
       text-decoration: none;
-      transition: background-color .2s;
-    }
-    .subjects-dropdown a:hover {
-      background-color: rgba(255,255,255,0.1);
+      color: inherit;
+      transition: background-color .2s ease;
     }
     .subjects-dropdown img {
-      width: 32px;
-      height: 32px;
-      flex-shrink: 0;
+      width: 48px; height: 48px;
+      display: block;
+      transition: filter .2s ease;
     }
-    .subjects-dropdown .label {
-      opacity: 1;
-      transition: none;
+
+    /* Assess (pastel blue) */
+    .assess .subjects-dropdown a:hover,
+    .assess .subjects-dropdown a:focus {
+      background-color: rgba(173,216,230,0.3);
+    }
+    .assess .subjects-dropdown a:active img,
+    .assess .subjects-dropdown a:focus img {
+      filter: drop-shadow(0 0 8px #ADD8E6);
+    }
+
+    /* Primers (pastel orange) */
+    .primers .subjects-dropdown a:hover,
+    .primers .subjects-dropdown a:focus {
+      background-color: rgba(255,229,180,0.3);
+    }
+    .primers .subjects-dropdown a:active img,
+    .primers .subjects-dropdown a:focus img {
+      filter: drop-shadow(0 0 8px #FFE5B4);
+    }
+
+    /* Revise (white) */
+    .revise .subjects-dropdown a:hover,
+    .revise .subjects-dropdown a:focus {
+      background-color: rgba(255,255,255,0.3);
+      color: #000;
+    }
+    .revise .subjects-dropdown a:active img,
+    .revise .subjects-dropdown a:focus img {
+      filter: drop-shadow(0 0 8px #FFF);
     }
 
     /* ---------- Particle canvas ---------- */
     .particle-canvas {
       position: absolute;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
+      top: 0; left: 0;
+      width: 100%; height: 100%;
       pointer-events: none;
       background: transparent;
     }
   </style>
 </head>
+
 <body>
   <div class="three-columns">
 
     <!-- Ganes Assess -->
-    <div class="card">
+    <div class="card assess">
       <canvas class="particle-canvas"></canvas>
       <a href="https://www.ganesteaches.com/ganes-assess" target="_blank">
         <div class="icon-wrapper">
-          <img src="ganes_assess.png" alt="Ganes Assess">
+          <img src="ganes_assess.png" alt="">
         </div>
         <h2>Ganes Assess</h2>
         <p class="subtitle">Exam-Style Question Bank</p>
@@ -216,21 +217,21 @@
       </a>
       <div class="subjects-dropdown">
         <ul>
-          <li><a href="/biology.html"><img src="biology_list_icon.png" alt="Biology icon"><span class="label">Biology</span></a></li>
-          <li><a href="/chemistry.html"><img src="chemistry_list_icon.png" alt="Chemistry icon"><span class="label">Chemistry</span></a></li>
-          <li><a href="/physics.html"><img src="physics_list_icon.png" alt="Physics icon"><span class="label">Physics</span></a></li>
-          <li><a href="/maths.html"><img src="mathematics_list_icon.png" alt="Mathematics icon"><span class="label">Mathematics</span></a></li>
-          <li><a href="/further-maths.html"><img src="further_mathematics_list_icon.png" alt="Further Mathematics icon"><span class="label">Further Mathematics</span></a></li>
+          <li><a href="/biology.html"><img src="biology_list_icon.png" alt=""><span>Biology</span></a></li>
+          <li><a href="/chemistry.html"><img src="chemistry_list_icon.png" alt=""><span>Chemistry</span></a></li>
+          <li><a href="/physics.html"><img src="physics_list_icon.png" alt=""><span>Physics</span></a></li>
+          <li><a href="/maths.html"><img src="mathematics_list_icon.png" alt=""><span>Mathematics</span></a></li>
+          <li><a href="/further-maths.html"><img src="further_mathematics_list_icon.png" alt=""><span>Further Mathematics</span></a></li>
         </ul>
       </div>
     </div>
 
     <!-- Ganes Primers -->
-    <div class="card">
+    <div class="card primers">
       <canvas class="particle-canvas"></canvas>
       <a href="https://www.ganesteaches.com/ganes-primers" target="_blank">
         <div class="icon-wrapper">
-          <img src="ganes_primers.png" alt="Ganes Primers">
+          <img src="ganes_primers.png" alt="">
         </div>
         <h2>Ganes Primers</h2>
         <p class="subtitle">Revision Guides & Flash Cards</p>
@@ -243,24 +244,24 @@
       </a>
       <div class="subjects-dropdown">
         <ul>
-          <li><a href="/biology.html"><img src="biology_list_icon.png" alt="Biology icon"><span class="label">Biology</span></a></li>
-          <li><a href="/chemistry.html"><img src="chemistry_list_icon.png" alt="Chemistry icon"><span class="label">Chemistry</span></a></li>
-          <li><a href="/physics.html"><img src="physics_list_icon.png" alt="Physics icon"><span class="label">Physics</span></a></li>
-          <li><a href="/maths.html"><img src="mathematics_list_icon.png" alt="Mathematics icon"><span class="label">Mathematics</span></a></li>
-          <li><a href="/further-maths.html"><img src="further_mathematics_list_icon.png" alt="Further Mathematics icon"><span class="label">Further Mathematics</span></a></li>
+          <li><a href="/biology.html"><img src="biology_list_icon.png" alt=""><span>Biology</span></a></li>
+          <li><a href="/chemistry.html"><img src="chemistry_list_icon.png" alt=""><span>Chemistry</span></a></li>
+          <li><a href="/physics.html"><img src="physics_list_icon.png" alt=""><span>Physics</span></a></li>
+          <li><a href="/maths.html"><img src="mathematics_list_icon.png" alt=""><span>Mathematics</span></a></li>
+          <li><a href="/further-maths.html"><img src="further_mathematics_list_icon.png" alt=""><span>Further Mathematics</span></a></li>
         </ul>
       </div>
     </div>
 
     <!-- Ganes Revise -->
-    <div class="card">
+    <div class="card revise">
       <canvas class="particle-canvas"></canvas>
       <a href="https://www.ganesteaches.com/ganes-revise" target="_blank">
         <div class="icon-wrapper">
-          <img src="ganes_revise.png" alt="Ganes Revise">
+          <img src="ganes_revise.png" alt="">
         </div>
         <h2>Ganes Revise</h2>
-        <p class="subtitle">Notes & Worked Solution</p>
+        <p class="subtitle">Notes & Worked Solutions</p>
         <table>
           <tr><th>📦 Feature</th></tr>
           <tr><td>🧊 <span class="highlight">Step-by-step walkthroughs</span> of exam questions</td></tr>
@@ -270,11 +271,11 @@
       </a>
       <div class="subjects-dropdown">
         <ul>
-          <li><a href="/biology.html"><img src="right_biology_list_icon.png" alt="Biology icon"><span class="label">Biology</span></a></li>
-          <li><a href="/chemistry.html"><img src="right_chemistry_list_icon.png" alt="Chemistry icon"><span class="label">Chemistry</span></a></li>
-          <li><a href="/physics.html"><img src="right_physics_list_icon.png" alt="Physics icon"><span class="label">Physics</span></a></li>
-          <li><a href="/maths.html"><img src="right_mathematics_list_icon.png" alt="Mathematics icon"><span class="label">Mathematics</span></a></li>
-          <li><a href="/further-maths.html"><img src="right_further_mathematics_list_icon.png" alt="Further Mathematics icon"><span class="label">Further Mathematics</span></a></li>
+          <li><a href="/biology.html"><img src="right_biology_list_icon.png" alt=""><span>Biology</span></a></li>
+          <li><a href="/chemistry.html"><img src="right_chemistry_list_icon.png" alt=""><span>Chemistry</span></a></li>
+          <li><a href="/physics.html"><img src="right_physics_list_icon.png" alt=""><span>Physics</span></a></li>
+          <li><a href="/maths.html"><img src="right_mathematics_list_icon.png" alt=""><span>Mathematics</span></a></li>
+          <li><a href="/further-maths.html"><img src="right_further_mathematics_list_icon.png" alt=""><span>Further Mathematics</span></a></li>
         </ul>
       </div>
     </div>
