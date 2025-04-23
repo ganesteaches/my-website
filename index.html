@@ -10,7 +10,7 @@
       margin:0;
       padding:20px;
       font-family:'Segoe UI',Tahoma,sans-serif;
-      background-color:#000;          /* keep the dark backdrop */
+      background-color:#000;
       color:#FFF;
       text-align:center;
     }
@@ -65,7 +65,11 @@
     }
     .card:hover .icon-wrapper img{transform:scale(1.1);}
 
-    .card h2{margin:0.5rem 0;font-size:1.4rem;color:#9B30FF;}      /* purple headings */
+    .card h2{
+      margin:0.5rem 0;
+      font-size:1.4rem;
+      color:#FFF;               /* titles now white */
+    }
     .card p.subtitle{
       margin:0 0 1rem;
       font-size:1rem;
@@ -97,9 +101,9 @@
     }
 
     /* ---------- Dynamic highlight ---------- */
-    .highlight{                         /* normal state */
+    .highlight{
       background:transparent;
-      border:1px solid transparent;     /* keep cell width stable */
+      border:1px solid transparent;
       color:inherit;
       padding:2px 4px;
       border-radius:4px;
@@ -108,7 +112,7 @@
                  color .2s ease,
                  font-weight .2s ease;
     }
-    .card:hover .highlight{             /* highlight when the card is hovered */
+    .card:hover .highlight{
       background-color:#FFE5B4;
       border-color:#FFA500;
       color:#000;
