@@ -6,207 +6,181 @@
   <title>Ganes Assess | Primers | Revise</title>
   <style>
     /* ---------- Global resets ---------- */
-    body {
-      margin: 0;
-      padding: 20px;
-      font-family: 'Segoe UI', Tahoma, sans-serif;
-      background-color: transparent;
-      color: #FFF;
-      text-align: center;
+    body{
+      margin:0;
+      padding:20px;
+      font-family:'Segoe UI',Tahoma,sans-serif;
+      background:transparent;
+      color:#FFF;            /* ← property name fixed */
+      text-align:center;
     }
+
     .card a,
     .card a:link,
     .card a:visited,
     .card a:hover,
-    .card a:active {
-      text-decoration: none !important;
-      color: inherit;
+    .card a:active{
+      text-decoration:none!important;
+      color:inherit;
     }
 
     /* ---------- Layout ---------- */
-    .three-columns {
-      display: flex;
-      flex-wrap: wrap;
-      justify-content: center;
-      gap: 20px;
-      max-width: 1200px;
-      margin: 0 auto;
+    .three-columns{
+      display:flex;
+      flex-wrap:wrap;
+      justify-content:center;
+      gap:20px;
+      max-width:1200px;
+      margin:0 auto;
     }
 
     /* ---------- Card styling ---------- */
-    .card {
-      position: relative;
-      overflow: visible;
-      background-color: rgba(0,0,0,0.65);
-      border-radius: 12px;
-      padding: 20px;
-      width: 300px;
-      margin-bottom: 60px;
-      box-shadow: 0 0 20px rgba(255,255,255,0.15);
-      border: 1px solid #444;
-      transition: transform .3s ease, box-shadow .3s ease;
+    .card{
+      position:relative;
+      overflow:visible;
+      background:rgba(0,0,0,0.65);
+      border-radius:12px;
+      padding:20px;
+      width:300px;
+      margin-bottom:60px;
+      box-shadow:0 0 20px rgba(255,255,255,0.15);
+      border:1px solid #444;
+      transition:transform .3s ease, box-shadow .3s ease;
     }
-    .card:hover {
-      transform: translateY(-6px) scale(1.02);
-      box-shadow: 0 0 25px rgba(255,255,255,0.25);
+    .card:hover{
+      transform:translateY(-6px) scale(1.02);
+      box-shadow:0 0 25px rgba(255,255,255,0.25);
     }
-    .icon-wrapper {
-      margin: 0 auto 1rem;
-      width: 140px;
-      height: 140px;
-      background-color: #111;
-      border-radius: 50%;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      box-shadow: 0 0 10px rgba(255,255,255,0.2), 0 0 20px rgba(255,255,255,0.15);
-      transition: box-shadow .3s ease;
+    .icon-wrapper{
+      margin:0 auto 1rem;
+      width:140px;
+      height:140px;
+      background:#111;
+      border-radius:50%;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      box-shadow:0 0 10px rgba(255,255,255,0.2),0 0 20px rgba(255,255,255,0.15);
+      transition:box-shadow .3s ease;
     }
-    .card:hover .icon-wrapper {
-      box-shadow: 0 0 25px rgba(255,255,255,0.5), 0 0 40px rgba(255,255,255,0.3);
+    .card:hover .icon-wrapper{
+      box-shadow:0 0 25px rgba(255,255,255,0.5),0 0 40px rgba(255,255,255,0.3);
     }
-    .icon-wrapper img {
-      max-width: 80%;
-      max-height: 80%;
-      transition: transform .3s ease, filter .2s ease;
+    .icon-wrapper img{
+      max-width:80%;
+      max-height:80%;
+      transition:transform .3s ease, filter .2s ease;
     }
-    .card:hover .icon-wrapper img {
-      transform: scale(1.1);
-    }
-    .card h2 {
-      margin: .5rem 0;
-      font-size: 1.4rem;
-    }
-    .card p.subtitle {
-      margin: 0 0 1rem;
-      font-size: 1rem;
-      font-weight: bold;
-      color: #FFD580;
-    }
+    .card:hover .icon-wrapper img{transform:scale(1.1);}
+    .card h2{margin:.5rem 0;font-size:1.4rem;}
+    .card p.subtitle{margin:0 0 1rem;font-size:1rem;font-weight:bold;color:#FFD580;}
 
     /* ---------- Feature table ---------- */
-    table {
-      width: 100%;
-      border-collapse: separate;
-      border-spacing: 0;
-      border-radius: 8px;
-      overflow: hidden;
-      margin: 0 auto 0;
-      animation: glow-in 1s ease forwards;
+    table{
+      width:100%;
+      border-collapse:separate;
+      border-spacing:0;
+      border-radius:8px;
+      overflow:hidden;
+      margin:0 auto 0;
+      animation:glow-in 1s ease forwards;
     }
-    th, td {
-      border: 1px solid #444;
-      background-color: #2A2A2A;
-      padding: 12px;
-      font-size: .95em;
-      text-align: left;
+    th,td{
+      border:1px solid #444;
+      background:#2A2A2A;
+      padding:12px;
+      font-size:.95em;
+      text-align:left;
     }
-    th {
-      background-color: #333;
-      color: #FFD5A0;
-      text-align: center;
-      font-weight: bold;
+    th{
+      background:#333;
+      color:#FFD5A0;
+      text-align:center;
+      font-weight:bold;
     }
-    .highlight {
-      background: transparent;
-      border: 1px solid transparent;
-      padding: 2px 4px;
-      border-radius: 4px;
-      transition: background-color .2s, border-color .2s, color .2s, font-weight .2s;
+    .highlight{
+      background:transparent;
+      border:1px solid transparent;
+      padding:2px 4px;
+      border-radius:4px;
+      transition:background-color .2s, border-color .2s, color .2s, font-weight .2s;
     }
-    .card:hover .highlight {
-      background-color: #FFE5B4;
-      border-color: #FFA500;
-      color: #000;
-      font-weight: bold;
+    .card:hover .highlight{
+      background:#FFE5B4;
+      border-color:#FFA500;
+      color:#000;
+      font-weight:bold;
     }
-    @keyframes glow-in {
-      0% { box-shadow:0 0 0 rgba(255,255,255,0); opacity:0; transform:scale(0.98); }
-      50% { box-shadow:0 0 20px rgba(255,255,255,0.25); opacity:0.7; }
-      100% { box-shadow:0 0 20px rgba(255,255,255,0.35); opacity:1; transform:scale(1); }
+    @keyframes glow-in{
+      0%{box-shadow:0 0 0 rgba(255,255,255,0);opacity:0;transform:scale(0.98);}
+      50%{box-shadow:0 0 20px rgba(255,255,255,0.25);opacity:0.7;}
+      100%{box-shadow:0 0 20px rgba(255,255,255,0.35);opacity:1;transform:scale(1);}
     }
 
     /* ---------- Subjects dropdown (single column) ---------- */
-    .subjects-dropdown {
-      position: absolute;
-      top: 100%; left: 50%;
-      transform: translateX(-50%) translateY(10px);
-      opacity: 0;
-      visibility: hidden;
-      transition: transform .4s ease, opacity .4s ease;
+    .subjects-dropdown{
+      position:absolute;
+      top:100%;left:50%;
+      transform:translateX(-50%) translateY(10px);
+      opacity:0;
+      visibility:hidden;
+      transition:transform .4s ease, opacity .4s ease;
+      z-index:10;                    /* ← sits above everything */
     }
-    .card:hover .subjects-dropdown {
-      transform: translateX(-50%) translateY(0);
-      opacity: 1;
-      visibility: visible;
+    .card:hover .subjects-dropdown,
+    .subjects-dropdown:hover{        /* keeps it alive while hovered */
+      transform:translateX(-50%) translateY(0);
+      opacity:1;
+      visibility:visible;
     }
-    .subjects-dropdown ul {
-      list-style: none;
-      margin: 0;
-      padding: 12px;
-      background-color: rgba(0,0,0,0.6);
-      border-radius: 8px;
-      overflow: hidden;
-      display: flex;
-      flex-direction: column;
-      gap: 6px;
-      align-items: flex-start;
+    .subjects-dropdown ul{
+      list-style:none;
+      margin:0;
+      padding:12px;
+      background:rgba(0,0,0,0.6);
+      border-radius:8px;
+      display:flex;
+      flex-direction:column;
+      gap:6px;
+      align-items:flex-start;
     }
-    .subjects-dropdown a {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      padding: 6px 12px;
-      border-radius: 8px;
-      text-decoration: none;
-      color: inherit;
-      transition: background-color .2s ease;
+    .subjects-dropdown a{
+      display:flex;
+      align-items:center;
+      gap:10px;
+      padding:6px 12px;
+      border-radius:8px;
+      text-decoration:none;
+      color:inherit;
+      transition:background-color .2s ease;
     }
-    .subjects-dropdown img {
-      width: 48px;
-      height: 48px;
-      display: block;
-      transition: filter .2s ease;
-    }
+    .subjects-dropdown img{width:48px;height:48px;display:block;transition:filter .2s ease;}
 
     /* Assess (pastel blue) */
     .assess .subjects-dropdown a:hover,
-    .assess .subjects-dropdown a:focus {
-      background-color: rgba(173,216,230,0.3);
-    }
+    .assess .subjects-dropdown a:focus{background:rgba(173,216,230,0.3);}
     .assess .subjects-dropdown a:hover img,
-    .assess .subjects-dropdown a:focus img {
-      filter: drop-shadow(0 0 8px #ADD8E6);
-    }
+    .assess .subjects-dropdown a:focus img{filter:drop-shadow(0 0 8px #ADD8E6);}
 
     /* Primers (pastel orange) */
     .primers .subjects-dropdown a:hover,
-    .primers .subjects-dropdown a:focus {
-      background-color: rgba(255,229,180,0.3);
-    }
+    .primers .subjects-dropdown a:focus{background:rgba(255,229,180,0.3);}
     .primers .subjects-dropdown a:hover img,
-    .primers .subjects-dropdown a:focus img {
-      filter: drop-shadow(0 0 8px #FFA500);
-    }
+    .primers .subjects-dropdown a:focus img{filter:drop-shadow(0 0 8px #FFA500);}
 
     /* Revise (white) */
     .revise .subjects-dropdown a:hover,
-    .revise .subjects-dropdown a:focus {
-      background-color: rgba(255,255,255,0.3);
-      color: #000;
-    }
+    .revise .subjects-dropdown a:focus{background:rgba(255,255,255,0.3);color:#000;}
     .revise .subjects-dropdown a:hover img,
-    .revise .subjects-dropdown a:focus img {
-      filter: drop-shadow(0 0 8px #FFF);
-    }
+    .revise .subjects-dropdown a:focus img{filter:drop-shadow(0 0 8px #FFF);}
 
     /* ---------- Particle canvas ---------- */
-    .particle-canvas {
-      position: absolute;
-      top: 0; left: 0;
-      width: 100%; height: 100%;
-      pointer-events: none;
-      background: transparent;
+    .particle-canvas{
+      position:absolute;
+      top:0;left:0;
+      width:100%;height:100%;
+      pointer-events:none;
+      background:transparent;
     }
   </style>
 </head>
@@ -222,18 +196,18 @@
         <p class="subtitle">Exam-Style Question Bank</p>
         <table>
           <tr><th>📦 Feature</th></tr>
-          <tr><td>🧊 Exam board-aligned content (<span class="highlight">AQA, Edexcel, OCR</span>)</td></tr>
+          <tr><td>🧊 Exam-board-aligned content (<span class="highlight">AQA, Edexcel, OCR</span>)</td></tr>
           <tr><td>🧊 <span class="highlight">Targeted by topic</span> for focused revision</td></tr>
           <tr><td>🧊 <span class="highlight">Difficulty ramps up</span> to prepare for real exam conditions</td></tr>
         </table>
       </a>
       <div class="subjects-dropdown">
         <ul>
-          <li><a href="https://www.ganesteaches.com/ganes-assess/biology"><img src="biology_list_icon.png" alt=""><span>Biology</span></a></li>
-          <li><a href="https://www.ganesteaches.com/ganes-assess/chemistry"><img src="chemistry_list_icon.png" alt=""><span>Chemistry</span></a></li>
-          <li><a href="https://www.ganesteaches.com/ganes-assess/physics"><img src="physics_list_icon.png" alt=""><span>Physics</span></a></li>
-          <li><a href="https://www.ganesteaches.com/ganes-assess/mathematics"><img src="mathematics_list_icon.png" alt=""><span>Mathematics</span></a></li>
-          <li><a href="https://www.ganesteaches.com/ganes-assess/further-maths"><img src="further_mathematics_list_icon.png" alt=""><span>Further Mathematics</span></a></li>
+          <li><a href="https://www.ganesteaches.com/ganes-assess/biology" target="_blank"><img src="biology_list_icon.png" alt=""><span>Biology</span></a></li>
+          <li><a href="https://www.ganesteaches.com/ganes-assess/chemistry" target="_blank"><img src="chemistry_list_icon.png" alt=""><span>Chemistry</span></a></li>
+          <li><a href="https://www.ganesteaches.com/ganes-assess/physics" target="_blank"><img src="physics_list_icon.png" alt=""><span>Physics</span></a></li>
+          <li><a href="https://www.ganesteaches.com/ganes-assess/mathematics" target="_blank"><img src="mathematics_list_icon.png" alt=""><span>Mathematics</span></a></li>
+          <li><a href="https://www.ganesteaches.com/ganes-assess/further-maths" target="_blank"><img src="further_mathematics_list_icon.png" alt=""><span>Further Mathematics</span></a></li>
         </ul>
       </div>
     </div>
@@ -244,7 +218,7 @@
       <a href="https://www.ganesteaches.com/ganes-primers" target="_blank">
         <div class="icon-wrapper"><img src="ganes_primers.png" alt=""></div>
         <h2>Ganes Primers</h2>
-        <p class="subtitle">Revision Guides & Flash Cards</p>
+        <p class="subtitle">Revision Guides &amp; Flash Cards</p>
         <table>
           <tr><th>📦 Feature</th></tr>
           <tr><td>🧊 Concise <span class="highlight">topic summaries</span> for quick revision</td></tr>
@@ -254,11 +228,11 @@
       </a>
       <div class="subjects-dropdown">
         <ul>
-          <li><a href="https://www.ganesteaches.com/ganes-primers/biology"><img src="front_biology_list_icon.png" alt=""><span>Biology</span></a></li>
-          <li><a href="https://www.ganesteaches.com/ganes-primers/chemistry"><img src="front_chemistry_list_icon.png" alt=""><span>Chemistry</span></a></li>
-          <li><a href="https://www.ganesteaches.com/ganes-primers/physics"><img src="front_physics_list_icon.png" alt=""><span>Physics</span></a></li>
-          <li><a href="https://www.ganesteaches.com/ganes-primers/mathematics"><img src="front_mathematics_list_icon.png" alt=""><span>Mathematics</span></a></li>
-          <li><a href="https://www.ganesteaches.com/ganes-primers/further-maths"><img src="front_further_mathematics_list_icon.png" alt=""><span>Further Mathematics</span></a></li>
+          <li><a href="https://www.ganesteaches.com/ganes-primers/biology" target="_blank"><img src="front_biology_list_icon.png" alt=""><span>Biology</span></a></li>
+          <li><a href="https://www.ganesteaches.com/ganes-primers/chemistry" target="_blank"><img src="front_chemistry_list_icon.png" alt=""><span>Chemistry</span></a></li>
+          <li><a href="https://www.ganesteaches.com/ganes-primers/physics" target="_blank"><img src="front_physics_list_icon.png" alt=""><span>Physics</span></a></li>
+          <li><a href="https://www.ganesteaches.com/ganes-primers/mathematics" target="_blank"><img src="front_mathematics_list_icon.png" alt=""><span>Mathematics</span></a></li>
+          <li><a href="https://www.ganesteaches.com/ganes-primers/further-maths" target="_blank"><img src="front_further_mathematics_list_icon.png" alt=""><span>Further Mathematics</span></a></li>
         </ul>
       </div>
     </div>
@@ -269,7 +243,7 @@
       <a href="https://www.ganesteaches.com/ganes-revise" target="_blank">
         <div class="icon-wrapper"><img src="ganes_revise.png" alt=""></div>
         <h2>Ganes Revise</h2>
-        <p class="subtitle">Notes & Worked Solutions</p>
+        <p class="subtitle">Notes &amp; Worked Solutions</p>
         <table>
           <tr><th>📦 Feature</th></tr>
           <tr><td>🧊 <span class="highlight">Step-by-step walkthroughs</span> of exam questions</td></tr>
@@ -279,62 +253,55 @@
       </a>
       <div class="subjects-dropdown">
         <ul>
-          <li><a href="https://www.ganesteaches.com/ganes-revise/biology"><img src="right_biology_list_icon.png" alt=""><span>Biology</span></a></li>
-          <li><a href="https://www.ganesteaches.com/ganes-revise/chemistry"><img src="right_chemistry_list_icon.png" alt=""><span>Chemistry</span></a></li>
-          <li><a href="https://www.ganesteaches.com/ganes-revise/physics"><img src="right_physics_list_icon.png" alt=""><span>Physics</span></a></li>
-          <li><a href="https://www.ganesteaches.com/ganes-revise/mathematics"><img src="right_mathematics_list_icon.png" alt=""><span>Mathematics</span></a></li>
-          <li><a href="https://www.ganesteaches.com/ganes-revise/further-maths"><img src="right_further_mathematics_list_icon.png" alt=""><span>Further Mathematics</span></a></li>
+          <li><a href="https://www.ganesteaches.com/ganes-revise/biology" target="_blank"><img src="right_biology_list_icon.png" alt=""><span>Biology</span></a></li>
+          <li><a href="https://www.ganesteaches.com/ganes-revise/chemistry" target="_blank"><img src="right_chemistry_list_icon.png" alt=""><span>Chemistry</span></a></li>
+          <li><a href="https://www.ganesteaches.com/ganes-revise/physics" target="_blank"><img src="right_physics_list_icon.png" alt=""><span>Physics</span></a></li>
+          <li><a href="https://www.ganesteaches.com/ganes-revise/mathematics" target="_blank"><img src="right_mathematics_list_icon.png" alt=""><span>Mathematics</span></a></li>
+          <li><a href="https://www.ganesteaches.com/ganes-revise/further-maths" target="_blank"><img src="right_further_mathematics_list_icon.png" alt=""><span>Further Mathematics</span></a></li>
         </ul>
       </div>
     </div>
 
   </div>
+
+  <!-- ---------- Particle script (unchanged) ---------- -->
   <script>
-    document.querySelectorAll('.card').forEach(card => {
-      const canvas = card.querySelector('.particle-canvas');
-      const ctx = canvas.getContext('2d');
-      let particles = [], animId;
-      function resize() {
-        canvas.width = card.clientWidth;
-        canvas.height = card.clientHeight;
-      }
-      class Particle {
-        constructor() {
-          this.x = Math.random() * canvas.width;
-          this.y = Math.random() * canvas.height;
-          this.vx = (Math.random() - 0.5) * 1;
-          this.vy = (Math.random() - 0.5) * 1;
-          this.radius = Math.random() * 2 + 1;
-          this.life = 100;
-          this.color = Math.random() < 0.5 ? '#00E5FF' : '#FF8C00';
+    document.querySelectorAll('.card').forEach(card=>{
+      const canvas=card.querySelector('.particle-canvas');
+      const ctx=canvas.getContext('2d');
+      let particles=[],animId;
+      function resize(){canvas.width=card.clientWidth;canvas.height=card.clientHeight;}
+      class Particle{
+        constructor(){
+          this.x=Math.random()*canvas.width;
+          this.y=Math.random()*canvas.height;
+          this.vx=(Math.random()-0.5);
+          this.vy=(Math.random()-0.5);
+          this.radius=Math.random()*2+1;
+          this.life=100;
+          this.color=Math.random()<0.5?'#00E5FF':'#FF8C00';
         }
-        update() {
-          this.x += this.vx;
-          this.y += this.vy;
-          this.life--;
-        }
-        draw() {
-          ctx.globalAlpha = 0.2;
+        update(){this.x+=this.vx;this.y+=this.vy;this.life--;}
+        draw(){
+          ctx.globalAlpha=0.2;
           ctx.beginPath();
-          ctx.arc(this.x, this.y, this.radius, 0, Math.PI * 2);
-          ctx.fillStyle = this.color;
+          ctx.arc(this.x,this.y,this.radius,0,Math.PI*2);
+          ctx.fillStyle=this.color;
           ctx.fill();
         }
       }
-      function animate() {
-        ctx.clearRect(0, 0, canvas.width, canvas.height);
+      function animate(){
+        ctx.clearRect(0,0,canvas.width,canvas.height);
         particles.push(new Particle());
-        if (particles.length > 200) particles.shift();
-        particles.forEach((p, i) => {
-          p.update(); p.draw(); if (p.life <= 0) particles.splice(i, 1);
-        });
-        animId = requestAnimationFrame(animate);
+        if(particles.length>200)particles.shift();
+        particles.forEach((p,i)=>{p.update();p.draw();if(p.life<=0)particles.splice(i,1);});
+        animId=requestAnimationFrame(animate);
       }
-      card.addEventListener('mouseenter', () => { resize(); animate(); });
-      card.addEventListener('mouseleave', () => {
-        cancelAnimationFrame(animId); particles = []; ctx.clearRect(0, 0, canvas.width, canvas.height);
+      card.addEventListener('mouseenter',()=>{resize();animate();});
+      card.addEventListener('mouseleave',()=>{
+        cancelAnimationFrame(animId);particles=[];ctx.clearRect(0,0,canvas.width,canvas.height);
       });
-      window.addEventListener('resize', () => { if (card.matches(':hover')) resize(); });
+      window.addEventListener('resize',()=>{if(card.matches(':hover'))resize();});
     });
   </script>
 </body>
