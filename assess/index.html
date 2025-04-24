@@ -3,93 +3,191 @@
 <head>
 <meta charset="UTF-8">
 <title>Ganes Assess – Animated Hexagon</title>
+
 <style>
 :root{
-  --r1:   230px;
-  --r2:   320px;
-  --icon: 100px;
-  --bubble:70px;
+  --r1:   230px;   /* radius to subject icons            */
+  --r2:   320px;   /* radius to GCSE / A-Level / IB ring */
+  --icon: 100px;   /* subject icon diameter              */
+  --bubble:70px;   /* qualification bubble diameter      */
 }
 *{box-sizing:border-box;margin:0;padding:0}
 html,body{width:100%;height:100%}
-body{display:flex;align-items:center;justify-content:center;background:transparent;font-family:system-ui;color:#e2e8f0}
+body{
+  display:flex;align-items:center;justify-content:center;
+  background:transparent;font-family:system-ui;color:#e2e8f0;
+}
 #chart{position:relative;width:900px;height:900px}
 
-/* centre logo */
-#centre{position:absolute;top:50%;left:50%;width:190px;height:190px;transform:translate(-50%,-50%);border-radius:50%;overflow:hidden;box-shadow:0 0 16px 4px rgba(56,189,248,.35)}
+/* ───── centre logo ───── */
+#centre{
+  position:absolute;top:50%;left:50%;width:190px;height:190px;
+  transform:translate(-50%,-50%);
+  border-radius:50%;overflow:hidden;
+  box-shadow:0 0 16px 4px rgba(56,189,248,.35);
+}
 #centre img{width:100%;height:100%;object-fit:cover}
 
-/* icons */
-.node{position:absolute;display:flex;align-items:center;justify-content:center;width:var(--icon);height:var(--icon);border-radius:50%;overflow:hidden;border:3px solid #e2e8f0;background:#082f49;cursor:pointer;z-index:1;transition:left 1.6s ease-out,top 1.6s ease-out,opacity 1.6s ease-out;opacity:0}
+/* ───── subject icons ───── */
+.node{
+  position:absolute;display:flex;align-items:center;justify-content:center;
+  width:var(--icon);height:var(--icon);
+  border-radius:50%;overflow:hidden;
+  border:3px solid #e2e8f0;background:#082f49;cursor:pointer;
+  z-index:1;                                        /* below bubbles */
+  transition:left 1.6s ease-out, top 1.6s ease-out, opacity 1.6s ease-out;
+  opacity:0;
+}
 .node img{width:70%;height:70%;object-fit:contain}
+
 .science{filter:drop-shadow(0 0 14px #fb923c)}
 .maths  {filter:drop-shadow(0 0 14px #60a5fa)}
 .misc   {filter:drop-shadow(0 0 14px #a855f7)}
-.node:hover{opacity:1}
-.node:hover ~ .node{opacity:.5}
 
-/* bubbles */
-.bubble{position:absolute;display:flex;align-items:center;justify-content:center;width:var(--bubble);height:var(--bubble);border-radius:50%;background:#082f49;border:2px solid #64748b;font-size:13px;font-weight:600;color:#e2e8f0;text-decoration:none;pointer-events:none;opacity:0;transition:opacity .35s;z-index:2;cursor:pointer}
+/* dim siblings on hover */
+.node:hover         {opacity:1}
+.node:hover ~ .node {opacity:.5}
+
+/* ───── qualification bubbles ───── */
+.bubble{
+  position:absolute;display:flex;align-items:center;justify-content:center;
+  width:var(--bubble);height:var(--bubble);
+  border-radius:50%;background:#082f49;border:2px solid #64748b;
+  font-size:13px;font-weight:600;color:#e2e8f0;text-decoration:none;
+  opacity:0;pointer-events:none;transition:opacity .35s;
+  z-index:2;                                        /* on top – link clickable */
+}
 .bubble.show{opacity:1;pointer-events:auto}
 
-/* outline */
+/* ───── hexagon outline ───── */
 svg{position:absolute;inset:0;pointer-events:none}
-polygon{stroke:#64748b;stroke-width:3;fill:none;opacity:.5;transition:stroke-dashoffset 2s ease-out}
+polygon{
+  stroke:#64748b;stroke-width:3;fill:none;opacity:.5;
+  transition:stroke-dashoffset 2s ease-out;          /* slower draw */
+}
 </style>
 </head>
 <body>
-<div id="chart"><svg id="outline"></svg>
-  <a id="centre" href="https://www.ganesteaches.com/ganes-assess"><img src="../ganes_assess.png" alt="Ganes Assess"></a>
+
+<div id="chart">
+  <svg id="outline"></svg>
+
+  <!-- centre logo – links to Assess root -->
+  <a id="centre" href="https://www.ganesteaches.com/ganes-assess">
+    <img src="../ganes_assess.png" alt="Ganes Assess">
+  </a>
 </div>
 
 <script>
 (function(){
-const BASE="https://www.ganesteaches.com/ganes-assess";
-const subjects=[
- {label:"Biology",key:"biology",icon:"../biology_list_icon.png",cls:"science",angle:150},
- {label:"Chemistry",key:"chemistry",icon:"../chemistry_list_icon.png",cls:"science",angle:90},
- {label:"Physics",key:"physics",icon:"../physics_list_icon.png",cls:"science",angle:30},
- {label:"Mathematics",key:"mathematics",icon:"../mathematics_list_icon.png",cls:"maths",angle:210},
- {label:"Further Maths",key:"further-mathematics",icon:"../further_mathematics_list_icon.png",cls:"maths",angle:270},
- {label:"Misc",key:"misc",icon:"../physics_list_icon.png",cls:"misc",angle:330}
+
+/* --------------- PAGE-SPECIFIC CONSTANT --------------- */
+const BASE = "https://www.ganesteaches.com/ganes-assess";
+/* ------------------------------------------------------ */
+
+const subjects = [
+  {label:"Biology",        key:"biology",            icon:"../front_biology_list_icon.png",          cls:"science", angle:150},
+  {label:"Chemistry",      key:"chemistry",          icon:"../front_chemistry_list_icon.png",        cls:"science", angle: 90},
+  {label:"Physics",        key:"physics",            icon:"../front_physics_list_icon.png",          cls:"science", angle: 30},
+  {label:"Mathematics",    key:"mathematics",        icon:"../front_mathematics_list_icon.png",      cls:"maths",   angle:210},
+  {label:"Further Maths",  key:"further-mathematics",icon:"../front_further_mathematics_list_icon.png",cls:"maths",   angle:270},
+  {label:"Misc",           key:"misc",               icon:"../front_physics_list_icon.png",          cls:"misc",    angle:330}
 ];
-const quals=["GCSE","A Level","IB"];
-const chart=document.getElementById("chart"),svg=document.getElementById("outline");
-const R1=parseFloat(getComputedStyle(document.documentElement).getPropertyValue("--r1"));
-const R2=parseFloat(getComputedStyle(document.documentElement).getPropertyValue("--r2"));
-const ICON=parseFloat(getComputedStyle(document.documentElement).getPropertyValue("--icon"));
-const BUB=parseFloat(getComputedStyle(document.documentElement).getPropertyValue("--bubble"));
-const cx=chart.clientWidth/2,cy=chart.clientHeight/2;
-let activeNode=null;
-const slug=s=>s.toLowerCase().replace(/\s+/g,"-");
+const quals = ["GCSE","A Level","IB"];
+
+/* ---------- geometry ---------- */
+const chart = document.getElementById("chart");
+const svg   = document.getElementById("outline");
+const R1    = parseFloat(getComputedStyle(document.documentElement).getPropertyValue("--r1"));
+const R2    = parseFloat(getComputedStyle(document.documentElement).getPropertyValue("--r2"));
+const ICON  = parseFloat(getComputedStyle(document.documentElement).getPropertyValue("--icon"));
+const BUB   = parseFloat(getComputedStyle(document.documentElement).getPropertyValue("--bubble"));
+const cx    = chart.clientWidth/2, cy = chart.clientHeight/2;
+let activeNode = null;
+
+const slug = s => s.toLowerCase().replace(/\s+/g,"-");
+
+/* ---------- build nodes ---------- */
 const verts=[];
 subjects.forEach(sub=>{
- const rad=sub.angle*Math.PI/180;
- const vx=cx+R1*Math.cos(rad),vy=cy+R1*Math.sin(rad);
- verts.push({angle:sub.angle,x:vx,y:vy});
- const node=document.createElement("div");
- node.className=`node ${sub.cls}`;node.style.left=(cx-ICON/2)+"px";node.style.top=(cy-ICON/2)+"px";
- node.innerHTML=`<img src="${sub.icon}" alt="${sub.label}">`;chart.appendChild(node);
- sub.el=node;sub.finalLeft=(vx-ICON/2)+"px";sub.finalTop=(vy-ICON/2)+"px";
- sub.bubbles=quals.map((q,i)=>{const off=(-30)+i*30,br=(sub.angle+off)*Math.PI/180,bx=cx+R2*Math.cos(br),by=cy+R2*Math.sin(br);
-  const a=document.createElement("a");a.className="bubble";a.textContent=q;a.href=`${BASE}/${sub.key}/${slug(q)}`;
-  a.style.left=(bx-BUB/2)+"px";a.style.top=(by-BUB/2)+"px";chart.appendChild(a);
-  a.addEventListener("click",e=>e.stopPropagation());return a;});
- node.addEventListener("mouseenter",()=>subjects.forEach(s=>{if(s!==sub)s.el.style.opacity=.5;}));
- node.addEventListener("mouseleave",()=>subjects.forEach(s=>s.el.style.opacity=1));
- node.addEventListener("click",()=>{
-   if(node===activeNode){sub.bubbles.forEach(b=>b.classList.remove("show"));activeNode=null;return;}
-   if(activeNode){const prev=subjects.find(s=>s.el===activeNode);prev.bubbles.forEach(b=>b.classList.remove("show")); }
-   activeNode=node;sub.bubbles.forEach(b=>b.classList.add("show"));
- });
+  const rad=sub.angle*Math.PI/180;
+  const vx =cx+R1*Math.cos(rad);
+  const vy =cy+R1*Math.sin(rad);
+  verts.push({angle:sub.angle,x:vx,y:vy});
+
+  /* icon */
+  const node=document.createElement("div");
+  node.className=`node ${sub.cls}`;
+  node.style.left=(cx-ICON/2)+"px";                /* start centred */
+  node.style.top =(cy-ICON/2)+"px";
+  node.innerHTML=`<img src="${sub.icon}" alt="${sub.label}">`;
+  chart.appendChild(node);
+  sub.el=node;
+  sub.finalLeft=(vx-ICON/2)+"px";
+  sub.finalTop =(vy-ICON/2)+"px";
+
+  /* bubbles */
+  sub.bubbles=quals.map((q,i)=>{
+    const off = (-30)+i*30;
+    const br  = (sub.angle+off)*Math.PI/180;
+    const bx  = cx+R2*Math.cos(br);
+    const by  = cy+R2*Math.sin(br);
+    const a   = document.createElement("a");
+    a.className="bubble";
+    a.textContent=q;
+    a.href=`${BASE}/${sub.key}/${slug(q)}`;
+    a.style.left=(bx-BUB/2)+"px";
+    a.style.top =(by-BUB/2)+"px";
+    a.addEventListener("click",e=>e.stopPropagation());   // don’t close ring on click
+    chart.appendChild(a);
+    return a;
+  });
+
+  /* hover-dim neighbours */
+  node.addEventListener("mouseenter",()=>subjects.forEach(s=>{if(s!==sub)s.el.style.opacity=.5;}));
+  node.addEventListener("mouseleave",()=>subjects.forEach(s=>s.el.style.opacity=1));
+
+  /* click toggle */
+  node.addEventListener("click",()=>{
+    if(node===activeNode){
+       sub.bubbles.forEach(b=>b.classList.remove("show"));
+       activeNode=null;
+       return;
+    }
+    if(activeNode){
+      const prev=subjects.find(s=>s.el===activeNode);
+      prev.bubbles.forEach(b=>b.classList.remove("show"));
+    }
+    activeNode=node;
+    sub.bubbles.forEach(b=>b.classList.add("show"));
+  });
 });
+
+/* ---------- outline ---------- */
 verts.sort((a,b)=>a.angle-b.angle);
 const pts=verts.map(v=>`${v.x},${v.y}`).join(" ");
 svg.setAttribute("viewBox",`0 0 ${chart.clientWidth} ${chart.clientHeight}`);
-const poly=document.createElementNS("http://www.w3.org/2000/svg","polygon");poly.setAttribute("points",pts);svg.appendChild(poly);
-let per=0;for(let i=0;i<verts.length;i++){const v1=verts[i],v2=verts[(i+1)%verts.length];per+=Math.hypot(v2.x-v1.x,v2.y-v1.y);}
-poly.style.strokeDasharray=per;poly.style.strokeDashoffset=per;
-requestAnimationFrame(()=>{poly.style.strokeDashoffset=0;subjects.forEach(s=>{s.el.style.left=s.finalLeft;s.el.style.top=s.finalTop;s.el.style.opacity=1;});});
+const poly=document.createElementNS("http://www.w3.org/2000/svg","polygon");
+poly.setAttribute("points",pts);
+svg.appendChild(poly);
+let per=0;
+for(let i=0;i<verts.length;i++){
+  const v1=verts[i],v2=verts[(i+1)%verts.length];
+  per+=Math.hypot(v2.x-v1.x,v2.y-v1.y);
+}
+poly.style.strokeDasharray=per;
+poly.style.strokeDashoffset=per;
+
+/* ---------- entrance animation ---------- */
+requestAnimationFrame(()=>{
+  poly.style.strokeDashoffset=0;               /* 2-second draw */
+  subjects.forEach(s=>{
+     s.el.style.left=s.finalLeft;
+     s.el.style.top =s.finalTop;
+     s.el.style.opacity=1;                     /* 1.6-second glide */
+  });
+});
+
 })();
 </script>
 </body>
