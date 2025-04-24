@@ -2,14 +2,14 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<title>Ganes Revise – Animated Hexagon</title>
+<title>Ganes Primers – Animated Hexagon</title>
 
 <style>
 :root{
-  --r1:   230px;
-  --r2:   320px;
-  --icon: 100px;
-  --bubble:70px;
+  --r1:   230px;   /* radius to subject icons            */
+  --r2:   320px;   /* radius to GCSE / A-Level / IB ring  */
+  --icon: 100px;   /* subject icon diameter               */
+  --bubble:70px;   /* qualification bubble diameter       */
 }
 *{box-sizing:border-box;margin:0;padding:0}
 html,body{width:100%;height:100%}
@@ -19,7 +19,7 @@ body{
 }
 #chart{position:relative;width:900px;height:900px}
 
-/* centre logo */
+/* ────── centre logo ────── */
 #centre{
   position:absolute;top:50%;left:50%;width:190px;height:190px;
   transform:translate(-50%,-50%);
@@ -28,7 +28,7 @@ body{
 }
 #centre img{width:100%;height:100%;object-fit:cover}
 
-/* subject icons */
+/* ────── subject icons (nodes) ────── */
 .node{
   position:absolute;display:flex;align-items:center;justify-content:center;
   width:var(--icon);height:var(--icon);
@@ -47,7 +47,7 @@ body{
 .node:hover         {opacity:1}
 .node:hover ~ .node {opacity:.5}
 
-/* qualification bubbles */
+/* ────── qualification bubbles ────── */
 .bubble{
   position:absolute;width:var(--bubble);height:var(--bubble);
   border-radius:50%;background:#082f49;border:2px solid #64748b;
@@ -57,11 +57,11 @@ body{
 }
 .bubble.show{opacity:1;pointer-events:auto}
 
-/* hexagon outline */
+/* ────── hexagon outline ────── */
 svg{position:absolute;inset:0;pointer-events:none}
 polygon{
   stroke:#64748b;stroke-width:3;fill:none;opacity:.5;
-  transition:stroke-dashoffset 2s ease-out;
+  transition:stroke-dashoffset 2s ease-out;   /* slower outline draw */
 }
 </style>
 </head>
@@ -69,17 +69,19 @@ polygon{
 
 <div id="chart">
   <svg id="outline"></svg>
-  <a id="centre" href="https://www.ganesteaches.com/ganes-revise">
-    <img src="../ganes_revise.png" alt="Ganes Revise">
+
+  <!-- centre logo – links to Primers root -->
+  <a id="centre" href="https://www.ganesteaches.com/ganes-primers">
+    <img src="../ganes_primers.png" alt="Ganes Primers">
   </a>
 </div>
 
 <script>
 (function(){
 
-/* ------------------- PAGE-SPECIFIC SETTINGS ------------------- */
-const BASE = "https://www.ganesteaches.com/ganes-revise";
-/* -------------------------------------------------------------- */
+/* ------------ PAGE-SPECIFIC CONSTANT ------------ */
+const BASE = "https://www.ganesteaches.com/ganes-primers";
+/* ----------------------------------------------- */
 
 const subjects = [
   {label:"Biology",        key:"biology",            icon:"../front_biology_list_icon.png",          cls:"science", angle:150},
@@ -114,7 +116,7 @@ subjects.forEach(sub=>{
   /* icon */
   const node=document.createElement("div");
   node.className=`node ${sub.cls}`;
-  node.style.left=(cx-ICON/2)+"px";
+  node.style.left=(cx-ICON/2)+"px";           // start centred
   node.style.top =(cy-ICON/2)+"px";
   node.innerHTML=`<img src="${sub.icon}" alt="${sub.label}">`;
   chart.appendChild(node);
@@ -131,7 +133,7 @@ subjects.forEach(sub=>{
     const a=document.createElement("a");
     a.className="bubble";
     a.textContent=q;
-    a.href=`${BASE}/${sub.key}/${slug(q)}`;
+    a.href=`${BASE}/${sub.key}/${slug(q)}`;   // e.g. …/ganes-primers/biology/gcse
     a.style.left=(bx-BUB/2)+"px";
     a.style.top =(by-BUB/2)+"px";
     chart.appendChild(a);
@@ -158,7 +160,7 @@ subjects.forEach(sub=>{
   });
 });
 
-/* outline */
+/* ---------- outline ---------- */
 verts.sort((a,b)=>a.angle-b.angle);
 const pts=verts.map(v=>`${v.x},${v.y}`).join(" ");
 svg.setAttribute("viewBox",`0 0 ${chart.clientWidth} ${chart.clientHeight}`);
@@ -173,13 +175,13 @@ for(let i=0;i<verts.length;i++){
 poly.style.strokeDasharray=per;
 poly.style.strokeDashoffset=per;
 
-/* entrance anim */
+/* ---------- entrance animation ---------- */
 requestAnimationFrame(()=>{
-  poly.style.strokeDashoffset=0;
+  poly.style.strokeDashoffset=0;               // 2-second draw
   subjects.forEach(s=>{
      s.el.style.left=s.finalLeft;
      s.el.style.top =s.finalTop;
-     s.el.style.opacity=1;
+     s.el.style.opacity=1;                     // 1.6-second glide
   });
 });
 
