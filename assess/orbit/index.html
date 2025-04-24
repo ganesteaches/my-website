@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Layout 2 – Qualification Orbits</title>
+<style>
+ :root{
+   --r1:150;  /* GCSE ring radius  */
+   --r2:220;  /* A‑Level ring      */
+   --r3:290;  /* IB ring           */
+   --node:80;
+ }
+ *{box-sizing:border-box;margin:0;padding:0}
+ body{height:100vh;display:flex;align-items:center;justify-content:center;font-family:system-ui;background:transparent}
+ #chart{position:relative;width:800px;height:800px}
+ #centre{position:absolute;top:50%;left:50%;width:160px;height:160px;transform:translate(-50%,-50%);border-radius:50%;overflow:hidden;box-shadow:0 4px 12px rgba(0,0,0,.4)}
+ #centre img{width:100%;height:100%;object-fit:cover}
+ .node{position:absolute;width:var(--node);height:var(--node);border-radius:50%;background:#fff;display:flex;align-items:center;justify-content:center;animation:wobble 6s ease-in-out infinite alternate;box-shadow:0 3px 6px rgba(0,0,0,.2)}
+ .node img{width:60%;height:60%}
+ .node::after{content:attr(data-qual);position:absolute;top:calc(100% + 4px);left:50%;transform:translateX(-50%);font-size:11px;font-weight:600;color:#f1f5f9}
+ @keyframes wobble{0%{transform:translate(-50%,-50%) rotate(0)}50%{transform:translate(-50%,-50%) rotate(4deg)}100%{transform:translate(-50%,-50%) rotate(-4deg)}}
+ #rings path{stroke:#64748b;stroke-width:2;fill:none;opacity:.4}
+</style>
+</head>
+<body>
+<div id="chart">
+  <svg id="rings"></svg>
+  <div id="centre"><img src="../ganes_assess.png" alt="Assess"></div>
+</div>
+<script>
+(function(){
+ const subjects=[
+  {icon:"../front_biology_list_icon.png",label:"Biology"},
+  {icon:"../front_chemistry_list_icon.png",label:"Chemistry"},
+  {icon:"../front_further_mathematics_list_icon.png",label:"Further"},
+  {icon:"../front_mathematics_list_icon.png",label:"Maths"},
+  {icon:"../front_physics_list_icon.png",label:"Physics"}
+ ];
+ const quals=[{r:'--r1',name:'GCSE'},{r:'--r2',name:'A‑Level'},{r:'--r3',name:'IB'}];
+ const chart=document.getElementById('chart');
+ const svg=document.getElementById('rings');
+ const nodeSize=parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--node'));
+ // generate rings SVG circles
+ function drawRings(){
+   svg.innerHTML='';
+   const rect=chart.getBoundingClientRect();
+   const cx=rect.width/2,cy=rect.height/2;
+   quals.forEach(q=>{
+     const r=parseFloat(getComputedStyle(document.documentElement).getPropertyValue(q.r));
+     const c=document.createElementNS('http://www.w3.org/2000/svg','circle');
+     c.setAttribute('cx',cx);c.setAttribute('cy',cy);c.setAttribute('r',r);
+     svg.appendChild(c);
+   });
+   svg.setAttribute('viewBox',`0 0 ${rect.width} ${rect.height}`);
+ }
+ drawRings();
+ window.addEventListener('resize',drawRings);
+ // create nodes for each ring & subject (15 total)
+ quals.forEach((q,qi)=>{
+   const r=parseFloat(getComputedStyle(document.documentElement).getPropertyValue(q.r));
+   subjects.forEach((s,i)=>{
+     const a=-90+i*(360/subjects.length);
+     const rad=a*Math.PI/180;
+     const n=document.createElement('div');
+     n.className='node';
+     n.dataset.qual=q.name;
+     n.style.animationDelay=Math.random()*4+'s';
+     n.innerHTML=`<img src="${s.icon}" alt="${s.label} ${q.name}">`;
+     chart.appendChild(n);
+     const x=chart.offsetWidth/2 + r*Math.cos(rad) - nodeSize/2;
+     const y=chart.offsetHeight/2 + r*Math.sin(rad) - nodeSize/2;
+     n.style.left=x+'px';n.style.top=y+'px';
+   });
+ });
+})();
+</script>
+</body>
+</html>
