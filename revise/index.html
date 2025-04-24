@@ -6,10 +6,10 @@
 
 <style>
 :root{
-  --r1:   230px;   /* radius to subject icons            */
-  --r2:   320px;   /* radius to GCSE / A-Level / IB ring  */
-  --icon: 100px;   /* subject icon diameter               */
-  --bubble:70px;   /* qualification bubble diameter       */
+  --r1:   230px;      /* radius to subject icons            */
+  --r2:   320px;      /* radius to GCSE / A-Level / IB ring  */
+  --icon: 100px;      /* subject icon diameter               */
+  --bubble:70px;      /* qualification bubble diameter       */
 }
 *{box-sizing:border-box;margin:0;padding:0}
 html,body{width:100%;height:100%}
@@ -19,7 +19,7 @@ body{
 }
 #chart{position:relative;width:900px;height:900px}
 
-/* ────── centre logo ────── */
+/* ───── centre logo ───── */
 #centre{
   position:absolute;top:50%;left:50%;width:190px;height:190px;
   transform:translate(-50%,-50%);
@@ -28,12 +28,13 @@ body{
 }
 #centre img{width:100%;height:100%;object-fit:cover}
 
-/* ────── subject icons (nodes) ────── */
+/* ───── subject icons ───── */
 .node{
   position:absolute;display:flex;align-items:center;justify-content:center;
   width:var(--icon);height:var(--icon);
   border-radius:50%;overflow:hidden;
   border:3px solid #e2e8f0;background:#082f49;cursor:pointer;
+  z-index:1;
   transition:left 1.6s ease-out, top 1.6s ease-out, opacity 1.6s ease-out;
   opacity:0;
 }
@@ -47,17 +48,19 @@ body{
 .node:hover         {opacity:1}
 .node:hover ~ .node {opacity:.5}
 
-/* ────── qualification bubbles ────── */
+/* ───── qualification bubbles ───── */
 .bubble{
-  position:absolute;width:var(--bubble);height:var(--bubble);
+  position:absolute;display:flex;align-items:center;justify-content:center;
+  width:var(--bubble);height:var(--bubble);
   border-radius:50%;background:#082f49;border:2px solid #64748b;
-  display:flex;align-items:center;justify-content:center;
-  font-size:13px;font-weight:600;text-decoration:none;color:#e2e8f0;
-  opacity:0;pointer-events:none;transition:opacity .35s;
+  font-size:13px;font-weight:600;color:#e2e8f0;text-decoration:none;
+  opacity:0;pointer-events:none;
+  transition:opacity .35s;
+  z-index:2;            /* sits above the icon so left-click works */
 }
 .bubble.show{opacity:1;pointer-events:auto}
 
-/* ────── hexagon outline ────── */
+/* ───── hexagon outline ───── */
 svg{position:absolute;inset:0;pointer-events:none}
 polygon{
   stroke:#64748b;stroke-width:3;fill:none;opacity:.5;
@@ -70,9 +73,9 @@ polygon{
 <div id="chart">
   <svg id="outline"></svg>
 
-  <!-- centre logo – links to Primers root -->
+  <!-- centre logo – links to Revise root -->
   <a id="centre" href="https://www.ganesteaches.com/ganes-revise">
-    <img src="../ganes_revise" alt="Ganes Revise">
+    <img src="../ganes_revise.png" alt="Ganes Revise">
   </a>
 </div>
 
@@ -80,7 +83,7 @@ polygon{
 (function(){
 
 /* ------------ PAGE-SPECIFIC CONSTANT ------------ */
-const BASE = "https://www.ganesteaches.com/ganes-primers";
+const BASE = "https://www.ganesteaches.com/ganes-revise";
 /* ----------------------------------------------- */
 
 const subjects = [
@@ -133,9 +136,10 @@ subjects.forEach(sub=>{
     const a=document.createElement("a");
     a.className="bubble";
     a.textContent=q;
-    a.href=`${BASE}/${sub.key}/${slug(q)}`;   // e.g. …/ganes-primers/biology/gcse
+    a.href=`${BASE}/${sub.key}/${slug(q)}`;
     a.style.left=(bx-BUB/2)+"px";
     a.style.top =(by-BUB/2)+"px";
+    a.addEventListener("click",e=>e.stopPropagation());  // prevent bubble click closing the ring
     chart.appendChild(a);
     return a;
   });
