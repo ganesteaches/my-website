@@ -2,21 +2,21 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<title>Ganes Assess – Interactive Hexagon</title>
+<title>Ganes Assess – Animated Hexagon</title>
 <meta charset="UTF-8">
 
 <style>
 :root{
   --r1:230;      /* radius to subject icons            */
-  --r2:320;      /* radius to GCSE / A-Level / IB ring  */
-  --icon:100;    /* subject icon size                   */
-  --bubble:70;   /* qualification bubble size           */
+  --r2:320;      /* radius to GCSE / A-Level / IB ring */
+  --icon:100;    /* diameter of each subject circle    */
+  --bubble:70;   /* diameter of each qualification     */
 }
 *{box-sizing:border-box;margin:0;padding:0}
 html,body{width:100%;height:100%}
 body{
   display:flex;align-items:center;justify-content:center;
-  background:transparent;font-family:system-ui;color:#e2e8f0
+  background:transparent;font-family:system-ui;color:#e2e8f0;
 }
 #chart{position:relative;width:900px;height:900px}
 
@@ -33,31 +33,39 @@ body{
 .node{
   position:absolute;display:flex;align-items:center;justify-content:center;
   width:var(--icon);height:var(--icon);
-  border-radius:50%;overflow:hidden;                /* perfect circle mask */
-  border:3px solid #e2e8f0;                         /* neat outline        */
-  background:#082f49;cursor:pointer;
-  transition:box-shadow .2s;
+  border-radius:50%;overflow:hidden;
+  border:3px solid #e2e8f0;background:#082f49;cursor:pointer;
+  transition:left 2.5s ease-out, top 2.5s ease-out, opacity 2.5s ease-out;
+  opacity:0;                                  /* fade-in during fly-out */
 }
-.node img{width:100%;height:100%;object-fit:contain}
-
+/* inner <img> is scaled to 70 % of the circle so odd-shaped assets never stick out */
+.node img{
+  width:70%;height:70%;object-fit:contain;
+}
 .science{filter:drop-shadow(0 0 14px #fb923c)}
 .maths  {filter:drop-shadow(0 0 14px #60a5fa)}
 .misc   {filter:drop-shadow(0 0 14px #a855f7)}
 
+/* dim siblings on hover */
+.node:hover         {opacity:1}
+.node:hover ~ .node {opacity:.5}
+
 /* ────── qualification bubbles ────── */
 .bubble{
   position:absolute;width:var(--bubble);height:var(--bubble);
-  border-radius:50%;background:#082f49;
-  border:2px solid #64748b;
+  border-radius:50%;background:#082f49;border:2px solid #64748b;
   display:flex;align-items:center;justify-content:center;
   font-size:13px;font-weight:600;text-decoration:none;color:#e2e8f0;
-  opacity:0;pointer-events:none;transition:opacity .35s;
+  opacity:0;pointer-events:none;transition:opacity .4s;
 }
 .bubble.show{opacity:1;pointer-events:auto}
 
 /* ────── hexagon outline ────── */
 svg{position:absolute;inset:0;pointer-events:none}
-polygon{stroke:#64748b;stroke-width:3;fill:none;opacity:.5}
+polygon{
+  stroke:#64748b;stroke-width:3;fill:none;opacity:.5;
+  transition:stroke-dashoffset 3s ease-out;   /* slower trace */
+}
 </style>
 </head>
 <body>
@@ -74,8 +82,8 @@ polygon{stroke:#64748b;stroke-width:3;fill:none;opacity:.5}
 <script>
 (function(){
 
-/* ───────────── configuration ───────────── */
-const BASE   = "https://www.ganesteaches.com/ganes-assess";
+/* ─────────── configuration ─────────── */
+const BASE = "https://www.ganesteaches.com/ganes-assess";
 const subjects = [
   {label:"Biology",        key:"biology",            icon:"../front_biology_list_icon.png",          cls:"science", angle:150},
   {label:"Chemistry",      key:"chemistry",          icon:"../front_chemistry_list_icon.png",        cls:"science", angle: 90},
@@ -84,99 +92,103 @@ const subjects = [
   {label:"Further Maths",  key:"further-mathematics",icon:"../front_further_mathematics_list_icon.png",cls:"maths",   angle:270},
   {label:"Misc",           key:"misc",               icon:"../front_physics_list_icon.png",          cls:"misc",    angle:330}
 ];
-const quals = ["GCSE","A Level","IB"];   /* ring order – left-to-right */
+const quals = ["GCSE","A Level","IB"];
 
-/* ───────────── DOM refs & pre-calc ───────────── */
-const chart   = document.getElementById("chart");
-const svg     = document.getElementById("outline");
-const R1      = parseFloat(getComputedStyle(document.documentElement).getPropertyValue("--r1"));
-const R2      = parseFloat(getComputedStyle(document.documentElement).getPropertyValue("--r2"));
-const ICON    = parseFloat(getComputedStyle(document.documentElement).getPropertyValue("--icon"));
-const BUB     = parseFloat(getComputedStyle(document.documentElement).getPropertyValue("--bubble"));
-const cx      = chart.clientWidth/2, cy = chart.clientHeight/2;
+/* ─────────── DOM & helpers ─────────── */
+const chart = document.getElementById("chart");
+const svg   = document.getElementById("outline");
+const css   = getComputedStyle(document.documentElement);
+const R1    = parseFloat(css.getPropertyValue("--r1"));
+const R2    = parseFloat(css.getPropertyValue("--r2"));
+const ICON  = parseFloat(css.getPropertyValue("--icon"));
+const BUB   = parseFloat(css.getPropertyValue("--bubble"));
+const cx    = chart.clientWidth/2, cy = chart.clientHeight/2;
+let   activeNode = null;
 
-/* track which subject is currently open */
-let activeNode = null;
+const slug = s => s.toLowerCase().replace(/\s+/g,"-");   // "A Level" → "a-level"
 
-/* ───────────── helpers ───────────── */
-const slug = str => str.toLowerCase().replace(/\s+/g,"-");   // "A Level" → "a-level"
-
-/* fade / unfade siblings on hover */
-function fadeOthers(target, toOpacity){
-    subjects.forEach(s=>{
-        if(s.el !== target) s.el.style.opacity = toOpacity;
-    });
-}
-
-/* ───────────── create nodes & bubbles ───────────── */
+/* ─────────── build graph ─────────── */
 const vertices = [];
 
-subjects.forEach(subject => {
+subjects.forEach(sub=>{
+  /* final polar position */
+  const rad = sub.angle*Math.PI/180;
+  const vx  = cx + R1*Math.cos(rad);
+  const vy  = cy + R1*Math.sin(rad);
+  vertices.push({angle:sub.angle,x:vx,y:vy});
 
-  /* ---- subject vertex position ---- */
-  const rad = subject.angle * Math.PI / 180;
-  const vx  = cx + R1 * Math.cos(rad);
-  const vy  = cy + R1 * Math.sin(rad);
-  vertices.push({angle:subject.angle,x:vx,y:vy});
-
-  /* ---- subject button (div, no link) ---- */
+  /* subject node (starts in centre) */
   const node = document.createElement("div");
-  node.className = `node ${subject.cls}`;
-  node.style.left = (vx - ICON/2) + "px";
-  node.style.top  = (vy - ICON/2) + "px";
-  node.innerHTML  = `<img src="${subject.icon}" alt="${subject.label}">`;
+  node.className = `node ${sub.cls}`;
+  node.style.left = (cx-ICON/2)+"px";
+  node.style.top  = (cy-ICON/2)+"px";
+  node.innerHTML  = `<img src="${sub.icon}" alt="${sub.label}">`;
   chart.appendChild(node);
-  subject.el = node;
+  sub.el = node;
+  sub.finLeft = (vx-ICON/2)+"px";
+  sub.finTop  = (vy-ICON/2)+"px";
 
-  /* ---- qualification bubbles for this subject ---- */
-  subject.bubbles = quals.map((q, i) =>{
-      const offset = (-30) + i*30;                        // -30°, 0°, +30°
-      const brad   = (subject.angle + offset) * Math.PI / 180;
-      const bx     = cx + R2 * Math.cos(brad);
-      const by     = cy + R2 * Math.sin(brad);
-      const bub    = document.createElement("a");
-      bub.className = "bubble";
-      bub.textContent = q;
-      bub.href   = `${BASE}/${subject.key}/${slug(q)}`;  // …/biology/gcse
-      bub.style.left = (bx - BUB/2) + "px";
-      bub.style.top  = (by - BUB/2) + "px";
-      chart.appendChild(bub);
-      return bub;
+  /* qualification bubbles */
+  sub.bubbles = quals.map((q,i)=>{
+      const offset = -30 + i*30;
+      const brad   = (sub.angle+offset)*Math.PI/180;
+      const bx     = cx + R2*Math.cos(brad);
+      const by     = cy + R2*Math.sin(brad);
+      const a      = document.createElement("a");
+      a.className  = "bubble";
+      a.textContent= q;
+      a.href       = `${BASE}/${sub.key}/${slug(q)}`;
+      a.style.left = (bx-BUB/2)+"px";
+      a.style.top  = (by-BUB/2)+"px";
+      chart.appendChild(a);
+      return a;
   });
 
-  /* ---- hover behaviour ---- */
-  node.addEventListener("mouseenter", ()=>fadeOthers(node,0.5));
-  node.addEventListener("mouseleave", ()=>fadeOthers(node,1));
+  /* hover dimming */
+  node.addEventListener("mouseenter",()=>subjects.forEach(s=>{if(s!==sub)s.el.style.opacity=.5;}));
+  node.addEventListener("mouseleave",()=>subjects.forEach(s=>s.el.style.opacity=1));
 
-  /* ---- click behaviour ---- */
-  node.addEventListener("click", () =>{
-      /* clicking the same active subject closes its ring */
-      if(node === activeNode){
-          node.classList.remove("active");
-          subject.bubbles.forEach(b=>b.classList.remove("show"));
-          activeNode = null;
-          return;
+  /* click toggle */
+  node.addEventListener("click",()=>{
+      if(node===activeNode){                 // close current
+          sub.bubbles.forEach(b=>b.classList.remove("show"));
+          activeNode=null; return;
       }
-      /* open this subject’s ring & close any other */
-      if(activeNode){
-         activeNode.classList.remove("active");
-         subjects.find(s=>s.el===activeNode).bubbles
-                 .forEach(b=>b.classList.remove("show"));
+      if(activeNode){                        // close other
+          const prev = subjects.find(s=>s.el===activeNode);
+          prev.bubbles.forEach(b=>b.classList.remove("show"));
       }
-      activeNode = node;
-      node.classList.add("active");
-      subject.bubbles.forEach(b=>b.classList.add("show"));
+      activeNode=node;
+      sub.bubbles.forEach(b=>b.classList.add("show"));
   });
 });
 
-/* ───────────── hexagon outline ───────────── */
+/* ─────────── hexagon outline ─────────── */
 vertices.sort((a,b)=>a.angle-b.angle);
 const pts = vertices.map(v=>`${v.x},${v.y}`).join(" ");
-svg.setAttribute("viewBox", `0 0 ${chart.clientWidth} ${chart.clientHeight}`);
-const poly = document.createElementNS("http://www.w3.org/2000/svg", "polygon");
-poly.setAttribute("points", pts);
+svg.setAttribute("viewBox",`0 0 ${chart.clientWidth} ${chart.clientHeight}`);
+const poly = document.createElementNS("http://www.w3.org/2000/svg","polygon");
+poly.setAttribute("points",pts);
 svg.appendChild(poly);
 
+/* dash length for drawing animation */
+let peri = 0;
+for(let i=0;i<vertices.length;i++){
+   const v1=vertices[i], v2=vertices[(i+1)%vertices.length];
+   peri += Math.hypot(v2.x-v1.x, v2.y-v1.y);
+}
+poly.style.strokeDasharray = peri;
+poly.style.strokeDashoffset= peri;
+
+/* ─────────── first-load animation ─────────── */
+requestAnimationFrame(()=>{          /* allow initial render */
+  poly.style.strokeDashoffset = 0;   /* trace outline (3 s)  */
+  subjects.forEach(s=>{
+      s.el.style.left = s.finLeft;   /* fly out (2.5 s)      */
+      s.el.style.top  = s.finTop;
+      s.el.style.opacity = 1;
+  });
+});
 })();
 </script>
 </body>
