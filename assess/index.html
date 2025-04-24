@@ -2,243 +2,105 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<title>Dynamic Flow Chart – Ganes Assess</title>
+<title>Ganes Assess – Hexagon with Second Layer</title>
 <style>
-    :root {
-        --radius: 180px;          /* distance from centre to each subject */
-        --node-size: 96px;        /* width / height of subject nodes      */
-    }
-
-    * { box-sizing: border-box; padding: 0; margin: 0; }
-
-    body {
-        height: 100vh;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        background: transparent;       /* ----- transparent background ----- */
-        font-family: system-ui, -apple-system, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-    }
-
-    #chart {
-        position: relative;
-        width: 600px;
-        height: 600px;
-    }
-
-    /* ---------- centre node ---------- */
-    #centre {
-        position: absolute;
-        top: 50%; left: 50%;
-        width: 140px; height: 140px;
-        transform: translate(-50%, -50%);
-        border-radius: 50%;
-        cursor: pointer;
-        box-shadow: 0 4px 12px rgba(0,0,0,.15);
-        overflow: hidden;
-    }
-    #centre img { width: 100%; height: 100%; object-fit: cover; }
-
-    /* ---------- subject nodes ---------- */
-    .node {
-        position: absolute;
-        width: var(--node-size);
-        height: var(--node-size);
-        border-radius: 18px;
-        background: #ffffff;
-        box-shadow: 0 3px 6px rgba(0,0,0,.12);
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        opacity: 0;
-        pointer-events: none;     /* protected until revealed */
-        transition: opacity .4s;
-        animation: wobble 4s ease-in-out alternate infinite;
-    }
-    .node img {
-        max-width: 70%;
-        max-height: 70%;
-    }
-
-    /* ---------- dropdown (GCSE / A Level / IB) ---------- */
-    .dropdown {
-        position: absolute;
-        top: calc(100% + 6px);
-        left: 50%;
-        transform: translateX(-50%);
-        background: #ffffff;
-        border-radius: 8px;
-        box-shadow: 0 2px 8px rgba(0,0,0,.15);
-        padding: 4px 0;
-        display: none;
-        z-index: 50;
-        white-space: nowrap;
-        font-size: 13px;
-    }
-    .dropdown li {
-        list-style: none;
-        padding: 4px 12px;
-        cursor: pointer;
-    }
-    .dropdown li:hover {
-        background: #f1f5f9;
-    }
-    .node:hover .dropdown {
-        display: block;
-    }
-
-    /* ---------- wobble animation ---------- */
-    /* keyframes shared – delays / durations set per‑node for independence */
-    @keyframes wobble {
-        0%   { transform: translate(-50%, -50%) translate(  0px,  0px) rotate( 0deg); }
-        50%  { transform: translate(-50%, -50%) translate(  6px, -4px) rotate( 3deg); }
-        100% { transform: translate(-50%, -50%) translate( -4px,  6px) rotate(-3deg); }
-    }
-
-    /* ---------- wiggly lines ---------- */
-    #lines {
-        position: absolute;
-        inset: 0;
-        pointer-events: none;
-    }
-    path {
-        stroke: #475569;
-        stroke-width: 2;
-        fill: none;
-        opacity: 0;              /* hidden until visible state */
-        transition: opacity .4s;
-    }
-
-    /* ---------- visible state ---------- */
-    .visible .node  { opacity: 1; pointer-events: auto; }
-    .visible path   { opacity: .5; }
+:root{
+  --r1:230;   /* radius to subject icons */
+  --r2:320;   /* radius to GCSE / A-Level / IB layer */
+  --icon:100; /* subject icon size */
+  --bubble:70;/* qualification bubble size */
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{height:100vh;display:flex;align-items:center;justify-content:center;background:#0f172a;font-family:system-ui;color:#e2e8f0}
+#chart{position:relative;width:900px;height:900px}
+/* centre logo */
+#centre{position:absolute;top:50%;left:50%;width:190px;height:190px;border-radius:50%;transform:translate(-50%,-50%);overflow:hidden;box-shadow:0 0 16px 4px rgba(56,189,248,.35)}
+#centre img{width:100%;height:100%;object-fit:cover}
+/* subject icons */
+.node{position:absolute;width:var(--icon);height:var(--icon);display:flex;align-items:center;justify-content:center;cursor:pointer;transition:transform .2s}
+.node:hover{transform:translate(-50%,-50%) scale(1.08)}
+.node img{width:100%;height:100%;object-fit:contain}
+.science{filter:drop-shadow(0 0 14px #fb923c)}
+.maths  {filter:drop-shadow(0 0 14px #60a5fa)}
+.misc   {filter:drop-shadow(0 0 14px #a855f7)}
+/* qualification bubbles */
+.bubble{position:absolute;width:var(--bubble);height:var(--bubble);border-radius:50%;background:#082f49;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:600;opacity:0;pointer-events:none;transition:opacity .4s}
+/* hexagon outline */
+svg{position:absolute;inset:0;pointer-events:none}
+polygon{stroke:#64748b;stroke-width:3;fill:none;opacity:.5}
+/* visible state */
+.bubble.show{opacity:1}
 </style>
 </head>
 <body>
 <div id="chart">
-    <!-- SVG canvas for the connecting lines -->
-    <svg id="lines"></svg>
-
-    <!-- centre node -->
-    <div id="centre">
-        <img src="../ganes_assess.png" alt="Ganes Assess">
-    </div>
-
-    <!-- subject nodes (initially hidden) -->
-    <div class="node" style="--index:0">
-        <img src="../front_biology_list_icon.png" alt="Biology">
-        <ul class="dropdown"><li>GCSE</li><li>A Level</li><li>IB</li></ul>
-    </div>
-    <div class="node" style="--index:1">
-        <img src="../front_chemistry_list_icon.png" alt="Chemistry">
-        <ul class="dropdown"><li>GCSE</li><li>A Level</li><li>IB</li></ul>
-    </div>
-    <div class="node" style="--index:2">
-        <img src="../front_further_mathematics_list_icon.png" alt="Further Mathematics">
-        <ul class="dropdown"><li>GCSE</li><li>A Level</li><li>IB</li></ul>
-    </div>
-    <div class="node" style="--index:3">
-        <img src="../front_mathematics_list_icon.png" alt="Mathematics">
-        <ul class="dropdown"><li>GCSE</li><li>A Level</li><li>IB</li></ul>
-    </div>
-    <div class="node" style="--index:4">
-        <img src="../front_physics_list_icon.png" alt="Physics">
-        <ul class="dropdown"><li>GCSE</li><li>A Level</li><li>IB</li></ul>
-    </div>
+  <svg id="outline"></svg>
+  <div id="centre"><img src="../ganes_assess.png" alt="Ganes Assess"></div>
 </div>
-
 <script>
-(function () {
-    const chart   = document.getElementById('chart');
-    const centre  = document.getElementById('centre');
-    const nodes   = Array.from(document.querySelectorAll('.node'));
-    const svg     = document.getElementById('lines');
+(function(){
+  /* configuration */
+  const subjects=[
+    {key:'bio',  label:'Biology',        icon:'../front_biology_list_icon.png',  cls:'science', angle:150},
+    {key:'chem', label:'Chemistry',      icon:'../front_chemistry_list_icon.png',cls:'science', angle: 90},
+    {key:'phys', label:'Physics',        icon:'../front_physics_list_icon.png',  cls:'science', angle: 30},
+    {key:'math', label:'Mathematics',    icon:'../front_mathematics_list_icon.png',cls:'maths',  angle:210},
+    {key:'fmath',label:'Further Maths',  icon:'../front_further_mathematics_list_icon.png',cls:'maths',  angle:270},
+    {key:'misc', label:'Misc',           icon:'../front_physics_list_icon.png',  cls:'misc',   angle:330}
+  ];
+  const quals=["GCSE","A Level","IB"];
 
-    const radius  = parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--radius'));
-    const nodeSz  = parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--node-size'));
-    const toRad   = deg => deg * Math.PI / 180;
+  /* dom refs */
+  const chart=document.getElementById('chart');
+  const svg  =document.getElementById('outline');
+  const R1=parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--r1'));
+  const R2=parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--r2'));
+  const ICON=parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--icon'));
+  const BUB=parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--bubble'));
+  const cx=chart.clientWidth/2, cy=chart.clientHeight/2;
 
-    /* Give each node its own animation duration & delay for independent wobble */
-    nodes.forEach(node => {
-        node.style.animationDelay    = `${Math.random() * 4}s`;
-        node.style.animationDuration = `${3 + Math.random() * 2}s`;
+  /* create subject nodes and bubbles */
+  const vertices=[];
+  subjects.forEach(s=>{
+    const rad=s.angle*Math.PI/180;
+    const vx=cx+R1*Math.cos(rad);
+    const vy=cy+R1*Math.sin(rad);
+    vertices.push({angle:s.angle,x:vx,y:vy});
+
+    const n=document.createElement('div');
+    n.className=`node ${s.cls}`;
+    n.style.left=(vx-ICON/2)+'px';
+    n.style.top =(vy-ICON/2)+'px';
+    n.innerHTML=`<img src='${s.icon}' alt='${s.label}'>`;
+    chart.appendChild(n);
+    s.el=n;
+
+    /* create 3 bubbles equally spaced around full ring (outer layer) but linked to subject */
+    s.bubbles=quals.map((q,i)=>{
+      const offset=(-30)+i*30; // -30°,0°,30° around subject angle
+      const brad=(s.angle+offset)*Math.PI/180;
+      const bx=cx+R2*Math.cos(brad);
+      const by=cy+R2*Math.sin(brad);
+      const bub=document.createElement('div');bub.className='bubble';bub.textContent=q;
+      bub.style.left=(bx-BUB/2)+'px';
+      bub.style.top =(by-BUB/2)+'px';
+      chart.appendChild(bub);
+      return bub;
     });
 
-    /* create SVG paths (one per subject) ----------------------------------- */
-    const paths = nodes.map(() => {
-        const p = document.createElementNS('http://www.w3.org/2000/svg', 'path');
-        svg.appendChild(p);
-        return p;
+    /* toggle bubbles on subject click */
+    n.addEventListener('click',()=>{
+      n.classList.toggle('active');
+      s.bubbles.forEach(b=>b.classList.toggle('show',n.classList.contains('active')));
     });
+  });
 
-    /* position subject nodes in a regular pentagon ------------------------- */
-    function positionNodes () {
-        const rect = chart.getBoundingClientRect();
-        const cx   = rect.width  / 2;
-        const cy   = rect.height / 2;
-
-        nodes.forEach((node, i) => {
-            const angle = -90 + i * 72; // start at top (-90°) and go clockwise
-            const x = cx + radius * Math.cos(toRad(angle)) - nodeSz/2;
-            const y = cy + radius * Math.sin(toRad(angle)) - nodeSz/2;
-            node.style.left = `${x}px`;
-            node.style.top  = `${y}px`;
-        });
-
-        svg.setAttribute('viewBox', `0 0 ${rect.width} ${rect.height}`);
-    }
-
-    window.addEventListener('resize', positionNodes);
-    positionNodes();
-
-    /* toggle visibility on centre click ------------------------------------ */
-    centre.addEventListener('click', () => {
-        chart.classList.toggle('visible');
-    });
-
-    /* helper: create a wiggly SVG path between two points ------------------ */
-    function makeWiggle(x1, y1, x2, y2, segments = 20, amp = 6) {
-        const dx = x2 - x1;
-        const dy = y2 - y1;
-        const len = Math.hypot(dx, dy);
-        if (!len) return '';
-
-        const ux = dx / len;
-        const uy = dy / len;
-        const px = -uy;          // perpendicular unit vector
-        const py = ux;
-
-        const points = [];
-        for (let i = 0; i <= segments; i++) {
-            const t = i / segments;
-            const sx = x1 + dx * t;
-            const sy = y1 + dy * t;
-            const offset = Math.sin(t * Math.PI * 2 * 3) * amp * (Math.random() * 0.6 + 0.7); // 3 full waves
-            points.push([
-                sx + px * offset,
-                sy + py * offset
-            ]);
-        }
-        return points.reduce((acc, [x, y], idx) => acc + (idx ? ' L ' : 'M ') + x.toFixed(2) + ' ' + y.toFixed(2), '');
-    }
-
-    /* keep paths anchored while nodes wobble ------------------------------- */
-    function updateConnections () {
-        const rect = chart.getBoundingClientRect();
-        const cx   = rect.width  / 2;
-        const cy   = rect.height / 2;
-
-        nodes.forEach((node, i) => {
-            const box = node.getBoundingClientRect();
-            const x = box.left - rect.left + box.width  / 2;
-            const y = box.top  - rect.top  + box.height / 2;
-            const d = makeWiggle(cx, cy, x, y);
-            paths[i].setAttribute('d', d);
-        });
-
-        requestAnimationFrame(updateConnections);
-    }
-    updateConnections();
+  /* draw hexagon outline */
+  vertices.sort((a,b)=>a.angle-b.angle);
+  const pts=vertices.map(v=>`${v.x},${v.y}`).join(' ');
+  svg.setAttribute('viewBox',`0 0 ${chart.clientWidth} ${chart.clientHeight}`);
+  const poly=document.createElementNS('http://www.w3.org/2000/svg','polygon');
+  poly.setAttribute('points',pts);svg.appendChild(poly);
 })();
 </script>
 </body>
