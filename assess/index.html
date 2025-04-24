@@ -6,11 +6,12 @@
 
   <style>
     :root {
-      --r1:    230px;   /* radius to subject icons            */
-      --r2:    320px;   /* radius to GCSE / A-Level / IB ring  */
-      --icon:  100px;   /* subject icon diameter              */
-      --bubble: 70px;   /* qualification bubble diameter      */
+      --r1:     230px;   /* radius to subject icons            */
+      --r2:     320px;   /* radius to GCSE / A-Level / IB ring   */
+      --icon:   100px;   /* subject icon diameter              */
+      --bubble:  70px;   /* qualification bubble diameter      */
     }
+
     * {
       box-sizing: border-box;
       margin:       0;
@@ -26,7 +27,7 @@
       justify-content: center;
       background:      transparent;
       font-family:     system-ui;
-      color:           #e2e8f0;  /* corrected */
+      color:           #e2e8f0;
     }
     #chart {
       position: relative;
@@ -34,14 +35,14 @@
       height:   900px;
     }
 
-    /* ─── centre logo ─── */
+    /* centre logo */
     #centre {
-      position:    absolute;
-      top:         50%;
-      left:        50%;
-      width:       190px;
-      height:      190px;
-      transform:   translate(-50%, -50%);
+      position:      absolute;
+      top:           50%;
+      left:          50%;
+      width:         190px;
+      height:        190px;
+      transform:     translate(-50%, -50%);
       border-radius: 50%;
       overflow:      hidden;
 
@@ -55,31 +56,31 @@
       object-fit: cover;
     }
 
-    /* ─── subject icons ─── */
+    /* subject icons */
     .node {
-      position:      absolute;
-      left:          50%;
-      top:           50%;
-      width:         var(--icon);
-      height:        var(--icon);
-      border-radius: 50%;
-      overflow:      hidden;
-      border:        3px solid #e2e8f0;
-      background:    #082f49;
-      cursor:        pointer;
-      z-index:       1;
+      position:       absolute;
+      left:           50%;
+      top:            50%;
+      width:          var(--icon);
+      height:         var(--icon);
+      border-radius:  50%;
+      overflow:       hidden;
+      border:         3px solid #e2e8f0;
+      background:     #082f49;
+      cursor:         pointer;
+      z-index:        1;
 
-      /* centre the IMG inside */
-      display:            flex;
-      align-items:        center;
-      justify-content:    center; /* corrected */
+      /* centre the icon inside */
+      display:         flex;
+      align-items:     center;
+      justify-content: center;
 
-      /* start centred & animate via transform */
-      transform:   translate(-50%, -50%);
-      will-change: transform, opacity;
-      transition:  transform 1.6s ease-out,
-                   opacity   1.6s ease-out;
-      opacity:     0;
+      /* start centred, animate via transform */
+      transform:      translate(-50%, -50%);
+      will-change:    transform, opacity;
+      transition:     transform 1.6s ease-out,
+                      opacity   1.6s ease-out;
+      opacity:        0;
     }
     .node img {
       width:      70%;
@@ -91,7 +92,7 @@
     .maths   { filter: drop-shadow(0 0 14px #60a5fa); }
     .misc    { filter: drop-shadow(0 0 14px #a855f7); }
 
-    /* ─── qualification bubbles ─── */
+    /* qualification bubbles */
     .bubble {
       position:        absolute;
       display:         flex;
@@ -104,7 +105,7 @@
       border:          2px solid #64748b;
       font-size:       13px;
       font-weight:     600;
-      color:           #e2e8f0;  /* corrected */
+      color:           #e2e8f0;
       text-decoration: none;
       opacity:         0;
       pointer-events:  none;
@@ -116,7 +117,7 @@
       pointer-events: auto;
     }
 
-    /* ─── hexagon outline ─── */
+    /* hexagon outline */
     svg {
       position:       absolute;
       inset:          0;
@@ -136,7 +137,6 @@
   <div id="chart">
     <svg id="outline"></svg>
 
-    <!-- centre logo – opens in a new tab -->
     <a id="centre"
        href="https://www.ganesteaches.com/ganes-assess"
        target="_blank" rel="noopener">
@@ -168,7 +168,12 @@
 
     let activeNode = null;
 
-    // Build each node, precompute its offset
+    // utility: hide every bubble
+    function hideAllBubbles() {
+      subjects.forEach(s => s.bubbles.forEach(b => b.classList.remove("show")));
+    }
+
+    // build nodes & bubbles
     subjects.forEach(sub => {
       const rad = sub.angle * Math.PI/180;
       const vx  = cx + R1 * Math.cos(rad);
@@ -176,7 +181,7 @@
       sub.tx = vx - cx;
       sub.ty = vy - cy;
 
-      // create icon container
+      // create node
       const node = document.createElement("div");
       node.className = `node ${sub.cls}`;
       node.innerHTML = `<img src="${sub.icon}" alt="${sub.label}">`;
@@ -199,41 +204,40 @@
         a.style.top   = `${by - BUB/2}px`;
         chart.appendChild(a);
 
-        // keep visible on hover
+        // keep open if hovered
         a.addEventListener("mouseenter", () => {
-          sub.bubbles.forEach(b => b.classList.add("show"));
+          a.classList.add("show");
         });
+        // hide on leave unless it's the clicked node
         a.addEventListener("mouseleave", () => {
-          if (activeNode !== node) {
-            sub.bubbles.forEach(b => b.classList.remove("show"));
-          }
+          if (activeNode !== node) a.classList.remove("show");
         });
 
         return a;
       });
 
-      // hover‐in: dim others, show my bubbles
+      // hover on node: hide all, dim others, show this set
       node.addEventListener("mouseenter", () => {
-        subjects.forEach(s => { if (s!==sub) s.el.style.opacity = 0.3; });
+        hideAllBubbles();
+        subjects.forEach(s => {
+          if (s !== sub) s.el.style.opacity = 0.3;
+        });
         sub.bubbles.forEach(b => b.classList.add("show"));
       });
-      // hover‐out: restore all icons
+      // hover off: restore icon opacity
       node.addEventListener("mouseleave", () => {
-        subjects.forEach(s => { s.el.style.opacity = 1; });
+        subjects.forEach(s => s.el.style.opacity = 1);
       });
 
-      // click toggle for persistent open/close
+      // click: persist this set
       node.addEventListener("click", () => {
-        if (node === activeNode) {
-          sub.bubbles.forEach(b=>b.classList.remove("show"));
+        if (activeNode === node) {
+          hideAllBubbles();
           activeNode = null;
         } else {
-          if (activeNode) {
-            const prev = subjects.find(s => s.el === activeNode);
-            prev.bubbles.forEach(b=>b.classList.remove("show"));
-          }
+          hideAllBubbles();
           activeNode = node;
-          sub.bubbles.forEach(b=>b.classList.add("show"));
+          sub.bubbles.forEach(b => b.classList.add("show"));
         }
       });
     });
@@ -245,15 +249,15 @@
         x:     cx + R1 * Math.cos(s.angle * Math.PI/180),
         y:     cy + R1 * Math.sin(s.angle * Math.PI/180)
       }))
-      .sort((a,b)=>a.angle - b.angle);
+      .sort((a,b) => a.angle - b.angle);
 
-    const pts = verts.map(v=>`${v.x},${v.y}`).join(" ");
+    const pts = verts.map(v => `${v.x},${v.y}`).join(" ");
     svg.setAttribute("viewBox", `0 0 ${chart.clientWidth} ${chart.clientHeight}`);
     const poly = document.createElementNS("http://www.w3.org/2000/svg","polygon");
     poly.setAttribute("points", pts);
     svg.appendChild(poly);
 
-    // prepare dash animation
+    // prepare dash-offset animation
     let per = 0;
     verts.forEach((v,i) => {
       const n = verts[(i+1) % verts.length];
@@ -262,7 +266,7 @@
     poly.style.strokeDasharray  = per;
     poly.style.strokeDashoffset = per;
 
-    // entrance: draw outline + move icons
+    // entrance: draw outline + move icons outwards
     requestAnimationFrame(() => {
       poly.style.strokeDashoffset = 0;
       subjects.forEach(s => {
@@ -273,7 +277,6 @@
         s.el.style.opacity = 1;
       });
     });
-
   })();
   </script>
 </body>
