@@ -1,187 +1,175 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Dynamic Flow Chart</title>
-  <style>
-    /* ---------- Layout & Typography ---------- */
+<meta charset="UTF-8">
+<title>Dynamic Flow Chart – Ganes Assess</title>
+<style>
     :root {
-      --indigo: #4f46e5;
-      --slate: #94a3b8;
+        --radius: 180px;          /* distance from centre to each subject */
+        --node-size: 96px;        /* width / height of subject nodes      */
     }
-    * {
-      box-sizing: border-box;
-    }
+
+    * { box-sizing: border-box; }
+
     body {
-      font-family: system-ui, sans-serif;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      min-height: 100vh;
-      background: #f8fafc;
-      margin: 0;
+        margin: 0;
+        height: 100vh;
+        display: flex;
+        align-items: centre;
+        justify-content: centre;
+        background: #f8fafc;
+        font-family: system-ui, -apple-system, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
     }
 
-    /* ---------- Flow‑chart canvas ---------- */
-    #flowchart {
-      position: relative;
-      width: 600px;
-      height: 600px;
-    }
-    svg {
-      position: absolute;
-      inset: 0;
-      pointer-events: none; /* allow clicks through lines */
+    #chart {
+        position: relative;
+        width: 600px;
+        height: 600px;
     }
 
-    /* ---------- Nodes ---------- */
+    /* ---------- centre node ---------- */
+    #centre {
+        position: absolute;
+        top: 50%; left: 50%;
+        width: 140px; height: 140px;
+        transform: translate(-50%, -50%);
+        border-radius: 50%;
+        cursor: pointer;
+        box-shadow: 0 4px 12px rgba(0,0,0,.15);
+        overflow: hidden;
+    }
+    #centre img { width: 100%; height: 100%; object-fit: cover; }
+
+    /* ---------- subject nodes ---------- */
     .node {
-      position: absolute;
-      padding: 8px 14px;
-      border-radius: 14px;
-      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.12);
-      text-align: center;
-      cursor: pointer;
-      user-select: none;
+        position: absolute;
+        width: var(--node-size);
+        height: var(--node-size);
+        border-radius: 18px;
+        background: #ffffff;
+        box-shadow: 0 3px 6px rgba(0,0,0,.12);
+        display: flex;
+        align-items: centre;
+        justify-content: centre;
+        opacity: 0;
+        pointer-events: none;     /* protected until revealed */
+        transition: opacity .4s;
+        animation: wobble 4s ease-in-out alternate infinite;
     }
-    #root {
-      background: var(--indigo);
-      color: #fff;
-      left: 50%;
-      top: 50%;
-      transform: translate(-50%, -50%);
-    }
-    .subject {
-      background: #ffffff;
-      border: 1px solid var(--slate);
-    }
-    .hidden {
-      display: none;
+    .node img {
+        max-width: 70%;
+        max-height: 70%;
     }
 
-    /* ---------- Modal ---------- */
-    #modal {
-      position: fixed;
-      inset: 0;
-      background: rgba(0, 0, 0, 0.6);
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      visibility: hidden;
+    /* ---------- wobble animation ---------- */
+    @keyframes wobble {
+        0%   { transform: translate(-50%, -50%) translate(  0px,  0px) rotate( 0deg); }
+        50%  { transform: translate(-50%, -50%) translate(  6px, -4px) rotate( 3deg); }
+        100% { transform: translate(-50%, -50%) translate( -4px,  6px) rotate(-3deg); }
     }
-    #modal img {
-      max-width: 90%;
-      max-height: 90%;
-      border-radius: 8px;
-      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
+
+    /* ---------- lines ---------- */
+    #lines {
+        position: absolute;
+        top: 0; left: 0;
+        width: 100%; height: 100%;
+        pointer-events: none;
     }
-  </style>
+    line {
+        stroke: #475569;
+        stroke-width: 2;
+        stroke-dasharray: 4 2;
+        opacity: 0;
+        transition: opacity .4s;
+    }
+
+    /* ---------- visible state ---------- */
+    .visible .node,
+    .visible line { opacity: 1; pointer-events: auto; }
+
+</style>
 </head>
 <body>
-  <div id="flowchart">
-    <!-- lines connecting the nodes (SVG) -->
-    <svg width="600" height="600"></svg>
+<div id="chart">
+    <!-- SVG canvas for the connecting lines -->
+    <svg id="lines"></svg>
 
-    <!-- root node -->
-    <div id="root" class="node">Ganes Assess</div>
+    <!-- centre node -->
+    <div id="centre">
+        <img src="ganes_assess.png" alt="Ganes Assess">
+    </div>
 
     <!-- subject nodes (initially hidden) -->
-    <div id="subjects" class="hidden">
-      <div id="maths" class="node subject">Mathematics</div>
-      <div id="bio"   class="node subject">Biology</div>
-      <div id="chem"  class="node subject">Chemistry</div>
-      <div id="phys"  class="node subject">Physics</div>
-    </div>
-  </div>
-
-  <!-- image modal -->
-  <div id="modal" title="Click anywhere to close">
-    <img src="assets/ganes_assess.png" alt="Ganes Assess" />
-  </div>
+    <div class="node" data-subject="Biology"            style="--index:0"><img src="front_biology_list_icon.png"            alt="Biology"></div>
+    <div class="node" data-subject="Chemistry"          style="--index:1"><img src="front_chemistry_list_icon.png"          alt="Chemistry"></div>
+    <div class="node" data-subject="Further Mathematics" style="--index:2"><img src="front_further_mathematics_list_icon.png" alt="Further Mathematics"></div>
+    <div class="node" data-subject="Mathematics"        style="--index:3"><img src="front_mathematics_list_icon.png"        alt="Mathematics"></div>
+    <div class="node" data-subject="Physics"            style="--index:4"><img src="front_physics_list_icon.png"            alt="Physics"></div>
+</div>
 
 <script>
-  /* ==========================================================
-   * Dynamic Flow‑chart script – no external libraries needed.
-   * ----------------------------------------------------------
-   * – Clicking the root node shows ganes_assess.png in a modal
-   *   and reveals subject branches arranged in a circle.
-   * – Edit the `subjects` NodeList in the HTML to add subjects.
-   * ========================================================== */
+(function () {
+    const chart   = document.getElementById('chart');
+    const centre  = document.getElementById('centre');
+    const nodes   = Array.from(document.querySelectorAll('.node'));
+    const svg     = document.getElementById('lines');
+    const radius  = parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--radius'));
+    const nodeSz  = parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--node-size'));
+    const toRad   = deg => deg * Math.PI / 180;
 
-  const root      = document.getElementById("root");
-  const subjectsC = document.getElementById("subjects");
-  const subjectNs = Array.from(subjectsC.children);
-  const modal     = document.getElementById("modal");
-  const svg       = document.querySelector("svg");
-  const flowchart = document.getElementById("flowchart");
-
-  // Position subject nodes evenly in a circle
-  function positionSubjects() {
-    const radius   = 200;
-    const centreX  = 300;
-    const centreY  = 300;
-    const step     = (2 * Math.PI) / subjectNs.length;
-
-    subjectNs.forEach((node, i) => {
-      const angle = i * step - Math.PI / 2; // start from top
-      const x     = centreX + radius * Math.cos(angle);
-      const y     = centreY + radius * Math.sin(angle);
-
-      node.style.left = `${x - node.offsetWidth  / 2}px`;
-      node.style.top  = `${y - node.offsetHeight / 2}px`;
+    /* create SVG lines (one per subject) ----------------------------------- */
+    const lines = nodes.map(() => {
+        const l = document.createElementNS('http://www.w3.org/2000/svg', 'line');
+        svg.appendChild(l);
+        return l;
     });
-  }
 
-  // Draw lines from root to subjects
-  function drawEdges() {
-    svg.innerHTML = ""; // clear previous lines
+    /* position subject nodes in a regular pentagon ------------------------- */
+    function positionNodes () {
+        const rect = chart.getBoundingClientRect();
+        const cx   = rect.width  / 2;
+        const cy   = rect.height / 2;
 
-    const rootRect = root.getBoundingClientRect();
-    const flowRect = flowchart.getBoundingClientRect();
-    const cx       = rootRect.left + rootRect.width  / 2 - flowRect.left;
-    const cy       = rootRect.top  + rootRect.height / 2 - flowRect.top;
+        nodes.forEach((node, i) => {
+            const angle = -90 + i * 72;     // start at top (-90°) and go clockwise
+            const x = cx + radius * Math.cos(toRad(angle)) - nodeSz/2;
+            const y = cy + radius * Math.sin(toRad(angle)) - nodeSz/2;
+            node.style.left = `${x}px`;
+            node.style.top  = `${y}px`;
+        });
 
-    subjectNs.forEach(node => {
-      const rect = node.getBoundingClientRect();
-      const tx   = rect.left + rect.width  / 2 - flowRect.left;
-      const ty   = rect.top  + rect.height / 2 - flowRect.top;
-
-      const line = document.createElementNS("http://www.w3.org/2000/svg", "line");
-      line.setAttribute("x1", cx);
-      line.setAttribute("y1", cy);
-      line.setAttribute("x2", tx);
-      line.setAttribute("y2", ty);
-      line.setAttribute("stroke", "#cbd5e1");
-      line.setAttribute("stroke-width", "2");
-      svg.appendChild(line);
-    });
-  }
-
-  // ------------ Interaction handlers ------------
-  root.addEventListener("click", () => {
-    // reveal subjects the first time we click root
-    if (subjectsC.classList.contains("hidden")) {
-      subjectsC.classList.remove("hidden");
-      positionSubjects();
-      drawEdges();
+        /* resize SVG to cover whole chart */
+        svg.setAttribute('viewBox', `0 0 ${rect.width} ${rect.height}`);
     }
 
-    // show the image modal
-    modal.style.visibility = "visible";
-  });
+    window.addEventListener('resize', positionNodes);
+    positionNodes();
 
-  modal.addEventListener("click", () => {
-    modal.style.visibility = "hidden";
-  });
+    /* toggle visibility on centre click ------------------------------------ */
+    centre.addEventListener('click', () => {
+        chart.classList.toggle('visible');
+    });
 
-  // keep edges aligned when window resizes
-  window.addEventListener("resize", () => {
-    if (!subjectsC.classList.contains("hidden")) {
-      positionSubjects();
-      drawEdges();
+    /* keep lines anchored while nodes wobble ------------------------------- */
+    function updateLines () {
+        const rect = chart.getBoundingClientRect();
+        const cx   = rect.width  / 2;
+        const cy   = rect.height / 2;
+
+        nodes.forEach((node, i) => {
+            const box = node.getBoundingClientRect();
+            const x = box.left - rect.left + box.width  / 2;
+            const y = box.top  - rect.top  + box.height / 2;
+            lines[i].setAttribute('x1', cx);
+            lines[i].setAttribute('y1', cy);
+            lines[i].setAttribute('x2', x);
+            lines[i].setAttribute('y2', y);
+        });
+
+        requestAnimationFrame(updateLines);
     }
-  });
+    updateLines();
+})();
 </script>
 </body>
 </html>
