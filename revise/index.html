@@ -6,10 +6,10 @@
 
   <style>
     :root {
-      --r1:     230px;   /* radius to subject icons            */
-      --r2:     320px;   /* radius to GCSE / A-Level / IB ring  */
-      --icon:   100px;   /* subject icon diameter              */
-      --bubble:  70px;   /* qualification bubble diameter      */
+      --r1:     230px;  /* radius to subject icons            */
+      --r2:     320px;  /* radius to GCSE / A-Level / IB ring  */
+      --icon:   100px;  /* subject icon diameter               */
+      --bubble:  70px;  /* qualification bubble diameter       */
     }
 
     *, *::before, *::after {
@@ -65,7 +65,7 @@
       border-radius:  50%;
       overflow:       hidden;
       border:         3px solid #e2e8f0;
-      background:     #082f49;
+      background:     #1a1a1a;   /* now dark grey */
       cursor:         pointer;
       z-index:        1;
 
@@ -98,7 +98,7 @@
       width:           var(--bubble);
       height:          var(--bubble);
       border-radius:   50%;
-      background:      #1a1a1a;    /* updated bubble background */
+      background:      #1a1a1a;  /* dark grey */
       border:          2px solid #64748b;
       font-size:       13px;
       font-weight:     600;
@@ -121,11 +121,11 @@
       pointer-events: none;
     }
     polygon {
-      stroke:             #64748b;
-      stroke-width:       3;
-      fill:               none;
-      opacity:            0.5;
-      transition:         stroke-dashoffset 2s ease-out;
+      stroke:       #64748b;
+      stroke-width: 3;
+      fill:         none;
+      opacity:      0.5;
+      transition:   stroke-dashoffset 2s ease-out;
     }
   </style>
 </head>
@@ -136,8 +136,7 @@
 
     <a id="centre"
        href="https://www.ganesteaches.com/ganes-revise"
-       target="_blank"
-       rel="noopener">
+       target="_blank" rel="noopener">
       <img src="../ganes_revise.png" alt="Ganes Revise">
     </a>
   </div>
