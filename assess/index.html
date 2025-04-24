@@ -6,16 +6,16 @@
 
   <style>
     :root {
-      --r1:     230px;   /* radius to subject icons             */
-      --r2:     320px;   /* radius to GCSE / A-Level / IB ring    */
-      --icon:   100px;   /* subject‐icon diameter                */
-      --bubble:  70px;   /* qualification‐bubble diameter         */
+      --r1:     230px;  /* radius to subject icons           */
+      --r2:     320px;  /* radius to GCSE / A-Level / IB ring */
+      --icon:   100px;  /* subject‐icon diameter             */
+      --bubble:  70px;  /* qualification‐bubble diameter     */
     }
 
     *, *::before, *::after {
       box-sizing: border-box;
-      margin:       0;
-      padding:      0;
+      margin:      0;
+      padding:     0;
     }
     html, body {
       width:  100%;
@@ -36,7 +36,7 @@
       height:   900px;
     }
 
-    /* ─── centre logo ─── */
+    /* centre logo */
     #centre {
       position:      absolute;
       top:           50%;
@@ -46,9 +46,8 @@
       transform:     translate(-50%, -50%);
       border-radius: 50%;
       overflow:      hidden;
-
-      filter:      drop-shadow(0 0 16px rgba(56,189,248,0.35));
-      will-change: filter;
+      filter:        drop-shadow(0 0 16px rgba(56,189,248,0.35));
+      will-change:   filter;
     }
     #centre img {
       width:      100%;
@@ -56,7 +55,7 @@
       object-fit: cover;
     }
 
-    /* ─── subject icons ─── */
+    /* subject icons */
     .node {
       position:       absolute;
       left:           50%;
@@ -66,13 +65,13 @@
       border-radius:  50%;
       overflow:       hidden;
       border:         3px solid #e2e8f0;
-      background:     #1a1a1a;  /* subject‐circle background colour */
+      background:     #1a1a1a;  /* subject‐circle background */
       cursor:         pointer;
       z-index:        1;
 
-      display:         flex;
-      align-items:     center;
-      justify-content: center;
+      display:        flex;
+      align-items:    center;
+      justify-content:center;
 
       transform:      translate(-50%, -50%);
       will-change:    transform, opacity;
@@ -90,7 +89,7 @@
     .maths   { filter: drop-shadow(0 0 14px #60a5fa); }
     .misc    { filter: drop-shadow(0 0 14px #a855f7); }
 
-    /* ─── qualification bubbles ─── */
+    /* qualification bubbles */
     .bubble {
       position:        absolute;
       display:         flex;
@@ -99,7 +98,7 @@
       width:           var(--bubble);
       height:          var(--bubble);
       border-radius:   50%;
-      background:      #082f49;
+      background:      #1a1a1a;  /* bubble background matches nodes */
       border:          2px solid #64748b;
       font-size:       13px;
       font-weight:     600;
@@ -115,7 +114,7 @@
       pointer-events: auto;
     }
 
-    /* ─── hexagon outline ─── */
+    /* hexagon outline */
     svg {
       position:       absolute;
       inset:          0;
@@ -166,12 +165,10 @@
 
     let activeNode = null;
 
-    // hide all bubbles
     function hideAllBubbles() {
       subjects.forEach(s => s.bubbles.forEach(b => b.classList.remove("show")));
     }
 
-    // build every node and its bubbles
     subjects.forEach(sub => {
       const rad = sub.angle * Math.PI/180;
       const vx  = cx + R1 * Math.cos(rad);
@@ -179,7 +176,7 @@
       sub.tx = vx - cx;
       sub.ty = vy - cy;
 
-      // create the icon container
+      // create subject circle
       const node = document.createElement("div");
       node.className = `node ${sub.cls}`;
       node.innerHTML = `<img src="${sub.icon}" alt="${sub.label}">`;
@@ -202,30 +199,27 @@
         a.style.top   = `${by - BUB/2}px`;
         chart.appendChild(a);
 
-        // keep visible while hovered
-        a.addEventListener("mouseenter", () => {
-          a.classList.add("show");
-        });
-        // hide when leaving, unless it’s the active node
+        // keep bubble visible while hovered
+        a.addEventListener("mouseenter", () => a.classList.add("show"));
+        // hide on leave, unless clicked open
         a.addEventListener("mouseleave", () => {
           if (activeNode !== node) a.classList.remove("show");
         });
+
         return a;
       });
 
-      // on hover: clear all, dim siblings & show this set
+      // hover: clear old, dim others, show these
       node.addEventListener("mouseenter", () => {
         hideAllBubbles();
-        subjects.forEach(s => {
-          if (s !== sub) s.el.style.opacity = 0.3;
-        });
+        subjects.forEach(s => { if (s !== sub) s.el.style.opacity = 0.3; });
         sub.bubbles.forEach(b => b.classList.add("show"));
       });
       node.addEventListener("mouseleave", () => {
         subjects.forEach(s => s.el.style.opacity = 1);
       });
 
-      // on click: toggle persistent display
+      // click: toggle persistent bubbles
       node.addEventListener("click", () => {
         if (activeNode === node) {
           hideAllBubbles();
@@ -238,7 +232,7 @@
       });
     });
 
-    // draw and animate the hexagon outline
+    // draw hexagon outline
     const verts = subjects
       .map(s => ({
         angle: s.angle,
@@ -253,14 +247,16 @@
     poly.setAttribute("points", pts);
     svg.appendChild(poly);
 
+    // calculate and apply dash‐animation
     let per = 0;
     verts.forEach((v,i) => {
-      const n = verts[(i+1) % verts.length];
+      const n = verts[(i+1)%verts.length];
       per += Math.hypot(n.x - v.x, n.y - v.y);
     });
     poly.style.strokeDasharray  = per;
     poly.style.strokeDashoffset = per;
 
+    // entrance animation
     requestAnimationFrame(() => {
       poly.style.strokeDashoffset = 0;
       subjects.forEach(s => {
