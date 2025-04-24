@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Dynamic Flow Chart</title>
+  <style>
+    /* ---------- Layout & Typography ---------- */
+    :root {
+      --indigo: #4f46e5;
+      --slate: #94a3b8;
+    }
+    * {
+      box-sizing: border-box;
+    }
+    body {
+      font-family: system-ui, sans-serif;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+      background: #f8fafc;
+      margin: 0;
+    }
+
+    /* ---------- Flow‑chart canvas ---------- */
+    #flowchart {
+      position: relative;
+      width: 600px;
+      height: 600px;
+    }
+    svg {
+      position: absolute;
+      inset: 0;
+      pointer-events: none; /* allow clicks through lines */
+    }
+
+    /* ---------- Nodes ---------- */
+    .node {
+      position: absolute;
+      padding: 8px 14px;
+      border-radius: 14px;
+      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.12);
+      text-align: center;
+      cursor: pointer;
+      user-select: none;
+    }
+    #root {
+      background: var(--indigo);
+      color: #fff;
+      left: 50%;
+      top: 50%;
+      transform: translate(-50%, -50%);
+    }
+    .subject {
+      background: #ffffff;
+      border: 1px solid var(--slate);
+    }
+    .hidden {
+      display: none;
+    }
+
+    /* ---------- Modal ---------- */
+    #modal {
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.6);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      visibility: hidden;
+    }
+    #modal img {
+      max-width: 90%;
+      max-height: 90%;
+      border-radius: 8px;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
+    }
+  </style>
+</head>
+<body>
+  <div id="flowchart">
+    <!-- lines connecting the nodes (SVG) -->
+    <svg width="600" height="600"></svg>
+
+    <!-- root node -->
+    <div id="root" class="node">Ganes Assess</div>
+
+    <!-- subject nodes (initially hidden) -->
+    <div id="subjects" class="hidden">
+      <div id="maths" class="node subject">Mathematics</div>
+      <div id="bio"   class="node subject">Biology</div>
+      <div id="chem"  class="node subject">Chemistry</div>
+      <div id="phys"  class="node subject">Physics</div>
+    </div>
+  </div>
+
+  <!-- image modal -->
+  <div id="modal" title="Click anywhere to close">
+    <img src="assets/ganes_assess.png" alt="Ganes Assess" />
+  </div>
+
+<script>
+  /* ==========================================================
+   * Dynamic Flow‑chart script – no external libraries needed.
+   * ----------------------------------------------------------
+   * – Clicking the root node shows ganes_assess.png in a modal
+   *   and reveals subject branches arranged in a circle.
+   * – Edit the `subjects` NodeList in the HTML to add subjects.
+   * ========================================================== */
+
+  const root      = document.getElementById("root");
+  const subjectsC = document.getElementById("subjects");
+  const subjectNs = Array.from(subjectsC.children);
+  const modal     = document.getElementById("modal");
+  const svg       = document.querySelector("svg");
+  const flowchart = document.getElementById("flowchart");
+
+  // Position subject nodes evenly in a circle
+  function positionSubjects() {
+    const radius   = 200;
+    const centreX  = 300;
+    const centreY  = 300;
+    const step     = (2 * Math.PI) / subjectNs.length;
+
+    subjectNs.forEach((node, i) => {
+      const angle = i * step - Math.PI / 2; // start from top
+      const x     = centreX + radius * Math.cos(angle);
+      const y     = centreY + radius * Math.sin(angle);
+
+      node.style.left = `${x - node.offsetWidth  / 2}px`;
+      node.style.top  = `${y - node.offsetHeight / 2}px`;
+    });
+  }
+
+  // Draw lines from root to subjects
+  function drawEdges() {
+    svg.innerHTML = ""; // clear previous lines
+
+    const rootRect = root.getBoundingClientRect();
+    const flowRect = flowchart.getBoundingClientRect();
+    const cx       = rootRect.left + rootRect.width  / 2 - flowRect.left;
+    const cy       = rootRect.top  + rootRect.height / 2 - flowRect.top;
+
+    subjectNs.forEach(node => {
+      const rect = node.getBoundingClientRect();
+      const tx   = rect.left + rect.width  / 2 - flowRect.left;
+      const ty   = rect.top  + rect.height / 2 - flowRect.top;
+
+      const line = document.createElementNS("http://www.w3.org/2000/svg", "line");
+      line.setAttribute("x1", cx);
+      line.setAttribute("y1", cy);
+      line.setAttribute("x2", tx);
+      line.setAttribute("y2", ty);
+      line.setAttribute("stroke", "#cbd5e1");
+      line.setAttribute("stroke-width", "2");
+      svg.appendChild(line);
+    });
+  }
+
+  // ------------ Interaction handlers ------------
+  root.addEventListener("click", () => {
+    // reveal subjects the first time we click root
+    if (subjectsC.classList.contains("hidden")) {
+      subjectsC.classList.remove("hidden");
+      positionSubjects();
+      drawEdges();
+    }
+
+    // show the image modal
+    modal.style.visibility = "visible";
+  });
+
+  modal.addEventListener("click", () => {
+    modal.style.visibility = "hidden";
+  });
+
+  // keep edges aligned when window resizes
+  window.addEventListener("resize", () => {
+    if (!subjectsC.classList.contains("hidden")) {
+      positionSubjects();
+      drawEdges();
+    }
+  });
+</script>
+</body>
+</html>
