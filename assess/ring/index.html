@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Layout 1 – Labelled Ring</title>
+<style>
+  :root {
+    --radius: 220;          /* radius of the outer ring (px) */
+    --node: 100;            /* subject node size             */
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{height:100vh;display:flex;align-items:center;justify-content:center;font-family:system-ui;background:transparent;color:#f1f5f9}
+  #chart{position:relative;width:600px;height:600px}
+
+  /* centre image */
+  #centre{position:absolute;top:50%;left:50%;width:150px;height:150px;border-radius:50%;transform:translate(-50%,-50%);overflow:hidden;box-shadow:0 4px 12px rgba(0,0,0,.35)}
+  #centre img{width:100%;height:100%;object-fit:cover}
+
+  /* subject nodes */
+  .node{position:absolute;width:var(--node);height:var(--node);border-radius:18px;background:#fff;box-shadow:0 3px 6px rgba(0,0,0,.2);display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;animation:wobble 5s ease-in-out infinite alternate}
+  .node img{width:56%;height:56%;object-fit:contain}
+  .label{font-size:13px;font-weight:500;margin-top:4px;color:#0f172a}
+
+  /* connecting spokes */
+  #lines{position:absolute;inset:0;pointer-events:none}
+  line{stroke:#38bdf8;stroke-width:3;filter:drop-shadow(0 0 4px #38bdf8)}
+
+  /* wobble keyframes */
+  @keyframes wobble{0%{transform:translate(-50%,-50%) rotate(1deg)}50%{transform:translate(-50%,-50%) rotate(-1deg)}100%{transform:translate(-50%,-50%) rotate(1deg)}}
+</style>
+</head>
+<body>
+  <div id="chart">
+    <svg id="lines"></svg>
+    <div id="centre"><img src="../ganes_assess.png" alt="Assessment"></div>
+  </div>
+
+<script>
+(function(){
+ const subjects=[
+  {icon:"../front_biology_list_icon.png",label:"Biology"},
+  {icon:"../front_chemistry_list_icon.png",label:"Chemistry"},
+  {icon:"../front_further_mathematics_list_icon.png",label:"Further Maths"},
+  {icon:"../front_mathematics_list_icon.png",label:"Mathematics"},
+  {icon:"../front_physics_list_icon.png",label:"Physics"}
+ ];
+ const chart=document.getElementById('chart');
+ const svg=document.getElementById('lines');
+ const centreRect=()=>document.getElementById('centre').getBoundingClientRect();
+ const radius=parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--radius'));
+ const nodeSize=parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--node'));
+
+ // build nodes
+ subjects.forEach((s,i)=>{
+   const n=document.createElement('div');n.className='node';
+   n.style.animationDelay=Math.random()*3+'s';
+   n.innerHTML=`<img src="${s.icon}" alt="${s.label}"><span class="label">${s.label}</span>`;
+   chart.appendChild(n);s.el=n;
+   const line=document.createElementNS('http://www.w3.org/2000/svg','line');
+   svg.appendChild(line);s.line=line;
+ });
+ function position(){
+   const rect=chart.getBoundingClientRect();
+   const cx=rect.width/2,cy=rect.height/2;
+   subjects.forEach((s,i)=>{
+     const angle=-90+i*(360/subjects.length);
+     const rad=angle*Math.PI/180;
+     const x=cx+radius*Math.cos(rad)-nodeSize/2;
+     const y=cy+radius*Math.sin(rad)-nodeSize/2;
+     s.el.style.left=x+'px';s.el.style.top=y+'px';
+   });
+   svg.setAttribute('viewBox',`0 0 ${rect.width} ${rect.height}`);
+ }
+ function updateLines(){
+   const rect=chart.getBoundingClientRect();
+   const cx=rect.width/2,cy=rect.height/2;
+   subjects.forEach(s=>{
+     const box=s.el.getBoundingClientRect();
+     const x=box.left-rect.left+box.width/2;
+     const y=box.top-rect.top+box.height/2;
+     s.line.setAttribute('x1',cx);s.line.setAttribute('y1',cy);
+     s.line.setAttribute('x2',x);s.line.setAttribute('y2',y);
+   });
+   requestAnimationFrame(updateLines);
+ }
+ window.addEventListener('resize',position);
+ position();updateLines();
+})();
+</script>
+</body>
+</html>
