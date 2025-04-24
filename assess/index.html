@@ -3,121 +3,170 @@
 <head>
 <meta charset="UTF-8">
 <title>Ganes Assess – Interactive Hexagon</title>
+<meta charset="UTF-8">
+
 <style>
 :root{
-  --r1:230;   /* radius to subject icons */
-  --r2:320;   /* radius to GCSE/A‑Level/IB layer */
-  --icon:100; /* subject icon size        */
-  --bubble:70;/* qualification bubble size */
+  --r1:230;      /* radius to subject icons            */
+  --r2:320;      /* radius to GCSE / A-Level / IB ring  */
+  --icon:100;    /* subject icon size                   */
+  --bubble:70;   /* qualification bubble size           */
 }
 *{box-sizing:border-box;margin:0;padding:0}
-body{height:100vh;display:flex;align-items:center;justify-content:center;background:transparent;font-family:system-ui;color:#e2e8f0}
+body{
+  height:100vh;display:flex;align-items:center;justify-content:center;
+  background:#0f172a;font-family:system-ui;color:#e2e8f0
+}
 #chart{position:relative;width:900px;height:900px}
-/* ---------------- centre logo ---------------- */
-#centre{position:absolute;top:50%;left:50%;width:190px;height:190px;border-radius:50%;transform:translate(-50%,-50%);overflow:hidden;box-shadow:0 0 16px 4px rgba(56,189,248,.35)}
+
+/* ────── centre logo ────── */
+#centre{
+  position:absolute;top:50%;left:50%;width:190px;height:190px;
+  transform:translate(-50%,-50%);
+  border-radius:50%;overflow:hidden;
+  box-shadow:0 0 16px 4px rgba(56,189,248,.35)
+}
 #centre img{width:100%;height:100%;object-fit:cover}
-/* ---------------- subject icons -------------- */
-.node{position:absolute;width:var(--icon);height:var(--icon);display:flex;align-items:center;justify-content:center;cursor:pointer;transition:filter .15s ease}
+
+/* ────── subject icons (nodes) ────── */
+.node{
+  position:absolute;display:flex;align-items:center;justify-content:center;
+  width:var(--icon);height:var(--icon);
+  border-radius:50%;overflow:hidden;           /* true circle mask           */
+  border:3px solid #e2e8f0;                    /* subtle outline             */
+  background:#082f49;cursor:pointer;
+  transition:transform .2s, box-shadow .2s;
+}
+.node:hover{transform:translate(-50%,-50%) scale(1.08)}
 .node img{width:100%;height:100%;object-fit:contain}
+
 .science{filter:drop-shadow(0 0 14px #fb923c)}
 .maths  {filter:drop-shadow(0 0 14px #60a5fa)}
 .misc   {filter:drop-shadow(0 0 14px #a855f7)}
-/* white hover glow */
-.node:hover{filter:drop-shadow(0 0 16px #ffffff)}
-/* ---------------- qualification bubbles ------ */
-.bubble{position:absolute;width:var(--bubble);height:var(--bubble);border-radius:50%;background:#082f49;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:600;opacity:0;pointer-events:none;transition:opacity .3s,filter .15s ease}
-/* bubble glow on parent hover */
-.active + .bubble,
-.bubble:hover{filter:drop-shadow(0 0 10px #38bdf8)}
-/* ---------------- hexagon outline ------------ */
+
+/* ────── qualification bubbles ────── */
+.bubble{
+  position:absolute;width:var(--bubble);height:var(--bubble);
+  border-radius:50%;background:#082f49;
+  border:2px solid #64748b;                     /* give a neat edge           */
+  display:flex;align-items:center;justify-content:center;
+  font-size:13px;font-weight:600;text-decoration:none;color:#e2e8f0;
+  opacity:0;pointer-events:none;transition:opacity .35s;
+}
+.bubble.show{opacity:1;pointer-events:auto}
+
+/* ────── hexagon outline ────── */
 svg{position:absolute;inset:0;pointer-events:none}
 polygon{stroke:#64748b;stroke-width:3;fill:none;opacity:.5}
 </style>
 </head>
 <body>
+
 <div id="chart">
   <svg id="outline"></svg>
-  <div id="centre"><img src="../ganes_assess.png" alt="Ganes Assess"></div>
+
+  <!-- home link in the middle -->
+  <a id="centre" href="https://www.ganesteaches.com/ganes-assess">
+      <img src="../ganes_assess.png" alt="Ganes Assess">
+  </a>
 </div>
+
 <script>
 (function(){
-  /* configuration */
-  const subjects=[
-    {key:'bio',  label:'Biology',        icon:'../front_biology_list_icon.png',  cls:'science', angle:150},
-    {key:'chem', label:'Chemistry',      icon:'../front_chemistry_list_icon.png',cls:'science', angle: 90},
-    {key:'phys', label:'Physics',        icon:'../front_physics_list_icon.png',  cls:'science', angle: 30},
-    {key:'math', label:'Mathematics',    icon:'../front_mathematics_list_icon.png',cls:'maths',  angle:210},
-    {key:'fmath',label:'Further Maths',  icon:'../front_further_mathematics_list_icon.png',cls:'maths',  angle:270},
-    {key:'misc', label:'Misc',           icon:'../front_physics_list_icon.png',  cls:'misc',   angle:330}
-  ];
-  const quals=["GCSE","A Level","IB"];
 
-  /* DOM refs & constants */
-  const chart=document.getElementById('chart');
-  const svg  =document.getElementById('outline');
-  const R1=parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--r1'));
-  const R2=parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--r2'));
-  const ICON=parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--icon'));
-  const BUB=parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--bubble'));
-  const cx=chart.clientWidth/2, cy=chart.clientHeight/2;
-  let activeSubject=null;
+/* ───────────── configuration ───────────── */
+const BASE   = "https://www.ganesteaches.com/ganes-assess";
+const subjects = [
+  {label:"Biology",        key:"biology",            icon:"../front_biology_list_icon.png",          cls:"science", angle:150},
+  {label:"Chemistry",      key:"chemistry",          icon:"../front_chemistry_list_icon.png",        cls:"science", angle: 90},
+  {label:"Physics",        key:"physics",            icon:"../front_physics_list_icon.png",          cls:"science", angle: 30},
+  {label:"Mathematics",    key:"mathematics",        icon:"../front_mathematics_list_icon.png",      cls:"maths",   angle:210},
+  {label:"Further Maths",  key:"further-mathematics",icon:"../front_further_mathematics_list_icon.png",cls:"maths",   angle:270},
+  {label:"Misc",           key:"misc",               icon:"../front_physics_list_icon.png",          cls:"misc",    angle:330}
+];
+const quals = ["GCSE","A Level","IB"];   /* ring order – left-to-right */
 
-  /* create subject nodes and bubbles */
-  const vertices=[];
-  subjects.forEach(s=>{
-    const rad=s.angle*Math.PI/180;
-    const sx=cx+R1*Math.cos(rad);
-    const sy=cy+R1*Math.sin(rad);
-    vertices.push({angle:s.angle,x:sx,y:sy});
+/* ───────────── DOM refs & pre-calc ───────────── */
+const chart   = document.getElementById("chart");
+const svg     = document.getElementById("outline");
+const R1      = parseFloat(getComputedStyle(document.documentElement).getPropertyValue("--r1"));
+const R2      = parseFloat(getComputedStyle(document.documentElement).getPropertyValue("--r2"));
+const ICON    = parseFloat(getComputedStyle(document.documentElement).getPropertyValue("--icon"));
+const BUB     = parseFloat(getComputedStyle(document.documentElement).getPropertyValue("--bubble"));
+const cx      = chart.clientWidth/2, cy = chart.clientHeight/2;
 
-    const n=document.createElement('div');
-    n.className=`node ${s.cls}`;
-    n.style.left=(sx-ICON/2)+'px';
-    n.style.top =(sy-ICON/2)+'px';
-    n.innerHTML=`<img src='${s.icon}' alt='${s.label}'>`;
-    chart.appendChild(n);
-    s.el=n;
+/* track which subject is currently open */
+let activeNode = null;
 
-    /* bubbles positioned along subject radial line but distributed equally */
-    s.bubbles=quals.map((q,i)=>{
-      const dist=R2 + i*0; // all bubbles at same outer ring – can adjust per i if stagger wanted
-      const bx=cx+dist*Math.cos(rad);
-      const by=cy+dist*Math.sin(rad);
-      const b=document.createElement('div');b.className='bubble';b.textContent=q;
-      b.style.left=(bx-BUB/2)+'px';
-      b.style.top =(by-BUB/2)+'px';
-      chart.appendChild(b);
-      return b;
-    });
+/* ───────────── helpers ───────────── */
+const slug = str => str.toLowerCase().replace(/\s+/g,"-");   // "A Level" → "a-level"
 
-    /* click handler                            */
-    n.addEventListener('click',()=>{
-      // if this is already active – close it
-      if(activeSubject===s){toggleSubject(null);return;}
-      // open this, close previous
-      toggleSubject(s);
-    });
+/* ───────────── create nodes & bubbles ───────────── */
+const vertices = [];
+
+subjects.forEach(subject => {
+
+  /* ---- subject vertex position ---- */
+  const rad = subject.angle * Math.PI / 180;
+  const vx  = cx + R1 * Math.cos(rad);
+  const vy  = cy + R1 * Math.sin(rad);
+  vertices.push({angle:subject.angle,x:vx,y:vy});
+
+  /* ---- subject link/button ---- */
+  const link = document.createElement("a");
+  link.className = `node ${subject.cls}`;
+  link.href      = `${BASE}/${subject.key}`;
+  link.style.left = (vx - ICON/2) + "px";
+  link.style.top  = (vy - ICON/2) + "px";
+  link.innerHTML  = `<img src="${subject.icon}" alt="${subject.label}">`;
+  chart.appendChild(link);
+  subject.el = link;           // keep reference for later
+
+  /* ---- qualification bubbles for this subject ---- */
+  subject.bubbles = quals.map((q, i) =>{
+      const offset = (-30) + i*30;                // -30°, 0°, +30° from subject
+      const brad   = (subject.angle + offset) * Math.PI / 180;
+      const bx     = cx + R2 * Math.cos(brad);
+      const by     = cy + R2 * Math.sin(brad);
+      const bub    = document.createElement("a");
+      bub.className = "bubble";
+      bub.textContent = q;
+      bub.href   = `${BASE}/${subject.key}/${slug(q)}`;  // e.g. …/biology/gcse
+      bub.style.left = (bx - BUB/2) + "px";
+      bub.style.top  = (by - BUB/2) + "px";
+      chart.appendChild(bub);
+      return bub;
   });
 
-  function toggleSubject(sub){
-    // hide previous
-    if(activeSubject){
-      activeSubject.el.classList.remove('active');
-      activeSubject.bubbles.forEach(b=>b.classList.remove('show'));
-    }
-    activeSubject=sub;
-    if(sub){
-      sub.el.classList.add('active');
-      sub.bubbles.forEach(b=>b.classList.add('show'));
-    }
-  }
+  /* ---- click behaviour ---- */
+  link.addEventListener("click", e =>{
+      /* already active → let the browser follow the link */
+      if(link === activeNode){
+          activeNode = null;          // (will be replaced if user comes back)
+          return;                     // NO preventDefault → natural navigation
+      }
 
-  /* draw hexagon outline */
-  vertices.sort((a,b)=>a.angle-b.angle);
-  const pts=vertices.map(v=>`${v.x},${v.y}`).join(' ');
-  svg.setAttribute('viewBox',`0 0 ${chart.clientWidth} ${chart.clientHeight}`);
-  const poly=document.createElementNS('http://www.w3.org/2000/svg','polygon');
-  poly.setAttribute('points',pts);svg.appendChild(poly);
+      /* otherwise open this ring and close any other */
+      e.preventDefault();             // stay on the landing page
+      if(activeNode){                 // close previous subject
+         activeNode.classList.remove("active");
+         subjects.find(s=>s.el===activeNode).bubbles
+                 .forEach(b=>b.classList.remove("show"));
+      }
+      activeNode = link;              // remember the newly opened subject
+      link.classList.add("active");
+      subject.bubbles.forEach(b=>b.classList.add("show"));
+  });
+});
+
+/* ───────────── hexagon outline ───────────── */
+vertices.sort((a,b)=>a.angle-b.angle);
+const pts = vertices.map(v=>`${v.x},${v.y}`).join(" ");
+svg.setAttribute("viewBox", `0 0 ${chart.clientWidth} ${chart.clientHeight}`);
+const poly = document.createElementNS("http://www.w3.org/2000/svg", "polygon");
+poly.setAttribute("points", pts);
+svg.appendChild(poly);
+
 })();
 </script>
 </body>
