@@ -7,77 +7,83 @@
   <style>
     :root {
       --r1:    230px;   /* radius to subject icons            */
-      --r2:    320px;   /* radius to GCSE / A-Level / IB ring */
+      --r2:    320px;   /* radius to GCSE / A-Level / IB ring  */
       --icon:  100px;   /* subject icon diameter              */
       --bubble: 70px;   /* qualification bubble diameter      */
     }
     * {
       box-sizing: border-box;
-      margin: 0;
-      padding: 0;
+      margin:       0;
+      padding:      0;
     }
     html, body {
-      width: 100%;
+      width:  100%;
       height: 100%;
     }
     body {
-      display: flex;
-      align-items: center;
+      display:         flex;
+      align-items:     center;
       justify-content: center;
-      background: transparent;
-      font-family: system-ui;
-      color: #e2e8f0;
+      background:      transparent;
+      font-family:     system-ui;
+      colour:          #e2e8f0;
     }
     #chart {
       position: relative;
-      width: 900px;
-      height: 900px;
+      width:    900px;
+      height:   900px;
     }
 
     /* ─── centre logo ─── */
     #centre {
-      position: absolute;
-      top: 50%;
-      left: 50%;
-      width: 190px;
-      height: 190px;
-      transform: translate(-50%, -50%);
+      position:    absolute;
+      top:         50%;
+      left:        50%;
+      width:       190px;
+      height:      190px;
+      transform:   translate(-50%, -50%);
       border-radius: 50%;
-      overflow: hidden;
+      overflow:      hidden;
 
       /* GPU-accelerated glow */
-      filter: drop-shadow(0 0 16px rgba(56,189,248,0.35));
+      filter:      drop-shadow(0 0 16px rgba(56,189,248,0.35));
       will-change: filter;
     }
     #centre img {
-      width: 100%;
-      height: 100%;
+      width:      100%;
+      height:     100%;
       object-fit: cover;
     }
 
     /* ─── subject icons ─── */
     .node {
-      position: absolute;
-      left: 50%;
-      top: 50%;
-      width: var(--icon);
-      height: var(--icon);
+      position:      absolute;
+      left:          50%;
+      top:           50%;
+      width:         var(--icon);
+      height:        var(--icon);
       border-radius: 50%;
-      overflow: hidden;
-      border: 3px solid #e2e8f0;
-      background: #082f49;
-      cursor: pointer;
-      z-index: 1;
+      overflow:      hidden;
+      border:        3px solid #e2e8f0;
+      background:    #082f49;
+      cursor:        pointer;
+      z-index:       1;
 
-      /* start centred, then we’ll add an offset */
-      transform: translate(-50%, -50%);
+      /* centre the IMG inside */
+      display:       flex;
+      align-items:   center;
+      justify-content: centre;
+
+      /* start centred & animate via transform */
+      transform:   translate(-50%, -50%);
       will-change: transform, opacity;
-      transition: transform 1.6s ease-out, opacity 1.6s ease-out;
-      opacity: 0;
+      transition:  transform 1.6s ease-out,
+                   opacity   1.6s ease-out;
+      opacity:     0;
     }
     .node img {
-      width: 70%;
-      height: 70%;
+      width:      70%;
+      height:     70%;
       object-fit: contain;
     }
 
@@ -87,41 +93,41 @@
 
     /* ─── qualification bubbles ─── */
     .bubble {
-      position: absolute;
-      display: flex;
-      align-items: center;
+      position:        absolute;
+      display:         flex;
+      align-items:     center;
       justify-content: center;
-      width: var(--bubble);
-      height: var(--bubble);
-      border-radius: 50%;
-      background: #082f49;
-      border: 2px solid #64748b;
-      font-size: 13px;
-      font-weight: 600;
-      color: #e2e8f0;
+      width:           var(--bubble);
+      height:          var(--bubble);
+      border-radius:   50%;
+      background:      #082f49;
+      border:          2px solid #64748b;
+      font-size:       13px;
+      font-weight:     600;
+      colour:          #e2e8f0;
       text-decoration: none;
-      opacity: 0;
-      pointer-events: none;
-      transition: opacity 0.35s;
-      z-index: 2;
+      opacity:         0;
+      pointer-events:  none;
+      transition:      opacity 0.35s;
+      z-index:         2;
     }
     .bubble.show {
-      opacity: 1;
+      opacity:        1;
       pointer-events: auto;
     }
 
     /* ─── hexagon outline ─── */
     svg {
-      position: absolute;
-      inset: 0;
+      position:       absolute;
+      inset:          0;
       pointer-events: none;
     }
     polygon {
-      stroke: #64748b;
-      stroke-width: 3;
-      fill: none;
-      opacity: 0.5;
-      transition: stroke-dashoffset 2s ease-out;
+      stroke:             #64748b;
+      stroke-width:       3;
+      fill:               none;
+      opacity:            0.5;
+      transition:         stroke-dashoffset 2s ease-out;
     }
   </style>
 </head>
@@ -140,15 +146,14 @@
 
   <script>
   (function(){
-
     const BASE     = "https://www.ganesteaches.com/ganes-assess";
     const subjects = [
-      { label:"Biology",        key:"biology",            icon:"../biology_list_icon.png",           cls:"science", angle:150 },
-      { label:"Chemistry",      key:"chemistry",          icon:"../chemistry_list_icon.png",         cls:"science", angle: 90 },
-      { label:"Physics",        key:"physics",            icon:"../physics_list_icon.png",           cls:"science", angle: 30 },
-      { label:"Mathematics",    key:"mathematics",        icon:"../mathematics_list_icon.png",       cls:"maths",   angle:210 },
-      { label:"Further Maths",  key:"further-mathematics",icon:"../further_mathematics_list_icon.png",cls:"maths",   angle:270 },
-      { label:"Misc",           key:"misc",               icon:"../physics_list_icon.png",           cls:"misc",    angle:330 }
+      { label:"Biology",       key:"biology",            icon:"../biology_list_icon.png",            cls:"science", angle:150 },
+      { label:"Chemistry",     key:"chemistry",          icon:"../chemistry_list_icon.png",          cls:"science", angle: 90 },
+      { label:"Physics",       key:"physics",            icon:"../physics_list_icon.png",            cls:"science", angle: 30 },
+      { label:"Mathematics",   key:"mathematics",        icon:"../mathematics_list_icon.png",        cls:"maths",   angle:210 },
+      { label:"Further Maths", key:"further-mathematics",icon:"../further_mathematics_list_icon.png",cls:"maths",   angle:270 },
+      { label:"Misc",          key:"misc",               icon:"../physics_list_icon.png",            cls:"misc",    angle:330 }
     ];
     const quals = ["GCSE","A Level","IB"];
 
@@ -163,63 +168,69 @@
 
     let activeNode = null;
 
-    /* build nodes, pre-compute offsets */
+    // Build each node, precompute its offset
     subjects.forEach(sub => {
-      const rad   = sub.angle * Math.PI/180;
-      const vx    = cx + R1 * Math.cos(rad);
-      const vy    = cy + R1 * Math.sin(rad);
-
+      const rad = sub.angle * Math.PI/180;
+      const vx  = cx + R1 * Math.cos(rad);
+      const vy  = cy + R1 * Math.sin(rad);
       sub.tx = vx - cx;
       sub.ty = vy - cy;
 
-      // create the node
+      // create icon container
       const node = document.createElement("div");
       node.className = `node ${sub.cls}`;
       node.innerHTML = `<img src="${sub.icon}" alt="${sub.label}">`;
       chart.appendChild(node);
       sub.el = node;
 
-      // create its bubbles
+      // create bubbles
       sub.bubbles = quals.map((q,i) => {
         const off = -30 + i*30;
-        const br  = (sub.angle+off)*Math.PI/180;
-        const bx  = cx + R2*Math.cos(br);
-        const by  = cy + R2*Math.sin(br);
+        const br  = (sub.angle + off) * Math.PI/180;
+        const bx  = cx + R2 * Math.cos(br);
+        const by  = cy + R2 * Math.sin(br);
         const a   = document.createElement("a");
         a.className   = "bubble";
         a.textContent = q;
         a.href        = `${BASE}/${sub.key}/${q.toLowerCase().replace(/\s+/g,"-")}`;
         a.target      = "_blank";
         a.rel         = "noopener";
-        a.addEventListener("click", e=>e.stopPropagation());
         a.style.left  = `${bx - BUB/2}px`;
         a.style.top   = `${by - BUB/2}px`;
         chart.appendChild(a);
+
+        // when I hover the bubble, keep it visible;
+        // only hide again if it's not the clicked‐open node
+        a.addEventListener("mouseenter", () => {
+          sub.bubbles.forEach(b=>b.classList.add("show"));
+        });
+        a.addEventListener("mouseleave", () => {
+          if (activeNode !== node) {
+            sub.bubbles.forEach(b=>b.classList.remove("show"));
+          }
+        });
+
         return a;
       });
 
-      // hover: dim others, show my bubbles
-      node.addEventListener("mouseenter", ()=>{
-        subjects.forEach(s => {
-          if(s !== sub) s.el.style.opacity = 0.3;
-        });
+      // hover‐in: dim others, show my bubbles
+      node.addEventListener("mouseenter", () => {
+        subjects.forEach(s => { if (s!==sub) s.el.style.opacity = 0.3; });
         sub.bubbles.forEach(b=>b.classList.add("show"));
       });
-      node.addEventListener("mouseleave", ()=>{
-        subjects.forEach(s => {
-          s.el.style.opacity = 1;
-        });
-        sub.bubbles.forEach(b=>b.classList.remove("show"));
+      // hover‐out: restore all icons, but don’t hide bubbles here
+      node.addEventListener("mouseleave", () => {
+        subjects.forEach(s => { s.el.style.opacity = 1; });
       });
 
-      // click still toggles persistence if you want it
-      node.addEventListener("click", ()=>{
-        if(node===activeNode){
+      // click toggle for persistent open/close
+      node.addEventListener("click", () => {
+        if (node === activeNode) {
           sub.bubbles.forEach(b=>b.classList.remove("show"));
           activeNode = null;
         } else {
-          if(activeNode){
-            const prev = subjects.find(s=>s.el===activeNode);
+          if (activeNode) {
+            const prev = subjects.find(s => s.el === activeNode);
             prev.bubbles.forEach(b=>b.classList.remove("show"));
           }
           activeNode = node;
@@ -228,34 +239,34 @@
       });
     });
 
-    /* draw the hexagon */
+    // draw hexagon outline
     const verts = subjects
       .map(s => ({
         angle: s.angle,
-        x:     cx + R1*Math.cos(s.angle*Math.PI/180),
-        y:     cy + R1*Math.sin(s.angle*Math.PI/180)
+        x:     cx + R1 * Math.cos(s.angle * Math.PI/180),
+        y:     cy + R1 * Math.sin(s.angle * Math.PI/180)
       }))
-      .sort((a,b)=>a.angle-b.angle);
+      .sort((a,b)=>a.angle - b.angle);
 
     const pts = verts.map(v=>`${v.x},${v.y}`).join(" ");
-    svg.setAttribute("viewBox",`0 0 ${chart.clientWidth} ${chart.clientHeight}`);
+    svg.setAttribute("viewBox", `0 0 ${chart.clientWidth} ${chart.clientHeight}`);
     const poly = document.createElementNS("http://www.w3.org/2000/svg","polygon");
-    poly.setAttribute("points",pts);
+    poly.setAttribute("points", pts);
     svg.appendChild(poly);
 
+    // prepare dash animation
     let per = 0;
-    for(let i=0;i<verts.length;i++){
-      const v1 = verts[i], v2 = verts[(i+1)%verts.length];
-      per += Math.hypot(v2.x-v1.x, v2.y-v1.y);
-    }
+    verts.forEach((v,i) => {
+      const n = verts[(i+1) % verts.length];
+      per += Math.hypot(n.x - v.x, n.y - v.y);
+    });
     poly.style.strokeDasharray  = per;
     poly.style.strokeDashoffset = per;
 
-    /* animate in: draw & move */
-    requestAnimationFrame(()=>{
+    // entrance: draw outline + move icons
+    requestAnimationFrame(() => {
       poly.style.strokeDashoffset = 0;
-      subjects.forEach(s=>{
-        // keep the initial centring, then offset by our delta
+      subjects.forEach(s => {
         s.el.style.transform = `
           translate(-50%, -50%)
           translate(${s.tx}px, ${s.ty}px)
