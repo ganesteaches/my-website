@@ -2,34 +2,36 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<title>Ganes Assess – Hexagon with Second Layer</title>
+<title>Ganes Assess – Interactive Hexagon</title>
 <style>
 :root{
   --r1:230;   /* radius to subject icons */
-  --r2:320;   /* radius to GCSE / A-Level / IB layer */
-  --icon:100; /* subject icon size */
+  --r2:320;   /* radius to GCSE/A‑Level/IB layer */
+  --icon:100; /* subject icon size        */
   --bubble:70;/* qualification bubble size */
 }
 *{box-sizing:border-box;margin:0;padding:0}
-body{height:100vh;display:flex;align-items:center;justify-content:center;background:#0f172a;font-family:system-ui;color:#e2e8f0}
+body{height:100vh;display:flex;align-items:center;justify-content:center;background:transparent;font-family:system-ui;color:#e2e8f0}
 #chart{position:relative;width:900px;height:900px}
-/* centre logo */
+/* ---------------- centre logo ---------------- */
 #centre{position:absolute;top:50%;left:50%;width:190px;height:190px;border-radius:50%;transform:translate(-50%,-50%);overflow:hidden;box-shadow:0 0 16px 4px rgba(56,189,248,.35)}
 #centre img{width:100%;height:100%;object-fit:cover}
-/* subject icons */
-.node{position:absolute;width:var(--icon);height:var(--icon);display:flex;align-items:center;justify-content:center;cursor:pointer;transition:transform .2s}
-.node:hover{transform:translate(-50%,-50%) scale(1.08)}
+/* ---------------- subject icons -------------- */
+.node{position:absolute;width:var(--icon);height:var(--icon);display:flex;align-items:center;justify-content:center;cursor:pointer;transition:filter .15s ease}
 .node img{width:100%;height:100%;object-fit:contain}
 .science{filter:drop-shadow(0 0 14px #fb923c)}
 .maths  {filter:drop-shadow(0 0 14px #60a5fa)}
 .misc   {filter:drop-shadow(0 0 14px #a855f7)}
-/* qualification bubbles */
-.bubble{position:absolute;width:var(--bubble);height:var(--bubble);border-radius:50%;background:#082f49;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:600;opacity:0;pointer-events:none;transition:opacity .4s}
-/* hexagon outline */
+/* white hover glow */
+.node:hover{filter:drop-shadow(0 0 16px #ffffff)}
+/* ---------------- qualification bubbles ------ */
+.bubble{position:absolute;width:var(--bubble);height:var(--bubble);border-radius:50%;background:#082f49;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:600;opacity:0;pointer-events:none;transition:opacity .3s,filter .15s ease}
+/* bubble glow on parent hover */
+.active + .bubble,
+.bubble:hover{filter:drop-shadow(0 0 10px #38bdf8)}
+/* ---------------- hexagon outline ------------ */
 svg{position:absolute;inset:0;pointer-events:none}
 polygon{stroke:#64748b;stroke-width:3;fill:none;opacity:.5}
-/* visible state */
-.bubble.show{opacity:1}
 </style>
 </head>
 <body>
@@ -50,7 +52,7 @@ polygon{stroke:#64748b;stroke-width:3;fill:none;opacity:.5}
   ];
   const quals=["GCSE","A Level","IB"];
 
-  /* dom refs */
+  /* DOM refs & constants */
   const chart=document.getElementById('chart');
   const svg  =document.getElementById('outline');
   const R1=parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--r1'));
@@ -58,42 +60,57 @@ polygon{stroke:#64748b;stroke-width:3;fill:none;opacity:.5}
   const ICON=parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--icon'));
   const BUB=parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--bubble'));
   const cx=chart.clientWidth/2, cy=chart.clientHeight/2;
+  let activeSubject=null;
 
   /* create subject nodes and bubbles */
   const vertices=[];
   subjects.forEach(s=>{
     const rad=s.angle*Math.PI/180;
-    const vx=cx+R1*Math.cos(rad);
-    const vy=cy+R1*Math.sin(rad);
-    vertices.push({angle:s.angle,x:vx,y:vy});
+    const sx=cx+R1*Math.cos(rad);
+    const sy=cy+R1*Math.sin(rad);
+    vertices.push({angle:s.angle,x:sx,y:sy});
 
     const n=document.createElement('div');
     n.className=`node ${s.cls}`;
-    n.style.left=(vx-ICON/2)+'px';
-    n.style.top =(vy-ICON/2)+'px';
+    n.style.left=(sx-ICON/2)+'px';
+    n.style.top =(sy-ICON/2)+'px';
     n.innerHTML=`<img src='${s.icon}' alt='${s.label}'>`;
     chart.appendChild(n);
     s.el=n;
 
-    /* create 3 bubbles equally spaced around full ring (outer layer) but linked to subject */
+    /* bubbles positioned along subject radial line but distributed equally */
     s.bubbles=quals.map((q,i)=>{
-      const offset=(-30)+i*30; // -30°,0°,30° around subject angle
-      const brad=(s.angle+offset)*Math.PI/180;
-      const bx=cx+R2*Math.cos(brad);
-      const by=cy+R2*Math.sin(brad);
-      const bub=document.createElement('div');bub.className='bubble';bub.textContent=q;
-      bub.style.left=(bx-BUB/2)+'px';
-      bub.style.top =(by-BUB/2)+'px';
-      chart.appendChild(bub);
-      return bub;
+      const dist=R2 + i*0; // all bubbles at same outer ring – can adjust per i if stagger wanted
+      const bx=cx+dist*Math.cos(rad);
+      const by=cy+dist*Math.sin(rad);
+      const b=document.createElement('div');b.className='bubble';b.textContent=q;
+      b.style.left=(bx-BUB/2)+'px';
+      b.style.top =(by-BUB/2)+'px';
+      chart.appendChild(b);
+      return b;
     });
 
-    /* toggle bubbles on subject click */
+    /* click handler                            */
     n.addEventListener('click',()=>{
-      n.classList.toggle('active');
-      s.bubbles.forEach(b=>b.classList.toggle('show',n.classList.contains('active')));
+      // if this is already active – close it
+      if(activeSubject===s){toggleSubject(null);return;}
+      // open this, close previous
+      toggleSubject(s);
     });
   });
+
+  function toggleSubject(sub){
+    // hide previous
+    if(activeSubject){
+      activeSubject.el.classList.remove('active');
+      activeSubject.bubbles.forEach(b=>b.classList.remove('show'));
+    }
+    activeSubject=sub;
+    if(sub){
+      sub.el.classList.add('active');
+      sub.bubbles.forEach(b=>b.classList.add('show'));
+    }
+  }
 
   /* draw hexagon outline */
   vertices.sort((a,b)=>a.angle-b.angle);
