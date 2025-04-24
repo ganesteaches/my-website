@@ -117,7 +117,7 @@
       100%{box-shadow:0 0 20px rgba(255,255,255,0.35);opacity:1;transform:scale(1);}
     }
 
-    /* ---------- Subjects dropdown (single column) ---------- */
+    /* ---------- Subjects dropdown (single column) ----------
     .subjects-dropdown{
       position:absolute;
       top:100%;left:50%;
@@ -125,10 +125,10 @@
       opacity:0;
       visibility:hidden;
       transition:transform .4s ease, opacity .4s ease;
-      z-index:10;                    /* ← sits above everything */
+      z-index:10;
     }
     .card:hover .subjects-dropdown,
-    .subjects-dropdown:hover{        /* keeps it alive while hovered */
+    .subjects-dropdown:hover{
       transform:translateX(-50%) translateY(0);
       opacity:1;
       visibility:visible;
@@ -156,23 +156,21 @@
     }
     .subjects-dropdown img{width:48px;height:48px;display:block;transition:filter .2s ease;}
 
-    /* Assess (pastel blue) */
     .assess .subjects-dropdown a:hover,
     .assess .subjects-dropdown a:focus{background:rgba(173,216,230,0.3);}
     .assess .subjects-dropdown a:hover img,
     .assess .subjects-dropdown a:focus img{filter:drop-shadow(0 0 8px #ADD8E6);}
 
-    /* Primers (pastel orange) */
     .primers .subjects-dropdown a:hover,
     .primers .subjects-dropdown a:focus{background:rgba(255,229,180,0.3);}
     .primers .subjects-dropdown a:hover img,
     .primers .subjects-dropdown a:focus img{filter:drop-shadow(0 0 8px #FFA500);}
 
-    /* Revise (white) */
     .revise .subjects-dropdown a:hover,
     .revise .subjects-dropdown a:focus{background:rgba(255,255,255,0.3);color:#000;}
     .revise .subjects-dropdown a:hover img,
     .revise .subjects-dropdown a:focus img{filter:drop-shadow(0 0 8px #FFF);}
+    ---------- End Subjects dropdown ---------- */
 
     /* ---------- Particle canvas ---------- */
     .particle-canvas{
@@ -201,6 +199,7 @@
           <tr><td>🧊 <span class="highlight">Difficulty ramps up</span> to prepare for real exam conditions</td></tr>
         </table>
       </a>
+      <!--
       <div class="subjects-dropdown">
         <ul>
           <li><a href="https://www.ganesteaches.com/ganes-assess/biology" target="_blank"><img src="biology_list_icon.png" alt=""><span>Biology</span></a></li>
@@ -210,6 +209,7 @@
           <li><a href="https://www.ganesteaches.com/ganes-assess/further-maths" target="_blank"><img src="further_mathematics_list_icon.png" alt=""><span>Further Mathematics</span></a></li>
         </ul>
       </div>
+      -->
     </div>
 
     <!-- Ganes Primers -->
@@ -226,6 +226,7 @@
           <tr><td>🧊 <span class="highlight">Colour-coded prompts</span> to reinforce key patterns</td></tr>
         </table>
       </a>
+      <!--
       <div class="subjects-dropdown">
         <ul>
           <li><a href="https://www.ganesteaches.com/ganes-primers/biology" target="_blank"><img src="front_biology_list_icon.png" alt=""><span>Biology</span></a></li>
@@ -235,6 +236,7 @@
           <li><a href="https://www.ganesteaches.com/ganes-primers/further-maths" target="_blank"><img src="front_further_mathematics_list_icon.png" alt=""><span>Further Mathematics</span></a></li>
         </ul>
       </div>
+      -->
     </div>
 
     <!-- Ganes Revise -->
@@ -251,6 +253,7 @@
           <tr><td>🧊 <span class="highlight">Summary notes</span></td></tr>
         </table>
       </a>
+      <!--
       <div class="subjects-dropdown">
         <ul>
           <li><a href="https://www.ganesteaches.com/ganes-revise/biology" target="_blank"><img src="right_biology_list_icon.png" alt=""><span>Biology</span></a></li>
@@ -260,6 +263,7 @@
           <li><a href="https://www.ganesteaches.com/ganes-revise/further-maths" target="_blank"><img src="right_further_mathematics_list_icon.png" alt=""><span>Further Mathematics</span></a></li>
         </ul>
       </div>
+      -->
     </div>
 
   </div>
