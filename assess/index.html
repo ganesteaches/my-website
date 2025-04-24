@@ -13,9 +13,10 @@
   --bubble:70;   /* qualification bubble size           */
 }
 *{box-sizing:border-box;margin:0;padding:0}
+html,body{width:100%;height:100%}
 body{
-  height:100vh;display:flex;align-items:center;justify-content:center;
-  background:#0f172a;font-family:system-ui;color:#e2e8f0
+  display:flex;align-items:center;justify-content:center;
+  background:transparent;font-family:system-ui;color:#e2e8f0
 }
 #chart{position:relative;width:900px;height:900px}
 
@@ -32,12 +33,11 @@ body{
 .node{
   position:absolute;display:flex;align-items:center;justify-content:center;
   width:var(--icon);height:var(--icon);
-  border-radius:50%;overflow:hidden;           /* true circle mask           */
-  border:3px solid #e2e8f0;                    /* subtle outline             */
+  border-radius:50%;overflow:hidden;                /* perfect circle mask */
+  border:3px solid #e2e8f0;                         /* neat outline        */
   background:#082f49;cursor:pointer;
-  transition:transform .2s, box-shadow .2s;
+  transition:box-shadow .2s;
 }
-.node:hover{transform:translate(-50%,-50%) scale(1.08)}
 .node img{width:100%;height:100%;object-fit:contain}
 
 .science{filter:drop-shadow(0 0 14px #fb923c)}
@@ -48,7 +48,7 @@ body{
 .bubble{
   position:absolute;width:var(--bubble);height:var(--bubble);
   border-radius:50%;background:#082f49;
-  border:2px solid #64748b;                     /* give a neat edge           */
+  border:2px solid #64748b;
   display:flex;align-items:center;justify-content:center;
   font-size:13px;font-weight:600;text-decoration:none;color:#e2e8f0;
   opacity:0;pointer-events:none;transition:opacity .35s;
@@ -101,6 +101,13 @@ let activeNode = null;
 /* ───────────── helpers ───────────── */
 const slug = str => str.toLowerCase().replace(/\s+/g,"-");   // "A Level" → "a-level"
 
+/* fade / unfade siblings on hover */
+function fadeOthers(target, toOpacity){
+    subjects.forEach(s=>{
+        if(s.el !== target) s.el.style.opacity = toOpacity;
+    });
+}
+
 /* ───────────── create nodes & bubbles ───────────── */
 const vertices = [];
 
@@ -112,49 +119,52 @@ subjects.forEach(subject => {
   const vy  = cy + R1 * Math.sin(rad);
   vertices.push({angle:subject.angle,x:vx,y:vy});
 
-  /* ---- subject link/button ---- */
-  const link = document.createElement("a");
-  link.className = `node ${subject.cls}`;
-  link.href      = `${BASE}/${subject.key}`;
-  link.style.left = (vx - ICON/2) + "px";
-  link.style.top  = (vy - ICON/2) + "px";
-  link.innerHTML  = `<img src="${subject.icon}" alt="${subject.label}">`;
-  chart.appendChild(link);
-  subject.el = link;           // keep reference for later
+  /* ---- subject button (div, no link) ---- */
+  const node = document.createElement("div");
+  node.className = `node ${subject.cls}`;
+  node.style.left = (vx - ICON/2) + "px";
+  node.style.top  = (vy - ICON/2) + "px";
+  node.innerHTML  = `<img src="${subject.icon}" alt="${subject.label}">`;
+  chart.appendChild(node);
+  subject.el = node;
 
   /* ---- qualification bubbles for this subject ---- */
   subject.bubbles = quals.map((q, i) =>{
-      const offset = (-30) + i*30;                // -30°, 0°, +30° from subject
+      const offset = (-30) + i*30;                        // -30°, 0°, +30°
       const brad   = (subject.angle + offset) * Math.PI / 180;
       const bx     = cx + R2 * Math.cos(brad);
       const by     = cy + R2 * Math.sin(brad);
       const bub    = document.createElement("a");
       bub.className = "bubble";
       bub.textContent = q;
-      bub.href   = `${BASE}/${subject.key}/${slug(q)}`;  // e.g. …/biology/gcse
+      bub.href   = `${BASE}/${subject.key}/${slug(q)}`;  // …/biology/gcse
       bub.style.left = (bx - BUB/2) + "px";
       bub.style.top  = (by - BUB/2) + "px";
       chart.appendChild(bub);
       return bub;
   });
 
-  /* ---- click behaviour ---- */
-  link.addEventListener("click", e =>{
-      /* already active → let the browser follow the link */
-      if(link === activeNode){
-          activeNode = null;          // (will be replaced if user comes back)
-          return;                     // NO preventDefault → natural navigation
-      }
+  /* ---- hover behaviour ---- */
+  node.addEventListener("mouseenter", ()=>fadeOthers(node,0.5));
+  node.addEventListener("mouseleave", ()=>fadeOthers(node,1));
 
-      /* otherwise open this ring and close any other */
-      e.preventDefault();             // stay on the landing page
-      if(activeNode){                 // close previous subject
+  /* ---- click behaviour ---- */
+  node.addEventListener("click", () =>{
+      /* clicking the same active subject closes its ring */
+      if(node === activeNode){
+          node.classList.remove("active");
+          subject.bubbles.forEach(b=>b.classList.remove("show"));
+          activeNode = null;
+          return;
+      }
+      /* open this subject’s ring & close any other */
+      if(activeNode){
          activeNode.classList.remove("active");
          subjects.find(s=>s.el===activeNode).bubbles
                  .forEach(b=>b.classList.remove("show"));
       }
-      activeNode = link;              // remember the newly opened subject
-      link.classList.add("active");
+      activeNode = node;
+      node.classList.add("active");
       subject.bubbles.forEach(b=>b.classList.add("show"));
   });
 });
