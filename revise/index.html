@@ -12,7 +12,9 @@
       --bubble:  70px;   /* qualification bubble diameter      */
     }
 
-    * {
+    *,
+    *::before,
+    *::after {
       box-sizing: border-box;
       margin:       0;
       padding:      0;
@@ -22,13 +24,14 @@
       height: 100%;
     }
     body {
-      display:          flex;
-      align-items:      center;
-      justify-content:  center;
-      background:       transparent;
-      font-family:      system-ui;
-      colour:           #e2e8f0;
+      display:         flex;
+      align-items:     center;
+      justify-content: center;
+      background:      transparent;
+      font-family:     system-ui, sans-serif;
+      color:           #e2e8f0;
     }
+
     #chart {
       position: relative;
       width:    900px;
@@ -37,23 +40,22 @@
 
     /* ─── centre logo ─── */
     #centre {
-      position: absolute;
-      top:      50%;
-      left:     50%;
-      width:    190px;
-      height:   190px;
-      transform: translate(-50%, -50%);
+      position:      absolute;
+      top:           50%;
+      left:          50%;
+      width:         190px;
+      height:        190px;
+      transform:     translate(-50%, -50%);
       border-radius: 50%;
-      overflow:       hidden;
+      overflow:      hidden;
 
-      /* GPU-accelerated glow */
       filter:      drop-shadow(0 0 16px rgba(56,189,248,0.35));
       will-change: filter;
     }
     #centre img {
-      width:       100%;
-      height:      100%;
-      object-fit:  cover;
+      width:      100%;
+      height:     100%;
+      object-fit: cover;
     }
 
     /* ─── subject icons ─── */
@@ -70,19 +72,20 @@
       cursor:         pointer;
       z-index:        1;
 
-      /* start centred, animate via transform */
+      display:         flex;
+      align-items:     center;
+      justify-content: center;
+
       transform:      translate(-50%, -50%);
       will-change:    transform, opacity;
-      transition:     transform 1.6s ease-out, opacity 1.6s ease-out;
+      transition:     transform 1.6s ease-out,
+                      opacity   1.6s ease-out;
       opacity:        0;
-      display:        flex;
-      align-items:    center;
-      justify-content:center;
     }
     .node img {
-      width:       70%;
-      height:      70%;
-      object-fit:  contain;
+      width:      70%;
+      height:     70%;
+      object-fit: contain;
     }
 
     .science { filter: drop-shadow(0 0 14px #fb923c); }
@@ -102,8 +105,8 @@
       border:          2px solid #64748b;
       font-size:       13px;
       font-weight:     600;
-      colour:          #e2e8f0;
-      text-decoration:none;
+      color:           #e2e8f0;
+      text-decoration: none;
       opacity:         0;
       pointer-events:  none;
       transition:      opacity 0.35s;
@@ -129,8 +132,8 @@
     }
   </style>
 </head>
-
 <body>
+
   <div id="chart">
     <svg id="outline"></svg>
 
@@ -167,21 +170,26 @@
 
     let activeNode = null;
 
-    // Build nodes & precompute offsets
+    function hideAllBubbles() {
+      subjects.forEach(s => s.bubbles.forEach(b => b.classList.remove("show")));
+    }
+
+    // build nodes & bubbles
     subjects.forEach(sub => {
       const rad = sub.angle * Math.PI/180;
       const vx  = cx + R1 * Math.cos(rad);
       const vy  = cy + R1 * Math.sin(rad);
-
       sub.tx = vx - cx;
       sub.ty = vy - cy;
 
+      // create icon container
       const node = document.createElement("div");
       node.className = `node ${sub.cls}`;
       node.innerHTML = `<img src="${sub.icon}" alt="${sub.label}">`;
       chart.appendChild(node);
       sub.el = node;
 
+      // create qualification bubbles
       sub.bubbles = quals.map((q,i) => {
         const off = -30 + i*30;
         const br  = (sub.angle + off) * Math.PI/180;
@@ -193,40 +201,45 @@
         a.href        = `${BASE}/${sub.key}/${q.toLowerCase().replace(/\s+/g,"-")}`;
         a.target      = "_blank";
         a.rel         = "noopener";
-        a.addEventListener("click", e => e.stopPropagation());
         a.style.left  = `${bx - BUB/2}px`;
         a.style.top   = `${by - BUB/2}px`;
         chart.appendChild(a);
+
+        // keep visible while hovered
+        a.addEventListener("mouseenter", () => a.classList.add("show"));
+        // hide when leaving unless it's the clicked node
+        a.addEventListener("mouseleave", () => {
+          if (activeNode !== node) a.classList.remove("show");
+        });
+
         return a;
       });
 
-      // hover: dim siblings to 30% & show bubbles
+      // hover in: clear, dim siblings, show these bubbles
       node.addEventListener("mouseenter", () => {
+        hideAllBubbles();
         subjects.forEach(s => { if (s !== sub) s.el.style.opacity = 0.3; });
         sub.bubbles.forEach(b => b.classList.add("show"));
       });
+      // hover out: restore icon opacity (bubbles hide on their own leave)
       node.addEventListener("mouseleave", () => {
-        subjects.forEach(s => { s.el.style.opacity = 1; });
-        sub.bubbles.forEach(b => b.classList.remove("show"));
+        subjects.forEach(s => s.el.style.opacity = 1);
       });
 
-      // click toggle (persist)
+      // click: toggle persistent
       node.addEventListener("click", () => {
-        if (node === activeNode) {
-          sub.bubbles.forEach(b => b.classList.remove("show"));
+        if (activeNode === node) {
+          hideAllBubbles();
           activeNode = null;
         } else {
-          if (activeNode) {
-            const prev = subjects.find(s => s.el === activeNode);
-            prev.bubbles.forEach(b => b.classList.remove("show"));
-          }
+          hideAllBubbles();
           activeNode = node;
           sub.bubbles.forEach(b => b.classList.add("show"));
         }
       });
     });
 
-    // Draw hexagon outline
+    // draw hexagon outline
     const verts = subjects
       .map(s => ({
         angle: s.angle,
@@ -243,13 +256,13 @@
 
     let per = 0;
     verts.forEach((v,i) => {
-      const v2 = verts[(i+1) % verts.length];
-      per += Math.hypot(v2.x - v.x, v2.y - v.y);
+      const next = verts[(i+1)%verts.length];
+      per += Math.hypot(next.x - v.x, next.y - v.y);
     });
     poly.style.strokeDasharray  = per;
     poly.style.strokeDashoffset = per;
 
-    // Entrance animation
+    // entrance animation
     requestAnimationFrame(() => {
       poly.style.strokeDashoffset = 0;
       subjects.forEach(s => {
@@ -260,7 +273,6 @@
         s.el.style.opacity = 1;
       });
     });
-
   })();
   </script>
 </body>
