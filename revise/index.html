@@ -12,12 +12,10 @@
       --bubble:  70px;   /* qualification bubble diameter      */
     }
 
-    *,
-    *::before,
-    *::after {
+    *, *::before, *::after {
       box-sizing: border-box;
-      margin:       0;
-      padding:      0;
+      margin:      0;
+      padding:     0;
     }
     html, body {
       width:  100%;
@@ -38,7 +36,7 @@
       height:   900px;
     }
 
-    /* ─── centre logo ─── */
+    /* centre logo */
     #centre {
       position:      absolute;
       top:           50%;
@@ -48,9 +46,8 @@
       transform:     translate(-50%, -50%);
       border-radius: 50%;
       overflow:      hidden;
-
-      filter:      drop-shadow(0 0 16px rgba(56,189,248,0.35));
-      will-change: filter;
+      filter:        drop-shadow(0 0 16px rgba(56,189,248,0.35));
+      will-change:   filter;
     }
     #centre img {
       width:      100%;
@@ -58,7 +55,7 @@
       object-fit: cover;
     }
 
-    /* ─── subject icons ─── */
+    /* subject icons */
     .node {
       position:       absolute;
       left:           50%;
@@ -92,7 +89,7 @@
     .maths   { filter: drop-shadow(0 0 14px #60a5fa); }
     .misc    { filter: drop-shadow(0 0 14px #a855f7); }
 
-    /* ─── qualification bubbles ─── */
+    /* qualification bubbles – now dark grey */
     .bubble {
       position:        absolute;
       display:         flex;
@@ -101,7 +98,7 @@
       width:           var(--bubble);
       height:          var(--bubble);
       border-radius:   50%;
-      background:      #082f49;
+      background:      #1a1a1a;    /* updated bubble background */
       border:          2px solid #64748b;
       font-size:       13px;
       font-weight:     600;
@@ -117,7 +114,7 @@
       pointer-events: auto;
     }
 
-    /* ─── hexagon outline ─── */
+    /* hexagon outline */
     svg {
       position:       absolute;
       inset:          0;
@@ -137,7 +134,6 @@
   <div id="chart">
     <svg id="outline"></svg>
 
-    <!-- centre logo – opens in new tab -->
     <a id="centre"
        href="https://www.ganesteaches.com/ganes-revise"
        target="_blank"
@@ -174,7 +170,6 @@
       subjects.forEach(s => s.bubbles.forEach(b => b.classList.remove("show")));
     }
 
-    // build nodes & bubbles
     subjects.forEach(sub => {
       const rad = sub.angle * Math.PI/180;
       const vx  = cx + R1 * Math.cos(rad);
@@ -182,14 +177,12 @@
       sub.tx = vx - cx;
       sub.ty = vy - cy;
 
-      // create icon container
       const node = document.createElement("div");
       node.className = `node ${sub.cls}`;
       node.innerHTML = `<img src="${sub.icon}" alt="${sub.label}">`;
       chart.appendChild(node);
       sub.el = node;
 
-      // create qualification bubbles
       sub.bubbles = quals.map((q,i) => {
         const off = -30 + i*30;
         const br  = (sub.angle + off) * Math.PI/180;
@@ -205,9 +198,7 @@
         a.style.top   = `${by - BUB/2}px`;
         chart.appendChild(a);
 
-        // keep visible while hovered
         a.addEventListener("mouseenter", () => a.classList.add("show"));
-        // hide when leaving unless it's the clicked node
         a.addEventListener("mouseleave", () => {
           if (activeNode !== node) a.classList.remove("show");
         });
@@ -215,18 +206,14 @@
         return a;
       });
 
-      // hover in: clear, dim siblings, show these bubbles
       node.addEventListener("mouseenter", () => {
         hideAllBubbles();
         subjects.forEach(s => { if (s !== sub) s.el.style.opacity = 0.3; });
         sub.bubbles.forEach(b => b.classList.add("show"));
       });
-      // hover out: restore icon opacity (bubbles hide on their own leave)
       node.addEventListener("mouseleave", () => {
         subjects.forEach(s => s.el.style.opacity = 1);
       });
-
-      // click: toggle persistent
       node.addEventListener("click", () => {
         if (activeNode === node) {
           hideAllBubbles();
@@ -239,7 +226,6 @@
       });
     });
 
-    // draw hexagon outline
     const verts = subjects
       .map(s => ({
         angle: s.angle,
@@ -262,7 +248,6 @@
     poly.style.strokeDasharray  = per;
     poly.style.strokeDashoffset = per;
 
-    // entrance animation
     requestAnimationFrame(() => {
       poly.style.strokeDashoffset = 0;
       subjects.forEach(s => {
