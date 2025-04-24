@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Layout 3 – Radial Tree Mind‑map</title>
+<style>
+ *{box-sizing:border-box;margin:0;padding:0}
+ body{font-family:system-ui;background:transparent;color:#e2e8f0;padding:40px}
+ .container{display:flex;align-items:flex-start;gap:32px}
+ #centre{width:180px;height:180px;border-radius:50%;overflow:hidden;box-shadow:0 4px 12px rgba(0,0,0,.4)}
+ #centre img{width:100%;height:100%;object-fit:cover}
+ .branches{flex:1;position:relative}
+ .subject{display:flex;align-items:center;margin-bottom:32px;position:relative}
+ .subject:last-child{margin-bottom:0}
+ .icon{width:80px;height:80px;border-radius:16px;background:#fff;display:flex;align-items:center;justify-content:center;box-shadow:0 3px 6px rgba(0,0,0,.2)}
+ .icon img{width:60%;height:60%}
+ .text{margin-left:12px}
+ .text h3{font-size:18px;font-weight:600;color:#f1f5f9;margin-bottom:4px}
+ .levels{display:flex;gap:8px;font-size:13px}
+ .level{background:#0f172a;padding:4px 8px;border-radius:6px}
+ /* connector lines */
+ svg{position:absolute;top:0;left:0;width:100%;height:100%;pointer-events:none}
+ path{stroke:#38bdf8;stroke-width:2;fill:none;opacity:.6}
+</style>
+</head>
+<body>
+<div class="container">
+  <div id="centre"><img src="../ganes_assess.png" alt="Assessment"></div>
+  <div class="branches" id="branches">
+    <svg></svg>
+    <!-- subjects -->
+    <div class="subject" data-icon="../front_biology_list_icon.png" data-label="Biology"></div>
+    <div class="subject" data-icon="../front_chemistry_list_icon.png" data-label="Chemistry"></div>
+    <div class="subject" data-icon="../front_further_mathematics_list_icon.png" data-label="Further Mathematics"></div>
+    <div class="subject" data-icon="../front_mathematics_list_icon.png" data-label="Mathematics"></div>
+    <div class="subject" data-icon="../front_physics_list_icon.png" data-label="Physics"></div>
+  </div>
+</div>
+<script>
+(function(){
+ const levels=['GCSE','A Level','IB'];
+ const branches=document.getElementById('branches');
+ const svg=branches.querySelector('svg');
+ // populate subject blocks
+ document.querySelectorAll('.subject').forEach(sub=>{
+   const icon=sub.dataset.icon,label=sub.dataset.label;
+   sub.innerHTML=`<div class="icon"><img src='${icon}' alt='${label}'></div><div class="text"><h3>${label}</h3><div class="levels">${levels.map(l=>`<span class='level'>${l}</span>`).join('')}</div></div>`;
+ });
+ function drawLines(){
+   svg.innerHTML='';
+   const centre=document.getElementById('centre');
+   const cRect=centre.getBoundingClientRect();
+   const cx=cRect.right; // right‑edge centre vertically
+   const cy=cRect.top + cRect.height/2;
+   document.querySelectorAll('.subject').forEach(sub=>{
+     const r=sub.getBoundingClientRect();
+     const sx=r.left, sy=r.top + r.height/2;
+     const mx=(cx+sx)/2;
+     const path=document.createElementNS('http://www.w3.org/2000/svg','path');
+     path.setAttribute('d',`M ${cx} ${cy} C ${mx} ${cy} ${mx} ${sy} ${sx} ${sy}`);
+     svg.appendChild(path);
+   });
+ }
+ drawLines();
+ window.addEventListener('resize',drawLines);
+})();
+</script>
+</body>
+</html>
