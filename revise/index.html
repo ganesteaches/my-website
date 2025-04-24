@@ -7,9 +7,9 @@
 <style>
 :root{
   --r1:   230px;      /* radius to subject icons            */
-  --r2:   320px;      /* radius to GCSE / A-Level / IB ring  */
-  --icon: 100px;      /* subject icon diameter               */
-  --bubble:70px;      /* qualification bubble diameter       */
+  --r2:   320px;      /* radius to GCSE / A-Level / IB ring */
+  --icon: 100px;      /* subject icon diameter              */
+  --bubble:70px;      /* qualification bubble diameter      */
 }
 *{box-sizing:border-box;margin:0;padding:0}
 html,body{width:100%;height:100%}
@@ -54,8 +54,7 @@ body{
   width:var(--bubble);height:var(--bubble);
   border-radius:50%;background:#082f49;border:2px solid #64748b;
   font-size:13px;font-weight:600;color:#e2e8f0;text-decoration:none;
-  opacity:0;pointer-events:none;
-  transition:opacity .35s;
+  opacity:0;pointer-events:none;transition:opacity .35s;
   z-index:2;            /* sits above the icon so left-click works */
 }
 .bubble.show{opacity:1;pointer-events:auto}
@@ -64,7 +63,7 @@ body{
 svg{position:absolute;inset:0;pointer-events:none}
 polygon{
   stroke:#64748b;stroke-width:3;fill:none;opacity:.5;
-  transition:stroke-dashoffset 2s ease-out;   /* slower outline draw */
+  transition:stroke-dashoffset 2s ease-out;
 }
 </style>
 </head>
@@ -73,8 +72,9 @@ polygon{
 <div id="chart">
   <svg id="outline"></svg>
 
-  <!-- centre logo – links to Revise root -->
-  <a id="centre" href="https://www.ganesteaches.com/ganes-revise">
+  <!-- centre logo – opens in a new tab -->
+  <a id="centre" href="https://www.ganesteaches.com/ganes-revise"
+     target="_blank" rel="noopener">
     <img src="../ganes_revise.png" alt="Ganes Revise">
   </a>
 </div>
@@ -87,16 +87,16 @@ const BASE = "https://www.ganesteaches.com/ganes-revise";
 /* ----------------------------------------------- */
 
 const subjects = [
-  {label:"Biology",        key:"biology",            icon:"../right_biology_list_icon.png",          cls:"science", angle:150},
-  {label:"Chemistry",      key:"chemistry",          icon:"../right_chemistry_list_icon.png",        cls:"science", angle: 90},
-  {label:"Physics",        key:"physics",            icon:"../right_physics_list_icon.png",          cls:"science", angle: 30},
-  {label:"Mathematics",    key:"mathematics",        icon:"../right_mathematics_list_icon.png",      cls:"maths",   angle:210},
-  {label:"Further Maths",  key:"further-mathematics",icon:"../right_further_mathematics_list_icon.png",cls:"maths",   angle:270},
-  {label:"Misc",           key:"misc",               icon:"../right_physics_list_icon.png",          cls:"misc",    angle:330}
+  {label:"Biology",        key:"biology",            icon:"../right_biology_list_icon.png",             cls:"science", angle:150},
+  {label:"Chemistry",      key:"chemistry",          icon:"../right_chemistry_list_icon.png",           cls:"science", angle: 90},
+  {label:"Physics",        key:"physics",            icon:"../right_physics_list_icon.png",             cls:"science", angle: 30},
+  {label:"Mathematics",    key:"mathematics",        icon:"../right_mathematics_list_icon.png",         cls:"maths",   angle:210},
+  {label:"Further Maths",  key:"further-mathematics",icon:"../right_further_mathematics_list_icon.png", cls:"maths",   angle:270},
+  {label:"Misc",           key:"misc",               icon:"../right_physics_list_icon.png",             cls:"misc",    angle:330}
 ];
 const quals = ["GCSE","A Level","IB"];
 
-/* ---------- DOM maths ---------- */
+/* ---------- geometry ---------- */
 const chart = document.getElementById("chart");
 const svg   = document.getElementById("outline");
 const R1    = parseFloat(getComputedStyle(document.documentElement).getPropertyValue("--r1"));
@@ -119,7 +119,7 @@ subjects.forEach(sub=>{
   /* icon */
   const node=document.createElement("div");
   node.className=`node ${sub.cls}`;
-  node.style.left=(cx-ICON/2)+"px";           // start centred
+  node.style.left=(cx-ICON/2)+"px";
   node.style.top =(cy-ICON/2)+"px";
   node.innerHTML=`<img src="${sub.icon}" alt="${sub.label}">`;
   chart.appendChild(node);
@@ -137,18 +137,20 @@ subjects.forEach(sub=>{
     a.className="bubble";
     a.textContent=q;
     a.href=`${BASE}/${sub.key}/${slug(q)}`;
+    a.target="_blank";        // open in a new tab (works on all browsers/OSs)
+    a.rel="noopener";
     a.style.left=(bx-BUB/2)+"px";
     a.style.top =(by-BUB/2)+"px";
-    a.addEventListener("click",e=>e.stopPropagation());  // prevent bubble click closing the ring
+    a.addEventListener("click",e=>e.stopPropagation());
     chart.appendChild(a);
     return a;
   });
 
-  /* hover dim */
+  /* hover dim neighbours */
   node.addEventListener("mouseenter",()=>subjects.forEach(s=>{if(s!==sub)s.el.style.opacity=.5;}));
   node.addEventListener("mouseleave",()=>subjects.forEach(s=>s.el.style.opacity=1));
 
-  /* click logic */
+  /* click toggle */
   node.addEventListener("click",()=>{
     if(node===activeNode){
        sub.bubbles.forEach(b=>b.classList.remove("show"));
@@ -181,11 +183,11 @@ poly.style.strokeDashoffset=per;
 
 /* ---------- entrance animation ---------- */
 requestAnimationFrame(()=>{
-  poly.style.strokeDashoffset=0;               // 2-second draw
+  poly.style.strokeDashoffset=0;
   subjects.forEach(s=>{
      s.el.style.left=s.finalLeft;
      s.el.style.top =s.finalTop;
-     s.el.style.opacity=1;                     // 1.6-second glide
+     s.el.style.opacity=1;
   });
 });
 
