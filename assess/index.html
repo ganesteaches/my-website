@@ -72,8 +72,8 @@ polygon{
 <div id="chart">
   <svg id="outline"></svg>
 
-  <!-- centre logo – links to Assess root -->
-  <a id="centre" href="https://www.ganesteaches.com/ganes-assess">
+  <!-- centre logo – breaks out of iframe -->
+  <a id="centre" href="https://www.ganesteaches.com/ganes-assess" target="_top">
     <img src="../ganes_assess.png" alt="Ganes Assess">
   </a>
 </div>
@@ -86,12 +86,12 @@ const BASE = "https://www.ganesteaches.com/ganes-assess";
 /* ------------------------------------------------------ */
 
 const subjects = [
-  {label:"Biology",        key:"biology",            icon:"../front_biology_list_icon.png",          cls:"science", angle:150},
-  {label:"Chemistry",      key:"chemistry",          icon:"../front_chemistry_list_icon.png",        cls:"science", angle: 90},
-  {label:"Physics",        key:"physics",            icon:"../front_physics_list_icon.png",          cls:"science", angle: 30},
-  {label:"Mathematics",    key:"mathematics",        icon:"../front_mathematics_list_icon.png",      cls:"maths",   angle:210},
-  {label:"Further Maths",  key:"further-mathematics",icon:"../front_further_mathematics_list_icon.png",cls:"maths",   angle:270},
-  {label:"Misc",           key:"misc",               icon:"../front_physics_list_icon.png",          cls:"misc",    angle:330}
+  {label:"Biology",        key:"biology",            icon:"../biology_list_icon.png",          cls:"science", angle:150},
+  {label:"Chemistry",      key:"chemistry",          icon:"../chemistry_list_icon.png",        cls:"science", angle: 90},
+  {label:"Physics",        key:"physics",            icon:"../physics_list_icon.png",          cls:"science", angle: 30},
+  {label:"Mathematics",    key:"mathematics",        icon:"../mathematics_list_icon.png",      cls:"maths",   angle:210},
+  {label:"Further Maths",  key:"further-mathematics",icon:"../further_mathematics_list_icon.png",cls:"maths",   angle:270},
+  {label:"Misc",           key:"misc",               icon:"../physics_list_icon.png",          cls:"misc",    angle:330}
 ];
 const quals = ["GCSE","A Level","IB"];
 
@@ -136,9 +136,10 @@ subjects.forEach(sub=>{
     a.className="bubble";
     a.textContent=q;
     a.href=`${BASE}/${sub.key}/${slug(q)}`;
+    a.target="_top";           // <<< break out of the Google Sites iframe
+    a.addEventListener("click",e=>e.stopPropagation());   // don’t close ring on click
     a.style.left=(bx-BUB/2)+"px";
     a.style.top =(by-BUB/2)+"px";
-    a.addEventListener("click",e=>e.stopPropagation());   // don’t close ring on click
     chart.appendChild(a);
     return a;
   });
