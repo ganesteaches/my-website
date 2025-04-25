@@ -1,125 +1,81 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="utf-8"/>
+  <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1"/>
-  <title>Footer Click Test</title>
+  <title>Ganes Teaches – Footer</title>
+
   <style>
-    /* Whole‐page transparent background so you see it’s really the footer handling clicks */
-    html, body {
-      margin: 0;
-      padding: 0;
-      height: 100%;
-      background: transparent;
-    }
-
-    /* Dummy content so you can scroll and see the footer is always on top */
-    main {
-      height: 200vh;
-      background: #333;
-    }
-
-    /* Fixed footer always on top */
+    /* Footer styles */
     .site-footer {
-      position: fixed;
-      bottom: 0;
-      left: 0;
-      width: 100%;
-      background: transparent;
+      background: #111;
+      color: #ddd;
       padding: 1rem;
-      pointer-events: auto;  /* allow clicks to reach it */
-      z-index: 1000;         /* above everything else */
+      font-family: sans-serif;
+      /* let clicks pass through blank areas */
+      pointer-events: none;
     }
-
     .footer-inner {
       max-width: 1024px;
       margin: 0 auto;
       display: flex;
-      justify-content: space-between;
+      flex-wrap: wrap;
       align-items: center;
-      color: #ddd;
-      font-family: sans-serif;
+      justify-content: space-between;
+    }
+    .footer-copy {
+      margin: 0;
       font-size: 0.9rem;
     }
-
     .social-links {
       display: flex;
       gap: 0.75rem;
-      transition: opacity 0.2s ease;
+      margin-top: 0.5rem;
     }
-    .social-links:hover a { opacity: 0.7; }
     .social-links a {
-      display: inline-block;
       width: 32px;
       height: 32px;
-      pointer-events: auto;   /* make sure each link is clickable */
-      transition: filter 0.2s ease, opacity 0.2s ease;
-    }
-    .social-links a:hover {
-      filter: drop-shadow(0 0 6px white);
-      opacity: 1 !important;
+      display: inline-block;
+      /* re-enable clicks on the links */
+      pointer-events: auto;
     }
     .social-links img {
       width: 100%;
       height: auto;
-      background: transparent;
       display: block;
     }
-
-    /* === ADDITIONAL RULES TO REMOVE GREY TAP-HIGHLIGHT BOX AND DISABLE SELECTION === */
-
-    /* Disable that grey “tap highlight” on mobile/WebViews */
-    .site-footer,
-    .site-footer a,
-    .site-footer img {
-      -webkit-tap-highlight-color: transparent;
-      tap-highlight-color: transparent;
-    }
-
-    /* Prevent accidental “text selection” grey boxes */
-    .site-footer,
-    .site-footer * {
-      -webkit-user-select: none;  /* Safari/Chrome */
-      -moz-user-select: none;     /* Firefox */
-      -ms-user-select: none;      /* IE10+ */
-      user-select: none;          /* Standard */
-    }
-
-    /* Hint touch UAs that these are manipulations (not scrolling) */
-    .social-links a {
-      touch-action: manipulation;
+    @media (min-width: 480px) {
+      .social-links {
+        margin-top: 0;
+      }
     }
   </style>
 </head>
 <body>
 
-  <main>
-    <h1 style="color:white; text-align:center; padding-top:2rem;">
-      Scroll and then click an icon in the footer below.
-    </h1>
-  </main>
+  <!-- Page content here -->
 
   <footer class="site-footer">
     <div class="footer-inner">
-      <span>© 2022–2025 Ganes Teaches</span>
+      <p class="footer-copy">© 2022–2025 Ganes Teaches. All rights reserved.</p>
       <div class="social-links">
         <a href="https://facebook.com/yourprofile" aria-label="Facebook">
-          <img src="./social_media_icon/facebook.png" alt="Facebook">
+          <img src="https://raw.githubusercontent.com/your-user/your-repo/main/footer/social_media_icon/facebook.png" alt="Facebook">
         </a>
         <a href="https://instagram.com/yourprofile" aria-label="Instagram">
-          <img src="./social_media_icon/instagram.png" alt="Instagram">
+          <img src="https://raw.githubusercontent.com/your-user/your-repo/main/footer/social_media_icon/instagram.png" alt="Instagram">
         </a>
-        <a href="mailto:ganesteaches@gmail.com" aria-label="Email">
-          <img src="./social_media_icon/mail.png" alt="Email">
+        <a href="mailto:you@example.com" aria-label="Email">
+          <img src="https://raw.githubusercontent.com/your-user/your-repo/main/footer/social_media_icon/mail.png" alt="Email">
         </a>
-        <a href="tel:+447927452294" aria-label="Phone">
-          <img src="./social_media_icon/phone.png" alt="Phone">
+        <a href="tel:+1234567890" aria-label="Phone">
+          <img src="https://raw.githubusercontent.com/your-user/your-repo/main/footer/social_media_icon/phone.png" alt="Phone">
         </a>
-        <a href="https://www.tiktok.com/@ganesteaches" aria-label="TikTok">
-          <img src="./social_media_icon/tiktok.png" alt="TikTok">
+        <a href="https://tiktok.com/@yourprofile" aria-label="TikTok">
+          <img src="https://raw.githubusercontent.com/your-user/your-repo/main/footer/social_media_icon/tiktok.png" alt="TikTok">
         </a>
-        <a href="https://www.youtube.com/@GanesRevise" aria-label="YouTube">
-          <img src="./social_media_icon/youtube.png" alt="YouTube">
+        <a href="https://youtube.com/yourchannel" aria-label="YouTube">
+          <img src="https://raw.githubusercontent.com/your-user/your-repo/main/footer/social_media_icon/youtube.png" alt="YouTube">
         </a>
       </div>
     </div>
