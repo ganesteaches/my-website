@@ -3,20 +3,65 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Ganes Teaches Footer</title>
+  <title>Ganes Teaches</title>
+
+  <!-- === Your Global Styles === -->
   <style>
-    /* Reset body margins so footer hugs the bottom */
+    /* Reset & base */
+    *, *::before, *::after {
+      box-sizing: border-box;
+    }
     body {
       margin: 0;
       padding: 0;
       font-family: sans-serif;
-      /* if you have a page bg-color/image, it will show through */
-      background: transparent;
+      line-height: 1.5;
+      background: #f5f5f5;
+      color: #333;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
     }
 
-    /* Footer styles */
+    /* Site header/nav */
+    header {
+      background: #222;
+      color: #fff;
+      padding: 1rem;
+    }
+    nav a {
+      color: #fff;
+      text-decoration: none;
+      margin-right: 1rem;
+    }
+    nav a:hover {
+      text-decoration: underline;
+    }
+
+    /* Main content area */
+    main {
+      flex: 1 0 auto; /* push footer to bottom */
+      padding: 2rem;
+    }
+
+    /* Example button */
+    .btn {
+      display: inline-block;
+      padding: 0.75rem 1.5rem;
+      background: #007acc;
+      color: #fff;
+      text-decoration: none;
+      border-radius: 4px;
+      transition: background 0.2s ease;
+    }
+    .btn:hover {
+      background: #005fa3;
+    }
+
+    /* Transparent Footer */
     .site-footer {
-      background: transparent;  /* make it see-through */
+      flex-shrink: 0; /* keep it at bottom */
+      background: transparent;
       color: #ddd;
       padding: 1rem;
     }
@@ -56,9 +101,33 @@
 </head>
 
 <body>
-  <!-- Your page content would go here -->
 
-  <!-- Transparent Footer -->
+  <!-- ==== Header / Navigation ==== -->
+  <header>
+    <div class="nav-inner" style="max-width:1024px; margin:0 auto;">
+      <nav>
+        <a href="/">Home</a>
+        <a href="/about.html">About</a>
+        <a href="/courses.html">Courses</a>
+        <a href="/contact.html">Contact</a>
+      </nav>
+    </div>
+  </header>
+
+  <!-- ==== Main Content ==== -->
+  <main>
+    <h1>Welcome to Ganes Teaches</h1>
+    <p>This is your landing page at <code>https://www.ganesteaches.com/</code>.</p>
+
+    <!-- Example button that previously pointed at /home -->
+    <p>
+      <a href="/" class="btn">Go back to Home</a>
+    </p>
+
+    <!-- Your other page content goes here -->
+  </main>
+
+  <!-- ==== Transparent Footer ==== -->
   <footer class="site-footer">
     <div class="footer-inner">
       <p class="footer-copy">© 2022–2025 Ganes Teaches. All rights reserved.</p>
@@ -84,5 +153,6 @@
       </div>
     </div>
   </footer>
+
 </body>
 </html>
