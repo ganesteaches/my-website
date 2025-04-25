@@ -65,6 +65,30 @@
       background: transparent;
       display: block;
     }
+
+    /* === ADDITIONAL RULES TO REMOVE GREY TAP-HIGHLIGHT BOX AND DISABLE SELECTION === */
+
+    /* Disable that grey “tap highlight” on mobile/WebViews */
+    .site-footer,
+    .site-footer a,
+    .site-footer img {
+      -webkit-tap-highlight-color: transparent;
+      tap-highlight-color: transparent;
+    }
+
+    /* Prevent accidental “text selection” grey boxes */
+    .site-footer,
+    .site-footer * {
+      -webkit-user-select: none;  /* Safari/Chrome */
+      -moz-user-select: none;     /* Firefox */
+      -ms-user-select: none;      /* IE10+ */
+      user-select: none;          /* Standard */
+    }
+
+    /* Hint touch UAs that these are manipulations (not scrolling) */
+    .social-links a {
+      touch-action: manipulation;
+    }
   </style>
 </head>
 <body>
