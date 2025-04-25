@@ -2,86 +2,82 @@
 <html lang="en">
 <head>
   <meta charset="utf-8"/>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Ganes Teaches — Footer Only (Clickable Links)</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
+  <title>Footer Click Test</title>
   <style>
+    /* Whole‐page transparent background so you see it’s really the footer handling clicks */
     html, body {
       margin: 0;
       padding: 0;
       height: 100%;
       background: transparent;
-      font-family: sans-serif;
-      color: #ddd;
-      display: flex;
-      flex-direction: column;
-    }
-    main {
-      flex: 1 0 auto;
     }
 
-    /* Transparent Footer — now on top and pointer‐events guaranteed */
+    /* Dummy content so you can scroll and see the footer is always on top */
+    main {
+      height: 200vh;
+      background: #333;
+    }
+
+    /* Fixed footer always on top */
     .site-footer {
-      position: relative;
-      z-index: 999;            /* bring footer above other content */
-      pointer-events: auto;    /* ensure it can receive clicks */
-      flex-shrink: 0;
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      width: 100%;
       background: transparent;
       padding: 1rem;
+      pointer-events: auto;  /* allow clicks to reach it */
+      z-index: 1000;         /* above everything else */
     }
+
     .footer-inner {
       max-width: 1024px;
       margin: 0 auto;
       display: flex;
-      flex-wrap: wrap;
-      align-items: center;
       justify-content: space-between;
-    }
-    .footer-copy {
-      margin: 0;
+      align-items: center;
+      color: #ddd;
+      font-family: sans-serif;
       font-size: 0.9rem;
     }
 
-    /* Social-links + hover effects */
     .social-links {
       display: flex;
       gap: 0.75rem;
-      margin-top: 0.5rem;
       transition: opacity 0.2s ease;
     }
-    .social-links:hover a {
-      opacity: 0.7;
-    }
+    .social-links:hover a { opacity: 0.7; }
     .social-links a {
-      position: relative;
-      z-index: 1000;           /* and make each link clickable */
-      pointer-events: auto;    /* reinforce interactivity */
+      display: inline-block;
       width: 32px;
       height: 32px;
-      display: inline-block;
-      transition: opacity 0.2s ease, filter 0.2s ease;
-      opacity: 1;
+      pointer-events: auto;   /* make sure each link is clickable */
+      transition: filter 0.2s ease, opacity 0.2s ease;
     }
     .social-links a:hover {
-      opacity: 1 !important;
       filter: drop-shadow(0 0 6px white);
+      opacity: 1 !important;
     }
     .social-links img {
       width: 100%;
       height: auto;
-      display: block;
       background: transparent;
+      display: block;
     }
   </style>
 </head>
 <body>
 
   <main>
-    <!-- …your existing page content… -->
+    <h1 style="color:white; text-align:center; padding-top:2rem;">
+      Scroll and then click an icon in the footer below.
+    </h1>
   </main>
 
   <footer class="site-footer">
     <div class="footer-inner">
-      <p class="footer-copy">© 2022–2025 Ganes Teaches. All rights reserved.</p>
+      <span>© 2022–2025 Ganes Teaches</span>
       <div class="social-links">
         <a href="https://facebook.com/yourprofile" aria-label="Facebook">
           <img src="./social_media_icon/facebook.png" alt="Facebook">
