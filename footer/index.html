@@ -5,14 +5,14 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Ganes Teaches — Footer Demo</title>
   <style>
-    /* Ensure footer sits at bottom */
+    /* make page background transparent so footer shows it through */
     body {
       margin: 0;
       padding: 0;
       display: flex;
       flex-direction: column;
       min-height: 100vh;
-      background: #222; /* just for contrast in this demo */
+      background: transparent;
       color: #ddd;
       font-family: sans-serif;
     }
@@ -40,17 +40,14 @@
       font-size: 0.9rem;
     }
 
-    /* Social-links layout + hover effects */
+    /* Social-links */
     .social-links {
       display: flex;
       gap: 0.75rem;
       margin-top: 0.5rem;
       transition: opacity 0.2s ease;
     }
-    /* dim all when hovering any */
-    .social-links:hover a {
-      opacity: 0.7;
-    }
+    .social-links:hover a { opacity: 0.7; }
     .social-links a {
       width: 32px;
       height: 32px;
@@ -58,46 +55,46 @@
       transition: opacity 0.2s ease, filter 0.2s ease;
       opacity: 1;
     }
-    /* keep hovered full opacity + orange glow */
     .social-links a:hover {
       opacity: 1 !important;
       filter: drop-shadow(0 0 6px orange);
     }
+    /* ensure no unwanted background behind the PNGs */
     .social-links img {
+      display: block;
       width: 100%;
       height: auto;
-      display: block;
+      background: transparent;
     }
   </style>
 </head>
 <body>
 
   <main>
-    <!-- Your page content would go here -->
+    <!-- …your page content… -->
   </main>
 
-  <!-- ==== Transparent Footer ==== -->
   <footer class="site-footer">
     <div class="footer-inner">
       <p class="footer-copy">© 2022–2025 Ganes Teaches. All rights reserved.</p>
       <div class="social-links">
         <a href="https://facebook.com/yourprofile" aria-label="Facebook">
-          <img src="/social_media_icon/facebook.png" alt="Facebook">
+          <img src="social_media_icon/facebook.png" alt="Facebook">
         </a>
         <a href="https://instagram.com/yourprofile" aria-label="Instagram">
-          <img src="/social_media_icon/instagram.png" alt="Instagram">
+          <img src="social_media_icon/instagram.png" alt="Instagram">
         </a>
         <a href="mailto:ganesteaches@gmail.com" aria-label="Email">
-          <img src="/social_media_icon/mail.png" alt="Email">
+          <img src="social_media_icon/mail.png" alt="Email">
         </a>
         <a href="tel:+447927452294" aria-label="Phone">
-          <img src="/social_media_icon/phone.png" alt="Phone">
+          <img src="social_media_icon/phone.png" alt="Phone">
         </a>
         <a href="https://www.tiktok.com/@ganesteaches" aria-label="TikTok">
-          <img src="/social_media_icon/tiktok.png" alt="TikTok">
+          <img src="social_media_icon/tiktok.png" alt="TikTok">
         </a>
         <a href="https://www.youtube.com/@GanesRevise" aria-label="YouTube">
-          <img src="/social_media_icon/youtube.png" alt="YouTube">
+          <img src="social_media_icon/youtube.png" alt="YouTube">
         </a>
       </div>
     </div>
