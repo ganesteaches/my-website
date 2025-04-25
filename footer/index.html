@@ -3,65 +3,26 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Ganes Teaches</title>
-
-  <!-- === Your Global Styles === -->
+  <title>Ganes Teaches — Footer Demo</title>
   <style>
-    /* Reset & base */
-    *, *::before, *::after {
-      box-sizing: border-box;
-    }
+    /* Ensure footer sits at bottom */
     body {
       margin: 0;
       padding: 0;
-      font-family: sans-serif;
-      line-height: 1.5;
-      background: #f5f5f5;
-      color: #333;
-      min-height: 100vh;
       display: flex;
       flex-direction: column;
+      min-height: 100vh;
+      background: #222; /* just for contrast in this demo */
+      color: #ddd;
+      font-family: sans-serif;
     }
-
-    /* Site header/nav */
-    header {
-      background: #222;
-      color: #fff;
-      padding: 1rem;
-    }
-    nav a {
-      color: #fff;
-      text-decoration: none;
-      margin-right: 1rem;
-    }
-    nav a:hover {
-      text-decoration: underline;
-    }
-
-    /* Main content area */
     main {
-      flex: 1 0 auto; /* push footer to bottom */
-      padding: 2rem;
-    }
-
-    /* Example button */
-    .btn {
-      display: inline-block;
-      padding: 0.75rem 1.5rem;
-      background: #007acc;
-      color: #fff;
-      text-decoration: none;
-      border-radius: 4px;
-      transition: background 0.2s ease, box-shadow 0.2s ease;
-    }
-    .btn:hover {
-      background: #005fa3;
-      box-shadow: 0 0 8px orange;
+      flex: 1 0 auto;
     }
 
     /* Transparent Footer */
     .site-footer {
-      flex-shrink: 0; /* keep it at bottom */
+      flex-shrink: 0;
       background: transparent;
       color: #ddd;
       padding: 1rem;
@@ -78,13 +39,15 @@
       margin: 0;
       font-size: 0.9rem;
     }
+
+    /* Social-links layout + hover effects */
     .social-links {
       display: flex;
       gap: 0.75rem;
       margin-top: 0.5rem;
-      /* when hovering any icon, dim the rest */
       transition: opacity 0.2s ease;
     }
+    /* dim all when hovering any */
     .social-links:hover a {
       opacity: 0.7;
     }
@@ -95,8 +58,9 @@
       transition: opacity 0.2s ease, filter 0.2s ease;
       opacity: 1;
     }
+    /* keep hovered full opacity + orange glow */
     .social-links a:hover {
-      opacity: 1 !important; /* keep hovered icon fully opaque */
+      opacity: 1 !important;
       filter: drop-shadow(0 0 6px orange);
     }
     .social-links img {
@@ -104,39 +68,12 @@
       height: auto;
       display: block;
     }
-    @media (min-width: 480px) {
-      .social-links {
-        margin-top: 0;
-      }
-    }
   </style>
 </head>
-
 <body>
 
-  <!-- ==== Header / Navigation ==== -->
-  <header>
-    <div class="nav-inner" style="max-width:1024px; margin:0 auto;">
-      <nav>
-        <a href="/">Home</a>
-        <a href="/about.html">About</a>
-        <a href="/courses.html">Courses</a>
-        <a href="/contact.html">Contact</a>
-      </nav>
-    </div>
-  </header>
-
-  <!-- ==== Main Content ==== -->
   <main>
-    <h1>Welcome to Ganes Teaches</h1>
-    <p>This is your landing page at <code>https://www.ganesteaches.com/</code>.</p>
-
-    <!-- Example button that previously pointed at /home -->
-    <p>
-      <a href="/" class="btn">Go back to Home</a>
-    </p>
-
-    <!-- Your other page content goes here -->
+    <!-- Your page content would go here -->
   </main>
 
   <!-- ==== Transparent Footer ==== -->
