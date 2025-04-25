@@ -52,10 +52,11 @@
       color: #fff;
       text-decoration: none;
       border-radius: 4px;
-      transition: background 0.2s ease;
+      transition: background 0.2s ease, box-shadow 0.2s ease;
     }
     .btn:hover {
       background: #005fa3;
+      box-shadow: 0 0 8px orange;
     }
 
     /* Transparent Footer */
@@ -81,11 +82,22 @@
       display: flex;
       gap: 0.75rem;
       margin-top: 0.5rem;
+      /* when hovering any icon, dim the rest */
+      transition: opacity 0.2s ease;
+    }
+    .social-links:hover a {
+      opacity: 0.7;
     }
     .social-links a {
       width: 32px;
       height: 32px;
       display: inline-block;
+      transition: opacity 0.2s ease, filter 0.2s ease;
+      opacity: 1;
+    }
+    .social-links a:hover {
+      opacity: 1 !important; /* keep hovered icon fully opaque */
+      filter: drop-shadow(0 0 6px orange);
     }
     .social-links img {
       width: 100%;
