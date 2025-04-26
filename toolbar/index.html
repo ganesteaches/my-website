@@ -1,220 +1,123 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<title>Ganes Assess – Animated Hexagon</title>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+
+<title>Subject Ring – Hover Mathematics</title>
 
 <style>
-:root{
-  --r1:     230px;  /* radius to subject icons           */
-  --r2:     320px;  /* radius to GCSE / A-Level / IB ring */
-  --icon:   100px;  /* subject-icon diameter             */
-  --bubble:  70px;  /* qualification-bubble diameter     */
-}
-
-/* ---------- reset ---------- */
-*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
-html,body{width:100%;height:100%}
+/* ---------- Base ---------- */
+*,*::before,*::after{box-sizing:border-box}
 body{
-  display:flex;align-items:center;justify-content:center;
-  background:#1a1a1a;
-  font-family:system-ui,sans-serif;
-  color:#e2e8f0;
+  margin:0;
+  min-height:100vh;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  background:#0d0d0f;
+  font-family:system-ui,"Segoe UI",sans-serif;
+  color:#fff;
 }
 
-#chart{position:relative;width:900px;height:900px}
-
-/* ---------- centre logo ---------- */
-#centre{
-  position:absolute;top:50%;left:50%;
-  width:190px;height:190px;
-  transform:translate(-50%,-50%);
-  border-radius:50%;overflow:hidden;
-  filter:drop-shadow(0 0 16px rgba(56,189,248,.35));
+/* ---------- Ring layout ---------- */
+.subject-ring{
+  position:relative;
+  width:430px;          /* overall diameter                       */
+  aspect-ratio:1/1;     /* keeps it perfectly square              */
+  --radius:185px;       /* distance from centre to each subject   */
 }
-#centre img{width:100%;height:100%;object-fit:cover}
 
-/* ---------- subject circles ---------- */
-.node{
-  position:absolute;left:50%;top:50%;
-  width:var(--icon);height:var(--icon);
-  border-radius:50%;overflow:hidden;
-  border:3px solid #e2e8f0;
-  background:#1a1a1a;
-  cursor:pointer;z-index:1;
-
-  display:flex;align-items:center;justify-content:center;
-
-  transform:translate(-50%,-50%);          /* updated later by JS */
-  will-change:transform,opacity;
-  transition:transform 1.6s ease-out,opacity 1.6s ease-out;
-  opacity:0;
-}
-.node img{width:70%;height:70%;object-fit:contain}
-
-.science{filter:drop-shadow(0 0 14px #fb923c)}
-.maths  {filter:drop-shadow(0 0 14px #60a5fa)}
-.misc   {filter:drop-shadow(0 0 14px #a855f7)}
-
-/* ---------- qualification bubbles ---------- */
-.bubble{
-  position:absolute;display:flex;align-items:center;justify-content:center;
-  width:var(--bubble);height:var(--bubble);
+.subject{
+  position:absolute;
+  top:50%; left:50%;
+  width:110px;          /* node diameter                          */
+  aspect-ratio:1/1;
+  padding:6px;
   border-radius:50%;
-  background:#1a1a1a;border:2px solid #64748b;
-  font-size:13px;font-weight:600;color:#e2e8f0;text-decoration:none;
-  opacity:0;pointer-events:none;z-index:2;
-  transition:opacity .35s,transform .35s;
+  background:#111;
+  border:3px solid #ffffff22;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  justify-content:center;
+  text-decoration:none;
+  color:#fff;
+  transition:transform .25s ease;  /* enables smooth shrinking */
+  
+  /* Halo */
+  --glow:#66aaff;
 }
-.bubble.show   {opacity:1;pointer-events:auto;}
-.bubble.shrink {transform:scale(.67);}   /* ← 33 % smaller */
+.subject::before{
+  content:"";
+  position:absolute; inset:-4px;
+  border-radius:50%;
+  background:radial-gradient(circle at center,transparent 55%,var(--glow) 58%,transparent 65%);
+  opacity:.8;
+  filter:blur(8px);
+  pointer-events:none;
+}
 
-/* ---------- hexagon outline ---------- */
-svg{position:absolute;inset:0;pointer-events:none}
-polygon{stroke:#64748b;stroke-width:3;fill:none;opacity:.5;
-        transition:stroke-dashoffset 2s ease-out}
+/* icon & label */
+.subject img{max-width:60%;height:auto;margin-bottom:4px}
+.subject span{font-size:.85rem}
+
+/* ---------- Position the six nodes around a circle ---------- */
+.subject{
+  --base-xform:rotate(var(--angle)) translate(var(--radius)) rotate(calc(-1*var(--angle)));
+  transform:var(--base-xform);
+}
+.subject:nth-child(1){--angle:   0deg; --glow:#6ab3ff} /* Mathematics   */
+.subject:nth-child(2){--angle:  60deg; --glow:#ff9966} /* Biology       */
+.subject:nth-child(3){--angle: 120deg; --glow:#ffdd66} /* Chemistry     */
+.subject:nth-child(4){--angle: 180deg; --glow:#66ffcc} /* Physics       */
+.subject:nth-child(5){--angle: 240deg; --glow:#c266ff} /* Misc          */
+.subject:nth-child(6){--angle: 300deg; --glow:#66b7ff} /* Further Maths */
+
+/* ---------- Shrink *other* nodes while Mathematics is hovered ---------- */
+.subject-ring:has(.maths:hover) .subject:not(.maths){
+  transform:var(--base-xform) scale(.9);   /* 10 % smaller */
+}
+
+/* ---------- Accessibility: keyboard focus ---------- */
+.subject:focus-visible{
+  outline:4px solid #ffd580;
+  outline-offset:4px;
+}
 </style>
 </head>
+
 <body>
+  <div class="subject-ring">
+    <a href="#" class="subject maths">
+      <img src="mathematics_icon.png" alt=""/>
+      <span>Mathematics</span>
+    </a>
 
-<div id="chart">
-  <svg id="outline"></svg>
+    <a href="#" class="subject biology">
+      <img src="biology_icon.png" alt=""/>
+      <span>Biology</span>
+    </a>
 
-  <a id="centre" href="https://www.ganesteaches.com/ganes-assess"
-     target="_blank" rel="noopener">
-    <img src="../ganes_assess.png" alt="Ganes Assess">
-  </a>
-</div>
+    <a href="#" class="subject chemistry">
+      <img src="chemistry_icon.png" alt=""/>
+      <span>Chemistry</span>
+    </a>
 
-<script>
-(function(){
-  const BASE = "https://www.ganesteaches.com/ganes-assess";
-  const subjects = [
-    {label:"Biology",       key:"biology",            icon:"../biology_list_icon.png",             cls:"science", angle:150},
-    {label:"Chemistry",     key:"chemistry",          icon:"../chemistry_list_icon.png",           cls:"science", angle: 90},
-    {label:"Physics",       key:"physics",            icon:"../physics_list_icon.png",             cls:"science", angle: 30},
-    {label:"Mathematics",   key:"mathematics",        icon:"../mathematics_list_icon.png",         cls:"maths",   angle:210},
-    {label:"Further Maths", key:"further-mathematics",icon:"../further_mathematics_list_icon.png", cls:"maths",   angle:270},
-    {label:"Misc",          key:"misc",               icon:"../physics_list_icon.png",             cls:"misc",    angle:330}
-  ];
-  const quals = ["GCSE","A Level","IB"];
+    <a href="#" class="subject physics">
+      <img src="physics_icon.png" alt=""/>
+      <span>Physics</span>
+    </a>
 
-  const chart = document.getElementById("chart");
-  const svg   = document.getElementById("outline");
-  const R1    = parseFloat(getComputedStyle(document.documentElement).getPropertyValue("--r1"));
-  const R2    = parseFloat(getComputedStyle(document.documentElement).getPropertyValue("--r2"));
-  const BUB   = parseFloat(getComputedStyle(document.documentElement).getPropertyValue("--bubble"));
-  const cx    = chart.clientWidth  / 2;
-  const cy    = chart.clientHeight / 2;
+    <a href="#" class="subject misc">
+      <img src="misc_icon.png" alt=""/>
+      <span>Misc</span>
+    </a>
 
-  let activeNode = null;
-
-  function hideAllBubbles(){
-    subjects.forEach(s=>s.bubbles.forEach(b=>b.classList.remove("show","shrink")));
-  }
-
-  subjects.forEach(sub=>{
-    /* ---- position on inner ring ---- */
-    const rad = sub.angle*Math.PI/180;
-    const vx  = cx + R1*Math.cos(rad);
-    const vy  = cy + R1*Math.sin(rad);
-    sub.tx = vx - cx;
-    sub.ty = vy - cy;
-
-    /* ---- subject circle ---- */
-    const node = document.createElement("div");
-    node.className = `node ${sub.cls}`;
-    node.innerHTML = `<img src="${sub.icon}" alt="${sub.label}">`;
-    chart.appendChild(node);
-    sub.el = node;
-
-    /* ---- qualification bubbles ---- */
-    sub.bubbles = quals.map((q,i)=>{
-      const off = -30 + i*30;
-      const br  = (sub.angle+off)*Math.PI/180;
-      const bx  = cx + R2*Math.cos(br);
-      const by  = cy + R2*Math.sin(br);
-      const a   = document.createElement("a");
-      a.className   = "bubble";
-      a.textContent = q;
-      a.href        = `${BASE}/${sub.key}/${q.toLowerCase().replace(/\s+/g,"-")}`;
-      a.target="_blank"; a.rel="noopener";
-      a.style.left  = `${bx-BUB/2}px`;
-      a.style.top   = `${by-BUB/2}px`;
-      chart.appendChild(a);
-
-      /* keep visible when directly hovered */
-      a.addEventListener("mouseenter",()=>a.classList.add("show"));
-      a.addEventListener("mouseleave",()=>{
-        if(activeNode!==node) a.classList.remove("show");
-      });
-
-      return a;
-    });
-
-    /* ---- hover behaviour ---- */
-    node.addEventListener("mouseenter",()=>{
-      hideAllBubbles();
-      subjects.forEach(s=>{
-        if(s!==sub){
-          s.el.style.opacity = 0.3;              // dim others
-          s.bubbles.forEach(b=>b.classList.add("shrink"));
-        }
-      });
-      sub.bubbles.forEach(b=>b.classList.add("show"));
-    });
-
-    node.addEventListener("mouseleave",()=>{
-      subjects.forEach(s=>{
-        s.el.style.opacity = 1;
-        s.bubbles.forEach(b=>b.classList.remove("shrink"));
-      });
-    });
-
-    /* ---- click toggles persistent bubbles ---- */
-    node.addEventListener("click",()=>{
-      if(activeNode===node){
-        hideAllBubbles();
-        activeNode=null;
-      }else{
-        hideAllBubbles();
-        activeNode=node;
-        sub.bubbles.forEach(b=>b.classList.add("show"));
-      }
-    });
-  });
-
-  /* ---- hexagon outline ---- */
-  const verts = subjects.map(s=>({
-      angle:s.angle,
-      x:cx + R1*Math.cos(s.angle*Math.PI/180),
-      y:cy + R1*Math.sin(s.angle*Math.PI/180)
-    }))
-    .sort((a,b)=>a.angle-b.angle);
-
-  const pts = verts.map(v=>`${v.x},${v.y}`).join(" ");
-  svg.setAttribute("viewBox",`0 0 ${chart.clientWidth} ${chart.clientHeight}`);
-  const poly = document.createElementNS("http://www.w3.org/2000/svg","polygon");
-  poly.setAttribute("points",pts);
-  svg.appendChild(poly);
-
-  const per = verts.reduce((len,v,i)=>{
-    const n = verts[(i+1)%verts.length];
-    return len + Math.hypot(n.x-v.x,n.y-v.y);
-  },0);
-  poly.style.strokeDasharray  = per;
-  poly.style.strokeDashoffset = per;
-
-  /* ---- entrance animation ---- */
-  requestAnimationFrame(()=>{
-    poly.style.strokeDashoffset = 0;
-    subjects.forEach(s=>{
-      s.el.style.transform =
-        `translate(-50%, -50%) translate(${s.tx}px, ${s.ty}px)`;
-      s.el.style.opacity = 1;
-    });
-  });
-})();
-</script>
+    <a href="#" class="subject further">
+      <img src="further_math_icon.png" alt=""/>
+      <span>Further&nbsp;Maths</span>
+    </a>
+  </div>
 </body>
 </html>
