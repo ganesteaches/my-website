@@ -1,231 +1,227 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<title>Ganes Primers – Animated Hexagon</title>
+  <meta charset="UTF-8">
+  <title>Ganes Primers – Animated Hexagon</title>
 
-<style>
-:root{
-  --r1:     230px;
-  --r2:     320px;
-  --icon:   100px;
-  --bubble:  70px;
-}
+  <style>
+    :root{
+      --r1:     230px;  /* radius to subject icons            */
+      --r2:     320px;  /* radius to GCSE / A-Level / IB ring  */
+      --icon:   100px;  /* subject-icon diameter               */
+      --bubble:  70px;  /* qualification-bubble diameter       */
+    }
 
-/* reset ----------------------------------------------------------------*/
-*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
-html,body{width:100%;height:100%}
-body{display:flex;align-items:center;justify-content:center;
-     background:#1a1a1a;font-family:system-ui,sans-serif;color:#e2e8f0;}
+    /* reset -----------------------------------------------------------*/
+    *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+    html,body{width:100%;height:100%}
+    body{
+      display:flex;align-items:center;justify-content:center;
+      background:#1a1a1a;font-family:system-ui,sans-serif;color:#e2e8f0;
+    }
 
-#chart{position:relative;width:900px;height:900px}
+    #chart{position:relative;width:900px;height:900px}
 
-/* centre logo ----------------------------------------------------------*/
-#centre{position:absolute;top:50%;left:50%;width:190px;height:190px;
-        transform:translate(-50%,-50%);border-radius:50%;overflow:hidden;
-        filter:drop-shadow(0 0 16px rgba(56,189,248,.35));}
-#centre img{width:100%;height:100%;object-fit:cover}
+    /* centre logo -----------------------------------------------------*/
+    #centre{position:absolute;top:50%;left:50%;width:190px;height:190px;
+      transform:translate(-50%, -50%);border-radius:50%;overflow:hidden;
+      filter:drop-shadow(0 0 16px rgba(56,189,248,.35));}
+    #centre img{width:100%;height:100%;object-fit:cover}
 
-/* subject circles ------------------------------------------------------*/
-.node{
-  position:absolute;left:50%;top:50%;
-  width:var(--icon);height:var(--icon);
-  border-radius:50%;overflow:visible;border:3px solid #e2e8f0;
-  background:#1a1a1a;cursor:pointer;z-index:1;
-  display:flex;align-items:center;justify-content:center;
-  transform:translate(-50%, -50%);
-  will-change:transform,opacity;
-  transition:transform 4s cubic-bezier(.23,1,.32,1),
-             opacity   3s cubic-bezier(.23,1,.32,1);
-  opacity:0;
-}
-.node img{width:70%;height:70%;object-fit:contain;border-radius:50%;}
+    /* subject circles -------------------------------------------------*/
+    .node{
+      position:absolute;left:50%;top:50%;width:var(--icon);height:var(--icon);
+      border-radius:50%;overflow:visible;border:3px solid #e2e8f0; /* labels */
+      background:#1a1a1a;cursor:pointer;z-index:1;
+      display:flex;align-items:center;justify-content:center;
+      transform:translate(-50%, -50%);
+      will-change:transform,opacity;
+      transition:transform 3s cubic-bezier(.23,1,.32,1),
+                 opacity   3s cubic-bezier(.23,1,.32,1);
+      opacity:0;
+    }
+    .node img{width:70%;height:70%;object-fit:contain;border-radius:50%;}
 
-/* labels ---------------------------------------------------------------*/
-.label{
-  position:absolute;top:calc(100% + 8px);left:50%;
-  transform:translateX(-50%);
-  font-size:15px;font-weight:600;color:#e2e8f0;white-space:nowrap;
-  pointer-events:none;opacity:0;transition:opacity .2s;
-}
-/* only Chemistry gets .top, moving it above the icon */
-.label.top{top:auto;bottom:calc(100% + 8px);}   /* NEW */
+    /* labels ----------------------------------------------------------*/
+    .label{
+      position:absolute;top:calc(100% + 8px);left:50%;
+      transform:translateX(-50%);
+      font-size:15px;font-weight:600;color:#e2e8f0;white-space:nowrap;
+      pointer-events:none;opacity:0;transition:opacity .2s;
+    }
+    .label.top{top:auto;bottom:calc(100% + 8px);}  /* chemistry above */
+    .node:hover .label,
+    .node.active .label{opacity:1;}
 
-.node:hover .label,
-.node.active .label{opacity:1;}
+    .science{filter:drop-shadow(0 0 14px #fb923c)}
+    .maths  {filter:drop-shadow(0 0 14px #60a5fa)}
+    .misc   {filter:drop-shadow(0 0 14px #a855f7)}
 
-.science{filter:drop-shadow(0 0 14px #fb923c)}
-.maths  {filter:drop-shadow(0 0 14px #60a5fa)}
-.misc   {filter:drop-shadow(0 0 14px #a855f7)}
+    /* qualification bubbles ------------------------------------------*/
+    .bubble{
+      position:absolute;display:flex;align-items:center;justify-content:center;
+      width:var(--bubble);height:var(--bubble);
+      border-radius:50%;background:#1a1a1a;border:2px solid #64748b;
+      font-size:13px;font-weight:600;color:#e2e8f0;text-decoration:none;
+      opacity:0;pointer-events:none;z-index:2;
+      transition:opacity .35s,transform .35s;
+    }
+    .bubble.show   {opacity:1;pointer-events:auto;}
+    .bubble.shrink {transform:scale(.67);}
 
-/* qualification bubbles ------------------------------------------------*/
-.bubble{
-  position:absolute;display:flex;align-items:center;justify-content:center;
-  width:var(--bubble);height:var(--bubble);
-  border-radius:50%;background:#1a1a1a;border:2px solid #64748b;
-  font-size:13px;font-weight:600;color:#e2e8f0;text-decoration:none;
-  opacity:0;pointer-events:none;z-index:2;
-  transition:opacity .35s,transform .35s;
-}
-.bubble.show   {opacity:1;pointer-events:auto;}
-.bubble.shrink {transform:scale(.67);}
-
-/* hexagon outline ------------------------------------------------------*/
-svg{position:absolute;inset:0;pointer-events:none}
-polygon{stroke:#64748b;stroke-width:3;fill:none;opacity:.5;
-        transition:stroke-dashoffset 3.5s cubic-bezier(.23,1,.32,1);}
-</style>
+    /* hexagon outline (now on z-index 2 so it’s never hidden) ---------*/
+    svg{position:absolute;inset:0;pointer-events:none;z-index:2;}
+    polygon{stroke:#64748b;stroke-width:3;fill:none;opacity:.5;
+            transition:stroke-dashoffset 3s cubic-bezier(.23,1,.32,1);}
+  </style>
 </head>
 <body>
 
-<div id="chart">
-  <svg id="outline"></svg>
+  <div id="chart">
+    <svg id="outline"></svg>
 
-  <a id="centre" href="https://www.ganesteaches.com/ganes-primers"
-     target="_blank" rel="noopener">
-    <img src="../ganes_primers.png" alt="Ganes Primers">
-  </a>
-</div>
+    <a id="centre" href="https://www.ganesteaches.com/ganes-primers"
+       target="_blank" rel="noopener">
+      <img src="../ganes_primers.png" alt="Ganes Primers">
+    </a>
+  </div>
 
-<script>
-(function(){
-  const BASE        = "https://www.ganesteaches.com/ganes-primers";
-  const NODE_SHRINK = 0.85;
-  const subjects = [
-    {label:"Biology",       key:"biology",            icon:"../biology_list_icon.png",             cls:"science", angle:150},
-    {label:"Chemistry",     key:"chemistry",          icon:"../chemistry_list_icon.png",           cls:"science", angle: 90},
-    {label:"Physics",       key:"physics",            icon:"../physics_list_icon.png",             cls:"science", angle: 30},
-    {label:"Mathematics",   key:"mathematics",        icon:"../mathematics_list_icon.png",         cls:"maths",   angle:210},
-    {label:"Further Maths", key:"further-mathematics",icon:"../further_mathematics_list_icon.png", cls:"maths",   angle:270},
-    {label:"Misc",          key:"misc",               icon:"../physics_list_icon.png",             cls:"misc",    angle:330}
-  ];
-  const quals = ["GCSE","A Level","IB"];
+  <script>
+  (function(){
+    const BASE        = 'https://www.ganesteaches.com/ganes-primers';
+    const NODE_SHRINK = 0.85;
 
-  const chart = document.getElementById("chart");
-  const svg   = document.getElementById("outline");
+    const subjects = [
+      {label:'Biology',       key:'biology',             icon:'../front_biology_list_icon.png',             cls:'science', angle:150},
+      {label:'Chemistry',     key:'chemistry',           icon:'../front_chemistry_list_icon.png',           cls:'science', angle: 90},
+      {label:'Physics',       key:'physics',             icon:'../front_physics_list_icon.png',             cls:'science', angle: 30},
+      {label:'Mathematics',   key:'mathematics',         icon:'../front_mathematics_list_icon.png',         cls:'maths',   angle:210},
+      {label:'Further Maths', key:'further-mathematics', icon:'../front_further_mathematics_list_icon.png', cls:'maths',   angle:270},
+      {label:'Misc',          key:'misc',                icon:'../front_physics_list_icon.png',             cls:'misc',    angle:330}
+    ];
+    const quals = ['GCSE','A Level','IB'];
 
-  const R1  = parseFloat(getComputedStyle(document.documentElement).getPropertyValue("--r1"));
-  const R2  = parseFloat(getComputedStyle(document.documentElement).getPropertyValue("--r2"));
-  const BUB = parseFloat(getComputedStyle(document.documentElement).getPropertyValue("--bubble"));
-  const cx  = chart.clientWidth /2;
-  const cy  = chart.clientHeight/2;
+    const chart = document.getElementById('chart');
+    const svg   = document.getElementById('outline');
 
-  let activeNode = null;
+    const R1  = parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--r1'));
+    const R2  = parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--r2'));
+    const BUB = parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--bubble'));
 
-  function setNodeTransform(sub, scale=1){
-    sub.el.style.transform =
-      `translate(-50%, -50%) translate(${sub.tx}px, ${sub.ty}px) scale(${scale})`;
-  }
-  function hideAllBubbles(){
-    subjects.forEach(s=>s.bubbles.forEach(b=>b.classList.remove("show","shrink")));
-  }
+    const cx  = chart.clientWidth / 2;
+    const cy  = chart.clientHeight/ 2;
 
-  /* build graph --------------------------------------------------------*/
-  subjects.forEach(sub=>{
-    /* position */
-    const rad = sub.angle*Math.PI/180;
-    const vx  = cx + R1*Math.cos(rad);
-    const vy  = cy + R1*Math.sin(rad);
-    sub.tx = vx - cx;
-    sub.ty = vy - cy;
+    let activeNode = null;
 
-    /* subject node */
-    const node = document.createElement("div");
-    node.className = `node ${sub.cls}`;
-    node.innerHTML = `
-      <img src="${sub.icon}" alt="${sub.label}">
-      <span class="label${sub.key==='chemistry' ? ' top' : ''}">${sub.label}</span>`;
-    chart.appendChild(node);
-    sub.el = node;
+    function setNodeTransform(sub, scale=1){
+      sub.el.style.transform =
+        `translate(-50%, -50%) translate(${sub.tx}px, ${sub.ty}px) scale(${scale})`;
+    }
+    function hideAllBubbles(){
+      subjects.forEach(s=>s.bubbles.forEach(b=>b.classList.remove('show','shrink')));
+    }
 
-    /* bubbles */
-    sub.bubbles = quals.map((q,i)=>{
-      const off=-30+i*30;
-      const br =(sub.angle+off)*Math.PI/180;
-      const bx =cx+R2*Math.cos(br);
-      const by =cy+R2*Math.sin(br);
-      const a  = document.createElement("a");
-      a.className="bubble";
-      a.textContent=q;
-      a.href=`${BASE}/${sub.key}/${q.toLowerCase().replace(/\s+/g,"-")}`;
-      a.target="_blank";a.rel="noopener";
-      a.style.left=`${bx-BUB/2}px`;
-      a.style.top =`${by-BUB/2}px`;
-      chart.appendChild(a);
+    /* build graph -----------------------------------------------------*/
+    subjects.forEach(sub=>{
+      const rad = sub.angle*Math.PI/180;
+      const vx  = cx + R1*Math.cos(rad);
+      const vy  = cy + R1*Math.sin(rad);
+      sub.tx = vx - cx;
+      sub.ty = vy - cy;
 
-      a.addEventListener("mouseenter",()=>{
-        a.classList.add("show");
-        sub.bubbles.forEach(b=>{ if(b!==a) b.classList.add("shrink"); });
+      const node = document.createElement('div');
+      node.className = `node ${sub.cls}`;
+      node.innerHTML = `
+        <img src="${sub.icon}" alt="${sub.label}">
+        <span class="label${sub.key==='chemistry' ? ' top' : ''}">${sub.label}</span>`;
+      chart.appendChild(node);
+      sub.el = node;
+
+      sub.bubbles = quals.map((q,i)=>{
+        const off=-30+i*30;
+        const br =(sub.angle+off)*Math.PI/180;
+        const bx =cx+R2*Math.cos(br);
+        const by =cy+R2*Math.sin(br);
+
+        const a  = document.createElement('a');
+        a.className='bubble';
+        a.textContent=q;
+        a.href=`${BASE}/${sub.key}/${q.toLowerCase().replace(/\\s+/g,'-')}`;
+        a.target='_blank';a.rel='noopener';
+        a.style.left=`${bx-BUB/2}px`;
+        a.style.top =`${by-BUB/2}px`;
+        chart.appendChild(a);
+
+        a.addEventListener('mouseenter',()=>{
+          a.classList.add('show');
+          sub.bubbles.forEach(b=>{ if(b!==a) b.classList.add('shrink'); });
+        });
+        a.addEventListener('mouseleave',()=>{
+          sub.bubbles.forEach(b=>b.classList.remove('shrink'));
+          if(activeNode!==node) a.classList.remove('show');
+        });
+        return a;
       });
-      a.addEventListener("mouseleave",()=>{
-        sub.bubbles.forEach(b=>b.classList.remove("shrink"));
-        if(activeNode!==node) a.classList.remove("show");
-      });
-      return a;
-    });
 
-    /* hover effects ----------------------------------------------------*/
-    node.addEventListener("mouseenter",()=>{
-      hideAllBubbles();
-      subjects.forEach(s=>{
-        if(s!==sub){
-          s.el.style.opacity=0.3;
-          setNodeTransform(s,NODE_SHRINK);
-          s.bubbles.forEach(b=>b.classList.add("shrink"));
+      node.addEventListener('mouseenter',()=>{
+        hideAllBubbles();
+        subjects.forEach(s=>{
+          if(s!==sub){
+            s.el.style.opacity=0.3;
+            setNodeTransform(s,NODE_SHRINK);
+            s.bubbles.forEach(b=>b.classList.add('shrink'));
+          }
+        });
+        sub.bubbles.forEach(b=>b.classList.add('show'));
+      });
+
+      node.addEventListener('mouseleave',()=>{
+        subjects.forEach(s=>{
+          s.el.style.opacity=1;
+          setNodeTransform(s,1);
+          s.bubbles.forEach(b=>b.classList.remove('shrink'));
+        });
+      });
+
+      node.addEventListener('click',()=>{
+        if(activeNode===node){
+          hideAllBubbles();node.classList.remove('active');activeNode=null;
+        }else{
+          hideAllBubbles();
+          if(activeNode) activeNode.classList.remove('active');
+          activeNode=node;node.classList.add('active');
+          sub.bubbles.forEach(b=>b.classList.add('show'));
         }
       });
-      sub.bubbles.forEach(b=>b.classList.add("show"));
     });
 
-    node.addEventListener("mouseleave",()=>{
+    /* hexagon outline -------------------------------------------------*/
+    const verts = subjects.map(s=>({
+        angle:s.angle,
+        x:cx+R1*Math.cos(s.angle*Math.PI/180),
+        y:cy+R1*Math.sin(s.angle*Math.PI/180)
+      })).sort((a,b)=>a.angle-b.angle);
+
+    svg.setAttribute('viewBox',`0 0 ${chart.clientWidth} ${chart.clientHeight}`);
+    const poly = document.createElementNS('http://www.w3.org/2000/svg','polygon');
+    poly.setAttribute('points',verts.map(v=>`${v.x},${v.y}`).join(' '));
+    svg.appendChild(poly);
+
+    const per = verts.reduce((d,v,i)=>{
+      const n=verts[(i+1)%verts.length];
+      return d+Math.hypot(n.x-v.x,n.y-v.y);
+    },0);
+    poly.style.strokeDasharray=per;
+    poly.style.strokeDashoffset=per;
+
+    requestAnimationFrame(()=>{
+      poly.style.strokeDashoffset=0;
       subjects.forEach(s=>{
-        s.el.style.opacity=1;
         setNodeTransform(s,1);
-        s.bubbles.forEach(b=>b.classList.remove("shrink"));
+        s.el.style.opacity=1;
       });
     });
-
-    /* click lock-in ----------------------------------------------------*/
-    node.addEventListener("click",()=>{
-      if(activeNode===node){
-        hideAllBubbles();node.classList.remove("active");activeNode=null;
-      }else{
-        hideAllBubbles();
-        if(activeNode) activeNode.classList.remove("active");
-        activeNode=node;node.classList.add("active");
-        sub.bubbles.forEach(b=>b.classList.add("show"));
-      }
-    });
-  });
-
-  /* hexagon outline ----------------------------------------------------*/
-  const verts = subjects.map(s=>({
-      angle:s.angle,
-      x:cx+R1*Math.cos(s.angle*Math.PI/180),
-      y:cy+R1*Math.sin(s.angle*Math.PI/180)
-    })).sort((a,b)=>a.angle-b.angle);
-
-  svg.setAttribute("viewBox",`0 0 ${chart.clientWidth} ${chart.clientHeight}`);
-  const poly = document.createElementNS("http://www.w3.org/2000/svg","polygon");
-  poly.setAttribute("points",verts.map(v=>`${v.x},${v.y}`).join(" "));
-  svg.appendChild(poly);
-
-  const per = verts.reduce((len,v,i)=>{
-    const n=verts[(i+1)%verts.length];
-    return len+Math.hypot(n.x-v.x,n.y-v.y);
-  },0);
-  poly.style.strokeDasharray=per;
-  poly.style.strokeDashoffset=per;
-
-  /* entrance animation -------------------------------------------------*/
-  requestAnimationFrame(()=>{
-    poly.style.strokeDashoffset=0;
-    subjects.forEach(s=>{
-      setNodeTransform(s,1);
-      s.el.style.opacity=1;
-    });
-  });
-})();
-</script>
+  })();
+  </script>
 </body>
 </html>
