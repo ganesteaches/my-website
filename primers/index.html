@@ -7,9 +7,9 @@
   <style>
     :root{
       --r1:     230px;  /* radius to subject icons            */
-      --r2:     320px;  /* radius to GCSE / A‑Level / IB ring  */
-      --icon:   100px;  /* subject‑icon diameter               */
-      --bubble:  70px;  /* qualification‑bubble diameter       */
+      --r2:     320px;  /* radius to GCSE / A-Level / IB ring  */
+      --icon:   100px;  /* subject-icon diameter               */
+      --bubble:  70px;  /* qualification-bubble diameter       */
     }
 
     /* reset -----------------------------------------------------------*/
@@ -25,13 +25,13 @@
     /* centre logo -----------------------------------------------------*/
     #centre{position:absolute;top:50%;left:50%;width:190px;height:190px;
       transform:translate(-50%, -50%);border-radius:50%;overflow:hidden;
-      filter:drop-shadow(0 0 16px rgba(56,189,248,.35));will-change:filter;}
+      filter:drop-shadow(0 0 16px rgba(56,189,248,.35));}
     #centre img{width:100%;height:100%;object-fit:cover}
 
     /* subject circles -------------------------------------------------*/
     .node{
       position:absolute;left:50%;top:50%;width:var(--icon);height:var(--icon);
-      border-radius:50%;overflow:hidden;border:3px solid #e2e8f0;
+      border-radius:50%;overflow:visible;border:3px solid #e2e8f0; /* key change */
       background:#1a1a1a;cursor:pointer;z-index:1;
       display:flex;align-items:center;justify-content:center;
       transform:translate(-50%, -50%);
@@ -90,7 +90,7 @@
   <script>
   (function(){
     const BASE        = 'https://www.ganesteaches.com/ganes-primers';
-    const NODE_SHRINK = 0.85;   // scale for non‑focused nodes
+    const NODE_SHRINK = 0.85;
 
     const subjects = [
       {label:'Biology',       key:'biology',             icon:'../front_biology_list_icon.png',             cls:'science', angle:150},
@@ -124,14 +124,12 @@
 
     /* build graph -----------------------------------------------------*/
     subjects.forEach(sub=>{
-      // position
       const rad = sub.angle*Math.PI/180;
       const vx  = cx + R1*Math.cos(rad);
       const vy  = cy + R1*Math.sin(rad);
       sub.tx = vx - cx;
       sub.ty = vy - cy;
 
-      // subject node
       const node = document.createElement('div');
       node.className = `node ${sub.cls}`;
       node.innerHTML = `
@@ -140,7 +138,6 @@
       chart.appendChild(node);
       sub.el = node;
 
-      // qualification bubbles
       sub.bubbles = quals.map((q,i)=>{
         const off=-30+i*30;
         const br =(sub.angle+off)*Math.PI/180;
@@ -150,7 +147,7 @@
         const a  = document.createElement('a');
         a.className='bubble';
         a.textContent=q;
-        a.href=`${BASE}/${sub.key}/${q.toLowerCase().replace(/\s+/g,'-')}`;
+        a.href=`${BASE}/${sub.key}/${q.toLowerCase().replace(/\\s+/g,'-')}`;
         a.target='_blank';a.rel='noopener';
         a.style.left=`${bx-BUB/2}px`;
         a.style.top =`${by-BUB/2}px`;
@@ -167,7 +164,6 @@
         return a;
       });
 
-      // hover effects --------------------------------------------------
       node.addEventListener('mouseenter',()=>{
         hideAllBubbles();
         subjects.forEach(s=>{
@@ -188,7 +184,6 @@
         });
       });
 
-      // click lock‑in --------------------------------------------------
       node.addEventListener('click',()=>{
         if(activeNode===node){
           hideAllBubbles();node.classList.remove('active');activeNode=null;
@@ -220,7 +215,6 @@
     poly.style.strokeDasharray=per;
     poly.style.strokeDashoffset=per;
 
-    /* entrance animation ----------------------------------------------*/
     requestAnimationFrame(()=>{
       poly.style.strokeDashoffset=0;
       subjects.forEach(s=>{
