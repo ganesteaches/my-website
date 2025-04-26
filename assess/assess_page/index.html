@@ -6,13 +6,14 @@
 
 <style>
 :root{
-  --r1:     230px;   /* distance from centre to subject icons          */
-  --r2:     320px;   /* distance from centre to qualification bubbles  */
-  --icon:   100px;   /* diameter of subject icons                      */
-  --bubble:  70px;   /* diameter of qualification bubbles              */
+  --r1:     230px;   /* centre → subject icons                       */
+  --r2:     320px;   /* centre → qualification bubbles               */
+  --icon:   100px;   /* diameter of the six subject icons            */
+  --bubble:  70px;   /* diameter of the GCSE / A-level / IB bubbles  */
+  --centre: 150px;   /* ⬅︎ central logo diameter –- change me!       */
 }
 
-/* ── reset ──────────────────────────────────────────────────────────── */
+/* ── reset ────────────────────────────────────────────────────────── */
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
 html,body{width:100%;height:100%}
 body{
@@ -22,14 +23,13 @@ body{
 
 #chart{position:relative;width:900px;height:900px}
 
-/* ── central logo + glow ────────────────────────────────────────────── */
-/* wrapper provides the glow with box-shadow (works in all browsers)    */
+/* ── central logo + glow ──────────────────────────────────────────── */
 #centre-wrapper{
   position:absolute;top:50%;left:50%;
-  width:190px;height:190px;
+  width:var(--centre);height:var(--centre);
   transform:translate(-50%,-50%);
   border-radius:50%;
-  pointer-events:none;            /* clicks go to the underlying link   */
+  pointer-events:none;
 }
 #centre-wrapper::before{
   content:"";
@@ -37,21 +37,19 @@ body{
   box-shadow:0 0 18px 6px rgba(56,189,248,.35);
 }
 
-/* actual link: unchanged except the filter was removed                 */
 #centre{
   display:block;width:100%;height:100%;
   border-radius:50%;overflow:hidden;
 }
 #centre img{width:100%;height:100%;object-fit:cover}
 
-/* ── subject circles ────────────────────────────────────────────────── */
+/* ── subject circles ──────────────────────────────────────────────── */
 .node{
   position:absolute;left:50%;top:50%;
   width:var(--icon);height:var(--icon);
   border-radius:50%;overflow:visible;border:3px solid #e2e8f0;
   background:#1a1a1a;cursor:pointer;z-index:1;
   display:flex;align-items:center;justify-content:center;
-
   transform:translate(-50%,-50%);
   will-change:transform,opacity;
   transition:transform 3s cubic-bezier(.23,1,.32,1),
@@ -60,14 +58,14 @@ body{
 }
 .node img{width:70%;height:70%;object-fit:contain;border-radius:50%;}
 
-/* ── labels ─────────────────────────────────────────────────────────── */
+/* ── labels ───────────────────────────────────────────────────────── */
 .label{
   position:absolute;top:calc(100% + 8px);left:50%;
   transform:translateX(-50%);
   font-size:15px;font-weight:600;color:#e2e8f0;white-space:nowrap;
   pointer-events:none;opacity:0;transition:opacity .2s;
 }
-.label.top{top:auto;bottom:calc(100% + 8px);}   /* for Chemistry only  */
+.label.top{top:auto;bottom:calc(100% + 8px);}   /* Chemistry only */
 
 .node:hover .label,
 .node.active .label{opacity:1;}
@@ -76,7 +74,7 @@ body{
 .maths  {filter:drop-shadow(0 0 14px #60a5fa)}
 .misc   {filter:drop-shadow(0 0 14px #a855f7)}
 
-/* ── qualification bubbles ─────────────────────────────────────────── */
+/* ── qualification bubbles ───────────────────────────────────────── */
 .bubble{
   position:absolute;display:flex;align-items:center;justify-content:center;
   width:var(--bubble);height:var(--bubble);
@@ -88,7 +86,7 @@ body{
 .bubble.show   {opacity:1;pointer-events:auto;}
 .bubble.shrink {transform:scale(.67);}
 
-/* ── hexagon outline ───────────────────────────────────────────────── */
+/* ── hexagon outline ─────────────────────────────────────────────── */
 svg{position:absolute;inset:0;pointer-events:none}
 polygon{
   stroke:#64748b;stroke-width:3;fill:none;opacity:.5;
@@ -130,12 +128,13 @@ polygon{
   const chart = document.getElementById("chart");
   const svg   = document.getElementById("outline");
 
-  /* fetch CSS custom-prop values as numbers -------------------------- */
-  const R1  = +getComputedStyle(document.documentElement).getPropertyValue("--r1").replace("px","");
-  const R2  = +getComputedStyle(document.documentElement).getPropertyValue("--r2").replace("px","");
-  const BUB = +getComputedStyle(document.documentElement).getPropertyValue("--bubble").replace("px","");
-  const cx  = chart.clientWidth /2;
-  const cy  = chart.clientHeight/2;
+  /* css variables ---------------------------------------------------- */
+  const css   = getComputedStyle(document.documentElement);
+  const R1    = +css.getPropertyValue("--r1").replace("px","");
+  const R2    = +css.getPropertyValue("--r2").replace("px","");
+  const BUB   = +css.getPropertyValue("--bubble").replace("px","");
+  const cx    = chart.clientWidth / 2;
+  const cy    = chart.clientHeight / 2;
 
   let activeNode = null;
 
@@ -147,16 +146,16 @@ polygon{
     subjects.forEach(s=>s.bubbles.forEach(b=>b.classList.remove("show","shrink")));
   }
 
-  /* build graph ------------------------------------------------------- */
+  /* build graph ------------------------------------------------------ */
   subjects.forEach(sub=>{
-    /* position -------------------------------------------------------- */
+    /* position ------------------------------------------------------- */
     const rad = sub.angle*Math.PI/180;
     const vx  = cx + R1*Math.cos(rad);
     const vy  = cy + R1*Math.sin(rad);
     sub.tx = vx - cx;
     sub.ty = vy - cy;
 
-    /* subject node ---------------------------------------------------- */
+    /* subject node --------------------------------------------------- */
     const node = document.createElement("div");
     node.className = `node ${sub.cls}`;
     node.innerHTML = `
@@ -165,7 +164,7 @@ polygon{
     chart.appendChild(node);
     sub.el = node;
 
-    /* qualification bubbles ------------------------------------------ */
+    /* qualification bubbles ----------------------------------------- */
     sub.bubbles = quals.map((q,i)=>{
       const off = -30 + i*30;                   /* small fan-out offset */
       const br  = (sub.angle + off)*Math.PI/180;
@@ -181,7 +180,6 @@ polygon{
       a.style.top =`${by-BUB/2}px`;
       chart.appendChild(a);
 
-      /* bubble hover -------------------------------------------------- */
       a.addEventListener("mouseenter",()=>{
         a.classList.add("show");
         sub.bubbles.forEach(b=>{ if(b!==a) b.classList.add("shrink"); });
@@ -193,7 +191,7 @@ polygon{
       return a;
     });
 
-    /* subject hover --------------------------------------------------- */
+    /* subject hover -------------------------------------------------- */
     node.addEventListener("mouseenter",()=>{
       hideAllBubbles();
       subjects.forEach(s=>{
@@ -214,7 +212,7 @@ polygon{
       });
     });
 
-    /* click lock-in ---------------------------------------------------- */
+    /* click lock-in --------------------------------------------------- */
     node.addEventListener("click",()=>{
       if(activeNode===node){
         hideAllBubbles();node.classList.remove("active");activeNode=null;
@@ -227,7 +225,7 @@ polygon{
     });
   });
 
-  /* SVG hexagon outline ---------------------------------------------- */
+  /* SVG hexagon outline --------------------------------------------- */
   const verts = subjects.map(s=>({
       angle:s.angle,
       x:cx + R1*Math.cos(s.angle*Math.PI/180),
@@ -246,7 +244,7 @@ polygon{
   poly.style.strokeDasharray  = per;
   poly.style.strokeDashoffset = per;
 
-  /* entrance animation ------------------------------------------------ */
+  /* entrance animation ---------------------------------------------- */
   requestAnimationFrame(()=>{
     poly.style.strokeDashoffset = 0;
     subjects.forEach(s=>{
