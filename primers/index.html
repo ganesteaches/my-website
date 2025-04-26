@@ -31,7 +31,7 @@
     /* subject circles -------------------------------------------------*/
     .node{
       position:absolute;left:50%;top:50%;width:var(--icon);height:var(--icon);
-      border-radius:50%;overflow:visible;border:3px solid #e2e8f0; /* key change */
+      border-radius:50%;overflow:visible;border:3px solid #e2e8f0; /* labels */
       background:#1a1a1a;cursor:pointer;z-index:1;
       display:flex;align-items:center;justify-content:center;
       transform:translate(-50%, -50%);
@@ -50,7 +50,6 @@
       pointer-events:none;opacity:0;transition:opacity .2s;
     }
     .label.top{top:auto;bottom:calc(100% + 8px);}  /* chemistry above */
-
     .node:hover .label,
     .node.active .label{opacity:1;}
 
@@ -70,8 +69,8 @@
     .bubble.show   {opacity:1;pointer-events:auto;}
     .bubble.shrink {transform:scale(.67);}
 
-    /* hexagon outline -------------------------------------------------*/
-    svg{position:absolute;inset:0;pointer-events:none}
+    /* hexagon outline (now on z-index 2 so it’s never hidden) ---------*/
+    svg{position:absolute;inset:0;pointer-events:none;z-index:2;}
     polygon{stroke:#64748b;stroke-width:3;fill:none;opacity:.5;
             transition:stroke-dashoffset 3s cubic-bezier(.23,1,.32,1);}
   </style>
@@ -208,9 +207,9 @@
     poly.setAttribute('points',verts.map(v=>`${v.x},${v.y}`).join(' '));
     svg.appendChild(poly);
 
-    const per = verts.reduce((len,v,i)=>{
+    const per = verts.reduce((d,v,i)=>{
       const n=verts[(i+1)%verts.length];
-      return len+Math.hypot(n.x-v.x,n.y-v.y);
+      return d+Math.hypot(n.x-v.x,n.y-v.y);
     },0);
     poly.style.strokeDasharray=per;
     poly.style.strokeDashoffset=per;
