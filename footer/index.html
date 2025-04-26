@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Ganes Teaches – Footer</title>
+
+  <style>
+    :root {
+      /* tweak this to make the icons larger or smaller */
+      --icon-size: 32px;
+    }
+
+    /* --- page reset (keeps the file self-contained) ----------------------- */
+    *,
+    *::before,
+    *::after {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+    html, body {
+      width: 100%;
+      height: 100%;
+      background: transparent;              /* stays see-through */
+      font-family: system-ui, sans-serif;
+      colour: #e2e8f0;                      /* comment uses British spelling */
+      color: #e2e8f0;                       /* actual CSS property */
+    }
+
+    /* --- footer ----------------------------------------------------------- */
+    footer {
+      width: 100%;
+      padding: 1rem 2rem;
+      background: transparent;              /* the footer itself is clear   */
+      display: flex;
+      align-items: centre;                  /* British spelling in comment */
+      align-items: center;
+      justify-content: space-between;
+      gap: 1rem;
+      font-size: 0.9rem;
+    }
+
+    /* copyright text */
+    .copyright {
+      white-space: nowrap;
+    }
+
+    /* icon list */
+    .social {
+      display: flex;
+      gap: 1rem;
+    }
+    .social a {
+      display: inline-block;
+      width:  var(--icon-size);
+      height: var(--icon-size);
+      transition: transform 0.25s ease-out,
+                  filter    0.25s ease-out;
+    }
+    .social a img {
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
+    }
+    .social a:hover {
+      transform: translateY(-2px) scale(1.1);
+      /* a gentle cyan glow similar to the animated widget’s style */
+      filter: drop-shadow(0 0 6px rgba(56, 189, 248, 0.35));
+    }
+  </style>
+</head>
+<body>
+
+  <footer>
+    <span class="copyright">
+      © 2022–2025 Ganes Teaches. All rights reserved.
+    </span>
+
+    <nav class="social" aria-label="Social media links">
+      <!-- Facebook -->
+      <a href="https://www.facebook.com/ganesteaches"
+         target="_blank" rel="noopener"
+         aria-label="Facebook">
+        <img src="social_media_icon/facebook.png" alt="Facebook">
+      </a>
+
+      <!-- Instagram -->
+      <a href="https://www.instagram.com/ganesteaches"
+         target="_blank" rel="noopener"
+         aria-label="Instagram">
+        <img src="social_media_icon/instagram.png" alt="Instagram">
+      </a>
+
+      <!-- E-mail -->
+      <a href="mailto:hello@ganesteaches.com"
+         aria-label="Send us an e-mail">
+        <img src="social_media_icon/mail.png" alt="Email">
+      </a>
+
+      <!-- Phone -->
+      <a href="tel:+44-1234-567-890"
+         aria-label="Call us">
+        <img src="social_media_icon/phone.png" alt="Phone">
+      </a>
+
+      <!-- TikTok -->
+      <a href="https://www.tiktok.com/@ganesteaches"
+         target="_blank" rel="noopener"
+         aria-label="TikTok">
+        <img src="social_media_icon/tiktok.png" alt="TikTok">
+      </a>
+
+      <!-- YouTube -->
+      <a href="https://www.youtube.com/@ganesteaches"
+         target="_blank" rel="noopener"
+         aria-label="YouTube">
+        <img src="social_media_icon/youtube.png" alt="YouTube">
+      </a>
+    </nav>
+  </footer>
+
+</body>
+</html>
