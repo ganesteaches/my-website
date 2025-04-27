@@ -1,258 +1,241 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<title>Ganes Assess – Animated Hexagon</title>
+  <meta charset="UTF-8">
+  <title>Three Independent Hexagons (larger)</title>
+  <style>
+    :root {
+      --r1:     150px;  /* radius to peripheral nodes */
+      --icon:   75px;   /* diameter of each peripheral node */
+      --centre: 180px;  /* diameter of the centre icon */
+    }
 
-<style>
-:root{
-  --r1:     230px;   /* centre → subject icons                       */
-  --r2:     320px;   /* centre → qualification bubbles               */
-  --icon:   100px;   /* diameter of the six subject icons            */
-  --bubble:  70px;   /* diameter of the GCSE / A-level / IB bubbles  */
-  --centre: 150px;   /* ⬅︎ central logo diameter –- change me!       */
-}
+    /* reset */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0 }
+    html, body { width: 100%; height: 100% }
+    body {
+      display:        flex;
+      align-items:    center;
+      justify-content: center;
+      background:     #1a1a1a;
+      color:          #e2e8f0;
+      font-family:    system-ui, sans-serif;
+      gap:            60px;
+    }
 
-/* ── reset ────────────────────────────────────────────────────────── */
-*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
-html,body{width:100%;height:100%}
-body{
-  display:flex;align-items:center;justify-content:center;
-  background:#1a1a1a;font-family:system-ui,sans-serif;color:#e2e8f0;
-}
+    /* three charts in a row */
+    .row {
+      display: flex;
+      gap:     40px;
+    }
 
-#chart{position:relative;width:900px;height:900px}
+    /* chart container */
+    .chart {
+      position: relative;
+      width:  calc(var(--r1) * 2);
+      height: calc(var(--r1) * 2);
+    }
 
-/* ── central logo + glow ──────────────────────────────────────────── */
-#centre-wrapper{
-  position:absolute;top:50%;left:50%;
-  width:var(--centre);height:var(--centre);
-  transform:translate(-50%,-50%);
-  border-radius:50%;
-  pointer-events:none;
-}
-#centre-wrapper::before{
-  content:"";
-  position:absolute;inset:0;border-radius:50%;
-  box-shadow:0 0 18px 6px rgba(56,189,248,.35);
-}
+    /* centre icon */
+    .centre {
+      position: absolute;
+      top:  50%; left: 50%;
+      width:  var(--centre);
+      height: var(--centre);
+      transform: translate(-50%,-50%);
+      border-radius: 50%;
+      overflow: hidden;
+      filter: drop-shadow(0 0 16px rgba(56,189,248,.35));
+      z-index: 3;
+    }
+    .centre img {
+      width: 100%; height: 100%; object-fit: cover;
+    }
 
-#centre{
-  display:block;width:100%;height:100%;
-  border-radius:50%;overflow:hidden;
-}
-#centre img{width:100%;height:100%;object-fit:cover}
+    /* peripheral nodes */
+    .node {
+      position: absolute; left:50%; top:50%;
+      width:  var(--icon); height: var(--icon);
+      border-radius: 50%;
+      border:        3px solid #e2e8f0;
+      background:    #1a1a1a;
+      transform:     translate(-50%,-50%) scale(0.5);
+      opacity:       0;
+      transition:
+        transform 4s cubic-bezier(.23,1,.32,1),
+        opacity   3s cubic-bezier(.23,1,.32,1);
+      display:      flex;
+      align-items:  center;
+      justify-content: center;
+      z-index:      1;
+    }
+    .node .label {
+      font-size: 12px; font-weight: 600;
+      color: #e2e8f0; pointer-events: none;
+      white-space: nowrap;
+    }
 
-/* ── subject circles ──────────────────────────────────────────────── */
-.node{
-  position:absolute;left:50%;top:50%;
-  width:var(--icon);height:var(--icon);
-  border-radius:50%;overflow:visible;border:3px solid #e2e8f0;
-  background:#1a1a1a;cursor:pointer;z-index:1;
-  display:flex;align-items:center;justify-content:center;
-  transform:translate(-50%,-50%);
-  will-change:transform,opacity;
-  transition:transform 3s cubic-bezier(.23,1,.32,1),
-             opacity   3s cubic-bezier(.23,1,.32,1);
-  opacity:0;
-}
-.node img{width:70%;height:70%;object-fit:contain;border-radius:50%;}
+    /* SVG fills its chart */
+    .chart svg {
+      position: absolute;
+      top:    0; left: 0;
+      width:  100%;
+      height: 100%;
+      pointer-events: none;
+    }
+    .chart svg polygon {
+      stroke:        #64748b;
+      stroke-width:  3;
+      fill:          none;
+      opacity:       .5;
+      transition:    stroke-dashoffset 3s cubic-bezier(.23,1,.32,1);
+    }
 
-/* ── labels ───────────────────────────────────────────────────────── */
-.label{
-  position:absolute;top:calc(100% + 8px);left:50%;
-  transform:translateX(-50%);
-  font-size:15px;font-weight:600;color:#e2e8f0;white-space:nowrap;
-  pointer-events:none;opacity:0;transition:opacity .2s;
-}
-.label.top{top:auto;bottom:calc(100% + 8px);}   /* Chemistry only */
-
-.node:hover .label,
-.node.active .label{opacity:1;}
-
-.science{filter:drop-shadow(0 0 14px #fb923c)}
-.maths  {filter:drop-shadow(0 0 14px #60a5fa)}
-.misc   {filter:drop-shadow(0 0 14px #a855f7)}
-
-/* ── qualification bubbles ───────────────────────────────────────── */
-.bubble{
-  position:absolute;display:flex;align-items:center;justify-content:center;
-  width:var(--bubble);height:var(--bubble);
-  border-radius:50%;background:#1a1a1a;border:2px solid #64748b;
-  font-size:13px;font-weight:600;color:#e2e8f0;text-decoration:none;
-  opacity:0;pointer-events:none;z-index:2;
-  transition:opacity .35s,transform .35s;
-}
-.bubble.show   {opacity:1;pointer-events:auto;}
-.bubble.shrink {transform:scale(.67);}
-
-/* ── hexagon outline ─────────────────────────────────────────────── */
-svg{position:absolute;inset:0;pointer-events:none}
-polygon{
-  stroke:#64748b;stroke-width:3;fill:none;opacity:.5;
-  transition:stroke-dashoffset 3s cubic-bezier(.23,1,.32,1);
-}
-</style>
+    /* drop-shadow classes */
+    .science { filter: drop-shadow(0 0 14px #fb923c) }
+    .maths   { filter: drop-shadow(0 0 14px #60a5fa) }
+    .misc    { filter: drop-shadow(0 0 14px #a855f7) }
+  </style>
 </head>
 <body>
 
-<div id="chart">
+  <div class="row">
+    <div id="chart-1" class="chart"></div>
+    <div id="chart-2" class="chart"></div>
+    <div id="chart-3" class="chart"></div>
+  </div>
 
-  <!-- glow wrapper -->
-  <div id="centre-wrapper"></div>
+  <script>
+  (function(){
+    const BASE = "https://www.ganesteaches.com/ganes-revise";
+    const R1   = parseFloat(getComputedStyle(document.documentElement).getPropertyValue("--r1"));
 
-  <!-- central logo -->
-  <a id="centre" href="https://www.ganesteaches.com/ganes-assess"
-     target="_blank" rel="noopener">
-    <img src="../ganes_assess.png" alt="Ganes Assess">
-  </a>
+    // centre charts with custom start indices and directions
+    // levels order: [ "11＋", "13＋", "KS3", "GCSE", "A Level", "University" ]
+    const centres = [
+      {
+        id:         "chart-1",
+        label:      "Biology",
+        key:        "biology",
+        icon:       "../biology_list_icon.png",
+        cls:        "science",
+        // start at "University" (index 5), clockwise
+        startAngle: -90 + 5 * 60,
+        direction:   1
+      },
+      {
+        id:         "chart-2",
+        label:      "Chemistry",
+        key:        "chemistry",
+        icon:       "../chemistry_list_icon.png",
+        cls:        "science",
+        // start at "GCSE" (index 3), anticlockwise
+        startAngle: -90 + 3 * 60,
+        direction:  -1
+      },
+      {
+        id:         "chart-3",
+        label:      "Physics",
+        key:        "physics",
+        icon:       "../physics_list_icon.png",
+        cls:        "science",
+        // start at "13＋" (index 1) = -30°, clockwise
+        startAngle: -30,
+        direction:   1
+      }
+    ];
 
-  <svg id="outline"></svg>
-</div>
+    const levels = [
+      { label:"11＋",       key:"11plus"    },
+      { label:"13＋",       key:"13plus"    },
+      { label:"KS3",        key:"ks3"       },
+      { label:"GCSE",       key:"gcse"      },
+      { label:"A Level",    key:"a-level"   },
+      { label:"University", key:"university"}
+    ];
 
-<script>
-(function(){
-  const BASE        = "https://www.ganesteaches.com/ganes-assess";
-  const NODE_SHRINK = 0.85;
-
-  const subjects = [
-    {label:"Biology",       key:"biology",            icon:"../biology_list_icon.png",             cls:"science", angle:150},
-    {label:"Chemistry",     key:"chemistry",          icon:"../chemistry_list_icon.png",           cls:"science", angle: 90},
-    {label:"Physics",       key:"physics",            icon:"../physics_list_icon.png",             cls:"science", angle: 30},
-    {label:"Mathematics",   key:"mathematics",        icon:"../mathematics_list_icon.png",         cls:"maths",   angle:210},
-    {label:"Further Maths", key:"further-mathematics",icon:"../further_mathematics_list_icon.png", cls:"maths",   angle:270},
-    {label:"Misc",          key:"misc",               icon:"../physics_list_icon.png",             cls:"misc",    angle:330}
-  ];
-  const quals = ["GCSE","A Level","IB"];
-
-  const chart = document.getElementById("chart");
-  const svg   = document.getElementById("outline");
-
-  /* css variables ---------------------------------------------------- */
-  const css   = getComputedStyle(document.documentElement);
-  const R1    = +css.getPropertyValue("--r1").replace("px","");
-  const R2    = +css.getPropertyValue("--r2").replace("px","");
-  const BUB   = +css.getPropertyValue("--bubble").replace("px","");
-  const cx    = chart.clientWidth / 2;
-  const cy    = chart.clientHeight / 2;
-
-  let activeNode = null;
-
-  function setNodeTransform(sub, scale=1){
-    sub.el.style.transform =
-      `translate(-50%, -50%) translate(${sub.tx}px, ${sub.ty}px) scale(${scale})`;
-  }
-  function hideAllBubbles(){
-    subjects.forEach(s=>s.bubbles.forEach(b=>b.classList.remove("show","shrink")));
-  }
-
-  /* build graph ------------------------------------------------------ */
-  subjects.forEach(sub=>{
-    /* position ------------------------------------------------------- */
-    const rad = sub.angle*Math.PI/180;
-    const vx  = cx + R1*Math.cos(rad);
-    const vy  = cy + R1*Math.sin(rad);
-    sub.tx = vx - cx;
-    sub.ty = vy - cy;
-
-    /* subject node --------------------------------------------------- */
-    const node = document.createElement("div");
-    node.className = `node ${sub.cls}`;
-    node.innerHTML = `
-      <img src="${sub.icon}" alt="${sub.label}">
-      <span class="label${sub.key==='chemistry' ? ' top' : ''}">${sub.label}</span>`;
-    chart.appendChild(node);
-    sub.el = node;
-
-    /* qualification bubbles ----------------------------------------- */
-    sub.bubbles = quals.map((q,i)=>{
-      const off = -30 + i*30;                   /* small fan-out offset */
-      const br  = (sub.angle + off)*Math.PI/180;
-      const bx  = cx + R2*Math.cos(br);
-      const by  = cy + R2*Math.sin(br);
-
-      const a   = document.createElement("a");
-      a.className="bubble";
-      a.textContent=q;
-      a.href=`${BASE}/${sub.key}/${q.toLowerCase().replace(/\s+/g,"-")}`;
-      a.target="_blank";a.rel="noopener";
-      a.style.left=`${bx-BUB/2}px`;
-      a.style.top =`${by-BUB/2}px`;
-      chart.appendChild(a);
-
-      a.addEventListener("mouseenter",()=>{
-        a.classList.add("show");
-        sub.bubbles.forEach(b=>{ if(b!==a) b.classList.add("shrink"); });
+    function drawHexagon(svg, cx, cy, radius, startAngleDeg = -90, direction = 1) {
+      const pts = Array.from({length: 6}, (_, i) => {
+        const angleDeg = startAngleDeg + direction * i * 60;
+        const rad      = angleDeg * Math.PI / 180;
+        return [
+          cx + radius * Math.cos(rad),
+          cy + radius * Math.sin(rad)
+        ];
       });
-      a.addEventListener("mouseleave",()=>{
-        sub.bubbles.forEach(b=>b.classList.remove("shrink"));
-        if(activeNode!==node) a.classList.remove("show");
-      });
-      return a;
-    });
 
-    /* subject hover -------------------------------------------------- */
-    node.addEventListener("mouseenter",()=>{
-      hideAllBubbles();
-      subjects.forEach(s=>{
-        if(s!==sub){
-          s.el.style.opacity=0.3;
-          setNodeTransform(s,NODE_SHRINK);
-          s.bubbles.forEach(b=>b.classList.add("shrink"));
-        }
-      });
-      sub.bubbles.forEach(b=>b.classList.add("show"));
-    });
+      const poly = document.createElementNS(svg.namespaceURI, "polygon");
+      poly.setAttribute("points", pts.map(p => p.join(",")).join(" "));
+      svg.appendChild(poly);
 
-    node.addEventListener("mouseleave",()=>{
-      subjects.forEach(s=>{
-        s.el.style.opacity=1;
-        setNodeTransform(s,1);
-        s.bubbles.forEach(b=>b.classList.remove("shrink"));
-      });
-    });
+      const perimeter = pts.reduce((sum, [x,y], i) => {
+        const [nx, ny] = pts[(i + 1) % pts.length];
+        return sum + Math.hypot(nx - x, ny - y);
+      }, 0);
 
-    /* click lock-in --------------------------------------------------- */
-    node.addEventListener("click",()=>{
-      if(activeNode===node){
-        hideAllBubbles();node.classList.remove("active");activeNode=null;
-      }else{
-        hideAllBubbles();
-        if(activeNode) activeNode.classList.remove("active");
-        activeNode=node;node.classList.add("active");
-        sub.bubbles.forEach(b=>b.classList.add("show"));
+      poly.style.strokeDasharray  = perimeter;
+      poly.style.strokeDashoffset = perimeter;
+      requestAnimationFrame(() => {
+        poly.style.strokeDashoffset = 0;
+      });
+    }
+
+    centres.forEach(cfg => {
+      const chart = document.getElementById(cfg.id);
+      if (!chart) {
+        console.warn(`No chart container with id="${cfg.id}" — skipping.`);
+        return;
+      }
+
+      const cx = chart.clientWidth  / 2;
+      const cy = chart.clientHeight / 2;
+
+      // SVG container
+      const svg = document.createElementNS("http://www.w3.org/2000/svg","svg");
+      svg.setAttribute("viewBox", `0 0 ${2*R1} ${2*R1}`);
+      chart.appendChild(svg);
+
+      // centre icon
+      const centre = document.createElement("a");
+      centre.className = "centre " + cfg.cls;
+      centre.href      = `${BASE}/${cfg.key}`;
+      centre.target    = "_blank";
+      centre.rel       = "noopener";
+      centre.innerHTML = `<img src="${cfg.icon}" alt="${cfg.label}">`;
+      chart.appendChild(centre);
+
+      // peripheral nodes
+      levels.forEach((lvl, i) => {
+        const angle = -90 + i * 60;
+        const rad   = angle * Math.PI / 180;
+        const x     = cx + R1 * Math.cos(rad);
+        const y     = cy + R1 * Math.sin(rad);
+
+        const node = document.createElement("a");
+        node.className    = `node ${cfg.cls}`;
+        node.href         = `${BASE}/${cfg.key}/${lvl.key}`;
+        node.target       = "_blank";
+        node.rel          = "noopener";
+        node.style.left   = `${x}px`;
+        node.style.top    = `${y}px`;
+        node.innerHTML    = `<span class="label">${lvl.label}</span>`;
+        chart.appendChild(node);
+
+        requestAnimationFrame(() => {
+          node.style.opacity   = 1;
+          node.style.transform = "translate(-50%,-50%) scale(1)";
+        });
+      });
+
+      // hexagon outline with custom start & direction
+      try {
+        drawHexagon(svg, cx, cy, R1, cfg.startAngle, cfg.direction);
+      } catch(e) {
+        console.error(`Hexagon outline failed for ${cfg.id}:`, e);
       }
     });
-  });
+  })();
+  </script>
 
-  /* SVG hexagon outline --------------------------------------------- */
-  const verts = subjects.map(s=>({
-      angle:s.angle,
-      x:cx + R1*Math.cos(s.angle*Math.PI/180),
-      y:cy + R1*Math.sin(s.angle*Math.PI/180)
-    })).sort((a,b)=>a.angle-b.angle);
-
-  svg.setAttribute("viewBox",`0 0 ${chart.clientWidth} ${chart.clientHeight}`);
-  const poly = document.createElementNS("http://www.w3.org/2000/svg","polygon");
-  poly.setAttribute("points",verts.map(v=>`${v.x},${v.y}`).join(" "));
-  svg.appendChild(poly);
-
-  const per = verts.reduce((len,v,i)=>{
-    const n = verts[(i+1)%verts.length];
-    return len + Math.hypot(n.x-v.x, n.y-v.y);
-  },0);
-  poly.style.strokeDasharray  = per;
-  poly.style.strokeDashoffset = per;
-
-  /* entrance animation ---------------------------------------------- */
-  requestAnimationFrame(()=>{
-    poly.style.strokeDashoffset = 0;
-    subjects.forEach(s=>{
-      setNodeTransform(s,1);
-      s.el.style.opacity = 1;
-    });
-  });
-})();
-</script>
 </body>
 </html>
