@@ -15,7 +15,7 @@
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
     html, body            { width: 100%; height: 100%; }
 
-    body{
+    body {
       display: flex;
       align-items: center;
       justify-content: center;
@@ -24,10 +24,10 @@
       color: #e2e8f0;
     }
 
-    #chart{ position: relative; width: 900px; height: 900px; }
+    #chart { position: relative; width: 900px; height: 900px; }
 
     /* centre logo */
-    #centre{
+    #centre {
       position: absolute;
       top: 50%; left: 50%;
       width: 190px; height: 190px;
@@ -36,10 +36,14 @@
       overflow: visible;
       box-shadow: 0 0 16px rgba(56,189,248,.35);
     }
-    #centre img{ width: 100%; height: 100%; object-fit: cover; border-radius: 50%; }
+    #centre img {
+      width: 100%; height: 100%;
+      object-fit: cover;
+      border-radius: 50%;
+    }
 
     /* subject circles */
-    .node{
+    .node {
       position: absolute;
       left: 50%; top: 50%;
       width: var(--icon); height: var(--icon);
@@ -58,64 +62,77 @@
       opacity: 0;
       box-shadow: 0 0 14px currentColor;
     }
-    .node.science{ color:#fb923c; }
-    .node.maths  { color:#60a5fa; }
-    .node.misc   { color:#a855f7; }
-    .node img{ width:70%; height:70%; object-fit:contain; border-radius:50%; }
+    .node.science { color: #fb923c; }
+    .node.maths   { color: #60a5fa; }
+    .node.misc    { color: #a855f7; }
+
+    /* ensure links don’t break layout */
+    .node a {
+      display: block;
+      width: 70%; height: 70%;
+    }
+    .node a img {
+      width: 100%; height: 100%;
+      object-fit: contain;
+      border-radius: 50%;
+    }
 
     /* labels */
-    .label{
-      position:absolute;
-      top:calc(100% + 8px);
-      left:50%;
-      transform:translateX(-50%);
-      font-size:15px;
-      font-weight:600;
-      color:#e2e8f0;
-      white-space:nowrap;
-      pointer-events:none;
-      opacity:.5;
-      transition:opacity .2s;
+    .label {
+      position: absolute;
+      top: calc(100% + 8px);
+      left: 50%;
+      transform: translateX(-50%);
+      font-size: 15px;
+      font-weight: 600;
+      color: #e2e8f0;
+      white-space: nowrap;
+      opacity: .5;
+      transition: opacity .2s;
+      pointer-events: none;
     }
-    .label.top{ top:auto; bottom:calc(100% + 8px); }
+    .label.top { top: auto; bottom: calc(100% + 8px); }
     .node:hover .label,
-    .node.active .label{ opacity:1; }
+    .node.active .label { opacity: 1; }
+
+    /* bubble icons */
+    .bubble img {
+      width: 60%; height: 60%;
+      object-fit: contain;
+    }
 
     /* qualification bubbles */
-    .bubble{
-      position:absolute;
-      display:flex;
-      align-items:center;
-      justify-content:center;
-      width:var(--bubble); height:var(--bubble);
-      border-radius:50%;
-      background:#1a1a1a;
-      border:2px solid #64748b;
-      font-size:13px;
-      font-weight:600;
-      color:#e2e8f0;
-      text-decoration:none;
-      opacity:0;
-      pointer-events:none;
-      z-index:2;
-      transition:opacity .35s, transform .35s;
+    .bubble {
+      position: absolute;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: var(--bubble); height: var(--bubble);
+      border-radius: 50%;
+      background: #1a1a1a;
+      border: 2px solid #64748b;
+      opacity: 0;
+      pointer-events: none;
+      z-index: 2;
+      transition: opacity .35s, transform .35s;
     }
-    .bubble.show  { opacity:1; pointer-events:auto; }
-    .bubble.shrink{ transform:scale(.67); }
+    .bubble.show  { opacity: 1; pointer-events: auto; }
+    .bubble.shrink{ transform: scale(.67); }
 
     /* hexagon outline */
-    svg{ position:absolute; inset:0; pointer-events:none; }
-    polygon{
-      stroke:#64748b; stroke-width:3; fill:none; opacity:.5;
-      filter:drop-shadow(0 0 16px rgba(59,130,246,.5));
-      transition:stroke-dashoffset 3s cubic-bezier(.23,1,.32,1);
+    svg { position: absolute; inset: 0; pointer-events: none; }
+    polygon {
+      stroke: #64748b; stroke-width: 3; fill: none; opacity: .5;
+      filter: drop-shadow(0 0 16px rgba(59,130,246,.5));
+      transition: stroke-dashoffset 3s cubic-bezier(.23,1,.32,1);
     }
   </style>
 </head>
 <body>
   <div id="chart">
     <svg id="outline"></svg>
-    <a id="centre" href="https://www.ganesteaches.com/ganes-primers" target="_blank" rel="noopener">
+    <a id="centre" href="https://www.ganesteaches.com/ganes-primers"
+       target="_blank" rel="noopener">
       <img src="../ganes_primers.png" alt="Ganes Primers">
     </a>
   </div>
@@ -136,132 +153,134 @@
 
     const chart = document.getElementById('chart');
     const svg   = document.getElementById('outline');
-    const R1  = parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--r1'));
-    const R2  = parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--r2'));
-    const BUB = parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--bubble'));
-    const cx  = chart.clientWidth/2;
-    const cy  = chart.clientHeight/2;
+    const R1    = parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--r1'));
+    const R2    = parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--r2'));
+    const BUB   = parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--bubble'));
+    const cx    = chart.clientWidth / 2;
+    const cy    = chart.clientHeight / 2;
     let activeNode = null;
 
-    function setNodeTransform(sub, scale=1){
+    function setNodeTransform(sub, scale=1) {
       sub.el.style.transform =
         `translate(-50%, -50%) translate(${sub.tx}px, ${sub.ty}px) scale(${scale})`;
     }
-    function hideAllBubbles(){
-      subjects.forEach(s => s.bubbles.forEach(b => b.classList.remove('show','shrink')));
+    function hideAllBubbles() {
+      subjects.forEach(s =>
+        s.bubbles.forEach(b => b.classList.remove('show','shrink'))
+      );
     }
 
-    /* build nodes + bubbles */
-    subjects.forEach(sub =>{
-      const rad = sub.angle*Math.PI/180;
-      const vx  = cx + R1*Math.cos(rad);
-      const vy  = cy + R1*Math.sin(rad);
-      sub.tx = vx-cx;
-      sub.ty = vy-cy;
+    subjects.forEach(sub => {
+      // position node
+      const rad = sub.angle * Math.PI/180;
+      sub.tx = (cx + R1 * Math.cos(rad)) - cx;
+      sub.ty = (cy + R1 * Math.sin(rad)) - cy;
 
+      // create node
       const node = document.createElement('div');
       node.className = `node ${sub.cls}`;
-
-      /* -------------------------------------------------------------------
-         ONLY CHANGED LINE: give top-placement to misc, further-maths, biology
-      ------------------------------------------------------------------- */
       node.innerHTML = `
-        <img src="${sub.icon}" alt="${sub.label}">
+        <a href="${BASE}/${sub.key}" target="_blank" rel="noopener">
+          <img src="${sub.icon}" alt="${sub.label}">
+        </a>
         <span class="label${['misc','further-mathematics','biology'].includes(sub.key)?' top':''}">
           ${sub.label}
         </span>`;
-
       chart.appendChild(node);
       sub.el = node;
 
-      /* bubbles */
-      sub.bubbles = quals.map((q,i)=>{
-        const off = -30+i*30;
-        const br  = (sub.angle+off)*Math.PI/180;
-        const bx  = cx+R2*Math.cos(br);
-        const by  = cy+R2*Math.sin(br);
-        const a   = document.createElement('a');
+      // create qualification bubbles
+      sub.bubbles = quals.map((q,i) => {
+        // strip all whitespace so "A Level" → "alevel"
+        const qkey = q.toLowerCase().replace(/\s+/g,'');
+
+        const off = -30 + i*30;
+        const br  = (sub.angle + off) * Math.PI/180;
+        const bx  = cx + R2 * Math.cos(br);
+        const by  = cy + R2 * Math.sin(br);
+
+        const a = document.createElement('a');
         a.className = 'bubble';
-        a.textContent = q;
-        a.href = `${BASE}/${sub.key}/${q.toLowerCase().replace(/\s+/g,'-')}`;
-        a.target = '_blank';
-        a.rel    = 'noopener';
-        a.style.left = `${bx-BUB/2}px`;
-        a.style.top  = `${by-BUB/2}px`;
+        a.href      = `${BASE}/${sub.key}/${qkey}`;
+        a.target    = '_blank';
+        a.rel       = 'noopener';
+        a.style.left = `${bx - BUB/2}px`;
+        a.style.top  = `${by - BUB/2}px`;
+
+        // **HERE** we drop the ../ so it loads `alevel_icon.png` from the same folder
+        a.innerHTML = `<img src="${qkey}_icon.png" alt="${q}">`;
+
         chart.appendChild(a);
 
-        a.addEventListener('mouseenter',()=>{
+        a.addEventListener('mouseenter', () => {
           a.classList.add('show');
-          sub.bubbles.forEach(b=>b!==a&&b.classList.add('shrink'));
+          sub.bubbles.forEach(b => b !== a && b.classList.add('shrink'));
         });
-        a.addEventListener('mouseleave',()=>{
-          sub.bubbles.forEach(b=>b.classList.remove('shrink'));
-          if(activeNode!==node) a.classList.remove('show');
+        a.addEventListener('mouseleave', () => {
+          sub.bubbles.forEach(b => b.classList.remove('shrink'));
+          if (activeNode !== node) a.classList.remove('show');
         });
+
         return a;
       });
 
-      /* node interactions */
-      node.addEventListener('mouseenter',()=>{
+      // hover & click logic
+      node.addEventListener('mouseenter', () => {
         hideAllBubbles();
-        subjects.forEach(s=>{
-          if(s!==sub){
-            s.el.style.opacity=.3;
-            setNodeTransform(s,NODE_SHRINK);
-            s.bubbles.forEach(b=>b.classList.add('shrink'));
+        subjects.forEach(s => {
+          if (s !== sub) {
+            s.el.style.opacity = 0.3;
+            setNodeTransform(s, NODE_SHRINK);
+            s.bubbles.forEach(b => b.classList.add('shrink'));
           }
         });
-        sub.bubbles.forEach(b=>b.classList.add('show'));
+        sub.bubbles.forEach(b => b.classList.add('show'));
       });
-
-      node.addEventListener('mouseleave',()=>{
-        subjects.forEach(s=>{
-          s.el.style.opacity=1;
-          setNodeTransform(s,1);
-          s.bubbles.forEach(b=>b.classList.remove('shrink'));
+      node.addEventListener('mouseleave', () => {
+        subjects.forEach(s => {
+          s.el.style.opacity = 1;
+          setNodeTransform(s, 1);
+          s.bubbles.forEach(b => b.classList.remove('shrink'));
         });
       });
-
-      node.addEventListener('click',()=>{
-        if(activeNode===node){
+      node.addEventListener('click', () => {
+        if (activeNode === node) {
           hideAllBubbles();
           node.classList.remove('active');
-          activeNode=null;
-        }else{
+          activeNode = null;
+        } else {
           hideAllBubbles();
-          if(activeNode) activeNode.classList.remove('active');
-          activeNode=node;
+          activeNode && activeNode.classList.remove('active');
+          activeNode = node;
           node.classList.add('active');
-          sub.bubbles.forEach(b=>b.classList.add('show'));
+          sub.bubbles.forEach(b => b.classList.add('show'));
         }
       });
     });
 
-    /* draw hexagon outline */
-    const verts = subjects.map(s=>({
-      angle:s.angle,
-      x:cx+R1*Math.cos(s.angle*Math.PI/180),
-      y:cy+R1*Math.sin(s.angle*Math.PI/180)
-    })).sort((a,b)=>a.angle-b.angle);
+    // draw hexagon
+    const verts = subjects
+      .map(s => ({ angle: s.angle, x: cx + R1*Math.cos(s.angle*Math.PI/180), y: cy + R1*Math.sin(s.angle*Math.PI/180) }))
+      .sort((a,b) => a.angle - b.angle);
 
-    svg.setAttribute('viewBox',`0 0 ${chart.clientWidth} ${chart.clientHeight}`);
+    svg.setAttribute('viewBox', `0 0 ${chart.clientWidth} ${chart.clientHeight}`);
     const poly = document.createElementNS('http://www.w3.org/2000/svg','polygon');
-    poly.setAttribute('points',verts.map(v=>`${v.x},${v.y}`).join(' '));
+    poly.setAttribute('points', verts.map(v => `${v.x},${v.y}`).join(' '));
     svg.appendChild(poly);
 
-    const per = verts.reduce((len,v,i)=>{
-      const n = verts[(i+1)%verts.length];
-      return len+Math.hypot(n.x-v.x,n.y-v.y);
+    const perimeter = verts.reduce((sum,v,i) => {
+      const next = verts[(i+1)%verts.length];
+      return sum + Math.hypot(next.x - v.x, next.y - v.y);
     },0);
-    poly.style.strokeDasharray = per;
-    poly.style.strokeDashoffset = per;
+    poly.style.strokeDasharray  = perimeter;
+    poly.style.strokeDashoffset = perimeter;
 
-    /* entrance animation */
-    requestAnimationFrame(()=>{
+    // entrance animation
+    requestAnimationFrame(() => {
       poly.style.strokeDashoffset = 0;
-      subjects.forEach(s=>{
-        setNodeTransform(s,1);
-        s.el.style.opacity=1;
+      subjects.forEach(s => {
+        setNodeTransform(s, 1);
+        s.el.style.opacity = 1;
       });
     });
   })();
