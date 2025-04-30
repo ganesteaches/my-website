@@ -66,7 +66,7 @@
     .node.maths   { color: #60a5fa; }
     .node.misc    { color: #a855f7; }
 
-    /* make sure links inside nodes don’t break layout */
+    /* ensure links don’t break layout */
     .node a {
       display: block;
       width: 70%; height: 70%;
@@ -89,7 +89,7 @@
       white-space: nowrap;
       opacity: .5;
       transition: opacity .2s;
-      pointer-events: none; /* label itself isn’t clickable */
+      pointer-events: none;
     }
     .label.top { top: auto; bottom: calc(100% + 8px); }
     .node:hover .label,
@@ -147,19 +147,15 @@
       { label:'Physics',       key:'physics',            icon:'../physics_list_icon.png',             cls:'science', angle:270 },
       { label:'Mathematics',   key:'mathematics',        icon:'../mathematics_list_icon.png',         cls:'maths',   angle:330 },
       { label:'Further Maths', key:'further-mathematics',icon:'../further_mathematics_list_icon.png', cls:'maths',   angle:150 },
-      { label:'Misc',          key:'misc',               icon:'../misc_list_icon.png',                cls:'misc',    angle:90  }
+      { label:'University',          key:'misc',               icon:'../misc_list_icon.png',                cls:'misc',    angle:90  }
     ];
-    // QUALIFICATIONS
     const quals = ['GCSE','A Level','IB'];
 
     const chart = document.getElementById('chart');
     const svg   = document.getElementById('outline');
-    const R1    = parseFloat(getComputedStyle(document.documentElement)
-                              .getPropertyValue('--r1'));
-    const R2    = parseFloat(getComputedStyle(document.documentElement)
-                              .getPropertyValue('--r2'));
-    const BUB   = parseFloat(getComputedStyle(document.documentElement)
-                              .getPropertyValue('--bubble'));
+    const R1    = parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--r1'));
+    const R2    = parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--r2'));
+    const BUB   = parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--bubble'));
     const cx    = chart.clientWidth / 2;
     const cy    = chart.clientHeight / 2;
     let activeNode = null;
@@ -174,64 +170,65 @@
       );
     }
 
-    /* build nodes + bubbles */
     subjects.forEach(sub => {
+      // position node
       const rad = sub.angle * Math.PI/180;
-      const vx  = cx + R1 * Math.cos(rad);
-      const vy  = cy + R1 * Math.sin(rad);
-      sub.tx = vx - cx;
-      sub.ty = vy - cy;
+      sub.tx = (cx + R1 * Math.cos(rad)) - cx;
+      sub.ty = (cy + R1 * Math.sin(rad)) - cy;
 
+      // create node
       const node = document.createElement('div');
       node.className = `node ${sub.cls}`;
-
-      /* icon wrapped in link, label plain text */
       node.innerHTML = `
         <a href="${BASE}/${sub.key}" target="_blank" rel="noopener">
           <img src="${sub.icon}" alt="${sub.label}">
         </a>
-        <span class="label${['misc','further-mathematics','biology']
-                               .includes(sub.key)?' top':''}">
+        <span class="label${['misc','further-mathematics','biology'].includes(sub.key)?' top':''}">
           ${sub.label}
         </span>`;
-
       chart.appendChild(node);
       sub.el = node;
 
-      /* qualification bubbles with icons */
+      // create qualification bubbles
       sub.bubbles = quals.map((q,i) => {
-        // remove spaces so "A Level" → "alevel"
+        // strip all whitespace so "A Level" → "alevel"
         const qkey = q.toLowerCase().replace(/\s+/g,'');
+
         const off = -30 + i*30;
-        const br  = (sub.angle+off) * Math.PI/180;
+        const br  = (sub.angle + off) * Math.PI/180;
         const bx  = cx + R2 * Math.cos(br);
         const by  = cy + R2 * Math.sin(br);
-        const a   = document.createElement('a');
+
+        const a = document.createElement('a');
         a.className = 'bubble';
-        a.href = `${BASE}/${sub.key}/${qkey}`;
-        a.target = '_blank';
-        a.rel    = 'noopener';
+        a.href      = `${BASE}/${sub.key}/${qkey}`;
+        a.target    = '_blank';
+        a.rel       = 'noopener';
         a.style.left = `${bx - BUB/2}px`;
         a.style.top  = `${by - BUB/2}px`;
-        a.innerHTML  = `<img src="../${qkey}_icon.png" alt="${q}">`;
+
+        // **HERE** we drop the ../ so it loads `alevel_icon.png` from the same folder
+        a.innerHTML = `<img src="${qkey}_icon.png" alt="${q}">`;
+
         chart.appendChild(a);
 
         a.addEventListener('mouseenter', () => {
           a.classList.add('show');
-          sub.bubbles.forEach(b => b!==a && b.classList.add('shrink'));
+          sub.bubbles.forEach(b => b !== a && b.classList.add('shrink'));
         });
         a.addEventListener('mouseleave', () => {
           sub.bubbles.forEach(b => b.classList.remove('shrink'));
-          if(activeNode !== node) a.classList.remove('show');
+          if (activeNode !== node) a.classList.remove('show');
         });
+
         return a;
       });
 
-      /* node hover & click logic */
+      // hover & click logic
       node.addEventListener('mouseenter', () => {
         hideAllBubbles();
         subjects.forEach(s => {
-          if(s !== sub) {
+          if (s !== sub) {
             s.el.style.opacity = 0.3;
             setNodeTransform(s, NODE_SHRINK);
             s.bubbles.forEach(b => b.classList.add('shrink'));
@@ -239,7 +236,6 @@
         });
         sub.bubbles.forEach(b => b.classList.add('show'));
       });
-
       node.addEventListener('mouseleave', () => {
         subjects.forEach(s => {
           s.el.style.opacity = 1;
@@ -247,15 +243,14 @@
           s.bubbles.forEach(b => b.classList.remove('shrink'));
         });
       });
-
       node.addEventListener('click', () => {
-        if(activeNode === node) {
+        if (activeNode === node) {
           hideAllBubbles();
           node.classList.remove('active');
           activeNode = null;
         } else {
           hideAllBubbles();
-          if(activeNode) activeNode.classList.remove('active');
+          activeNode && activeNode.classList.remove('active');
           activeNode = node;
           node.classList.add('active');
           sub.bubbles.forEach(b => b.classList.add('show'));
@@ -263,29 +258,24 @@
       });
     });
 
-    /* draw hexagon outline */
-    const verts = subjects.map(s => ({
-      angle: s.angle,
-      x: cx + R1 * Math.cos(s.angle * Math.PI/180),
-      y: cy + R1 * Math.sin(s.angle * Math.PI/180)
-    })).sort((a,b) => a.angle - b.angle);
+    // draw hexagon
+    const verts = subjects
+      .map(s => ({ angle: s.angle, x: cx + R1*Math.cos(s.angle*Math.PI/180), y: cy + R1*Math.sin(s.angle*Math.PI/180) }))
+      .sort((a,b) => a.angle - b.angle);
 
-    svg.setAttribute('viewBox',
-      `0 0 ${chart.clientWidth} ${chart.clientHeight}`);
-    const poly = document.createElementNS(
-      'http://www.w3.org/2000/svg', 'polygon');
-    poly.setAttribute('points',
-      verts.map(v => `${v.x},${v.y}`).join(' '));
+    svg.setAttribute('viewBox', `0 0 ${chart.clientWidth} ${chart.clientHeight}`);
+    const poly = document.createElementNS('http://www.w3.org/2000/svg','polygon');
+    poly.setAttribute('points', verts.map(v => `${v.x},${v.y}`).join(' '));
     svg.appendChild(poly);
 
-    const per = verts.reduce((len,v,i) => {
-      const n = verts[(i+1)%verts.length];
-      return len + Math.hypot(n.x - v.x, n.y - v.y);
-    }, 0);
-    poly.style.strokeDasharray  = per;
-    poly.style.strokeDashoffset = per;
+    const perimeter = verts.reduce((sum,v,i) => {
+      const next = verts[(i+1)%verts.length];
+      return sum + Math.hypot(next.x - v.x, next.y - v.y);
+    },0);
+    poly.style.strokeDasharray  = perimeter;
+    poly.style.strokeDashoffset = perimeter;
 
-    /* entrance animation */
+    // entrance animation
     requestAnimationFrame(() => {
       poly.style.strokeDashoffset = 0;
       subjects.forEach(s => {
