@@ -147,7 +147,7 @@
       { label:'Physics',       key:'physics',            icon:'../physics_list_icon.png',             cls:'science', angle:270 },
       { label:'Mathematics',   key:'mathematics',        icon:'../mathematics_list_icon.png',         cls:'maths',   angle:330 },
       { label:'Further Maths', key:'further-mathematics',icon:'../further_mathematics_list_icon.png', cls:'maths',   angle:150 },
-      { label:'University',          key:'misc',               icon:'../misc_list_icon.png',                cls:'misc',    angle:90  }
+      { label:'University',    key:'misc',               icon:'../misc_list_icon.png',                cls:'misc',    angle:90  }
     ];
     const quals = ['GCSE','A Level','IB'];
 
@@ -170,13 +170,13 @@
       );
     }
 
+    /* build nodes + bubbles */
     subjects.forEach(sub => {
-      // position node
       const rad = sub.angle * Math.PI/180;
       sub.tx = (cx + R1 * Math.cos(rad)) - cx;
       sub.ty = (cy + R1 * Math.sin(rad)) - cy;
 
-      // create node
+      // create the subject node
       const node = document.createElement('div');
       node.className = `node ${sub.cls}`;
       node.innerHTML = `
@@ -189,7 +189,7 @@
       chart.appendChild(node);
       sub.el = node;
 
-      // create qualification bubbles
+      // qualification bubbles
       sub.bubbles = quals.map((q,i) => {
         // strip all whitespace so "A Level" → "alevel"
         const qkey = q.toLowerCase().replace(/\s+/g,'');
@@ -207,8 +207,8 @@
         a.style.left = `${bx - BUB/2}px`;
         a.style.top  = `${by - BUB/2}px`;
 
-        // **HERE** we drop the ../ so it loads `alevel_icon.png` from the same folder
-        a.innerHTML = `<img src="${qkey}_icon.png" alt="${q}">`;
+        // **Use ../${qkey}_icon.png so it finds your parent-folder icon**
+        a.innerHTML = `<img src="../${qkey}_icon.png" alt="${q}">`;
 
         chart.appendChild(a);
 
@@ -224,7 +224,7 @@
         return a;
       });
 
-      // hover & click logic
+      // hover & click handlers…
       node.addEventListener('mouseenter', () => {
         hideAllBubbles();
         subjects.forEach(s => {
@@ -250,7 +250,7 @@
           activeNode = null;
         } else {
           hideAllBubbles();
-          activeNode && activeNode.classList.remove('active');
+          if (activeNode) activeNode.classList.remove('active');
           activeNode = node;
           node.classList.add('active');
           sub.bubbles.forEach(b => b.classList.add('show'));
@@ -258,9 +258,13 @@
       });
     });
 
-    // draw hexagon
+    // draw the hexagon outline
     const verts = subjects
-      .map(s => ({ angle: s.angle, x: cx + R1*Math.cos(s.angle*Math.PI/180), y: cy + R1*Math.sin(s.angle*Math.PI/180) }))
+      .map(s => ({
+        angle: s.angle,
+        x: cx + R1 * Math.cos(s.angle * Math.PI/180),
+        y: cy + R1 * Math.sin(s.angle * Math.PI/180)
+      }))
       .sort((a,b) => a.angle - b.angle);
 
     svg.setAttribute('viewBox', `0 0 ${chart.clientWidth} ${chart.clientHeight}`);
@@ -268,10 +272,10 @@
     poly.setAttribute('points', verts.map(v => `${v.x},${v.y}`).join(' '));
     svg.appendChild(poly);
 
-    const perimeter = verts.reduce((sum,v,i) => {
+    const perimeter = verts.reduce((len, v, i) => {
       const next = verts[(i+1)%verts.length];
-      return sum + Math.hypot(next.x - v.x, next.y - v.y);
-    },0);
+      return len + Math.hypot(next.x - v.x, next.y - v.y);
+    }, 0);
     poly.style.strokeDasharray  = perimeter;
     poly.style.strokeDashoffset = perimeter;
 
