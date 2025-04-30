@@ -5,28 +5,34 @@
   <title>Chemistry Branch Hexagon Chain</title>
   <style>
     :root {
-      --r1:       150px;   /* hexagon radius */
-      --centre:   180px;   /* diameter of centre icon */
-      --icon:      50px;   /* diameter of each node */
+      --r1:     150px;  /* hexagon “radius” */
+      --centre: 180px;  /* diameter of centre icon */
+      --icon:    50px;  /* diameter of each peripheral node */
     }
     *, *::before, *::after { box-sizing: border-box; margin:0; padding:0 }
     html, body { width:100%; height:100% }
     body {
-      display: flex; align-items: center; justify-content: center;
-      background: #111; font-family: system-ui, sans-serif;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: #111;
+      font-family: system-ui, sans-serif;
     }
     .container {
       position: relative;
-      width: calc(2*var(--r1) + 2*sqrt(3)*var(--r1));
-      height: calc(2*var(--r1));
+      /* width/height set in JS */
     }
     .container svg {
-      position: absolute; inset: 0; pointer-events: none;
+      position: absolute;
+      inset: 0;
+      pointer-events: none;
     }
 
+    /* centre icons */
     .centre {
       position: absolute;
-      width: var(--centre); height: var(--centre);
+      width: var(--centre);
+      height: var(--centre);
       border-radius: 50%;
       overflow: visible;
       transform: translate(-50%, -50%);
@@ -36,16 +42,27 @@
     .centre.inorganic { box-shadow: 0 0 24px #fbbf24 }
     .centre.physical  { box-shadow: 0 0 24px #60a5fa }
     .centre img {
-      width:100%; height:100%; object-fit: cover; border-radius:50%;
+      width:100%; height:100%;
+      object-fit: cover;
+      border-radius:50%;
     }
 
+    /* numbered peripheral nodes */
     .node {
       position: absolute;
-      width: var(--icon); height: var(--icon);
-      border-radius: 50%; background: #111; border: 2px solid #fff;
-      display: flex; align-items: center; justify-content: center;
-      font-size: 14px; font-weight: 600; color: #fff;
-      opacity: 0; transform: translate(-50%,-50%) scale(.5);
+      width: var(--icon);
+      height: var(--icon);
+      border-radius: 50%;
+      background: #111;
+      border: 2px solid #fff;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 14px;
+      font-weight: 600;
+      color: #fff;
+      opacity: 0;
+      transform: translate(-50%, -50%) scale(.5);
       transition: transform .4s ease, opacity .4s ease;
       z-index: 1;
     }
@@ -53,9 +70,13 @@
     .node.inorganic { box-shadow: 0 0 12px #fbbf24 }
     .node.physical  { box-shadow: 0 0 12px #60a5fa }
 
+    /* hexagon outline */
     .hexagon {
-      stroke: #374151; stroke-width: 2; fill: none;
-      stroke-dasharray: 1000; stroke-dashoffset: 1000;
+      stroke: #374151;
+      stroke-width: 2;
+      fill: none;
+      stroke-dasharray: 1000;
+      stroke-dashoffset: 1000;
       transition: stroke-dashoffset 1s ease;
     }
   </style>
@@ -65,87 +86,108 @@
 
   <script>
   (function() {
-    const BASE    = "https://your-site.com/chemistry";
+    // 1) YOUR BASE URL:
+    const BASE    = "https://www.ganesteaches.com/ganes-assess/chemistry";
     const R1      = parseFloat(getComputedStyle(document.documentElement).getPropertyValue("--r1"));
     const spacing = Math.sqrt(3) * R1;
+
+    // 2) DEFINE YOUR THREE BRANCHES:
     const branches = [
-      { key:"organic",   cls:"organic",   icon:"icons/organic.png",   title:"Organic Chemistry"   },
-      { key:"inorganic", cls:"inorganic", icon:"icons/inorganic.png", title:"Inorganic Chemistry" },
-      { key:"physical",  cls:"physical",  icon:"icons/physical.png",  title:"Physical Chemistry"  }
+      { key: "organic",   cls: "organic",   icon: "organic_icon.png",    title: "Organic Chemistry"   },
+      { key: "inorganic", cls: "inorganic", icon: "inorganic_icon.png",  title: "Inorganic Chemistry" },
+      { key: "physical",  cls: "physical",  icon: "physical_icon.png",   title: "Physical Chemistry"  }
     ];
-    const topics = Array.from({length:14},(_,i)=>({label:String(i+1),key:`topic-${i+1}`}));
 
-    // set up container
-    const cont = document.getElementById("container");
-    cont.style.width  = (2*R1 + 2*spacing) + "px";
-    cont.style.height = (2*R1) + "px";
+    // 3) NUMBERED TOPICS 1–14
+    const topics = Array.from({ length: 14 }, (_, i) => ({
+      label: String(i + 1),
+      key:   `topic-${i + 1}`
+    }));
 
-    // one big SVG
+    // 4) SET UP CONTAINER SIZE
+    const cont   = document.getElementById("container");
+    const totalW = 2 * R1 + 2 * spacing;
+    const totalH = 2 * R1;
+    cont.style.width  = totalW + "px";
+    cont.style.height = totalH + "px";
+
+    // 5) CREATE A SINGLE SVG FOR ALL THREE HEXAGONS
     const svgNS = "http://www.w3.org/2000/svg";
-    const svg = document.createElementNS(svgNS,"svg");
-    svg.setAttribute("viewBox",`0 0 ${2*R1+2*spacing} ${2*R1}`);
+    const svg   = document.createElementNS(svgNS, "svg");
+    svg.setAttribute("viewBox", `0 0 ${totalW} ${totalH}`);
     svg.style.width  = "100%";
     svg.style.height = "100%";
     cont.appendChild(svg);
 
-    function drawHex(cx,cy) {
-      const pts = Array.from({length:6},(_,i)=>{
-        const ang = (-90 + i*60)*Math.PI/180;
-        return [cx + R1*Math.cos(ang), cy + R1*Math.sin(ang)];
+    // 6) DRAW A HEXAGON AT (cx, cy) AND RETURN ITS 6 CORNERS
+    function drawHexagon(cx, cy) {
+      const pts = Array.from({ length: 6 }, (_, i) => {
+        const ang = (-90 + i * 60) * Math.PI / 180;
+        return [ cx + R1 * Math.cos(ang), cy + R1 * Math.sin(ang) ];
       });
-      const poly = document.createElementNS(svgNS,"polygon");
-      poly.setAttribute("points", pts.map(p=>p.join(",")).join(" "));
+      const poly = document.createElementNS(svgNS, "polygon");
+      poly.setAttribute("points", pts.map(p => p.join(",")).join(" "));
       poly.classList.add("hexagon");
       svg.appendChild(poly);
-      // animate dash
-      const perim = pts.reduce((sum,[x,y],i)=>{
-        const [nx,ny] = pts[(i+1)%6];
-        return sum + Math.hypot(nx-x,ny-y);
-      },0);
+
+      // animate the dashed stroke
+      const perim = pts.reduce((sum, [x, y], i) => {
+        const [nx, ny] = pts[(i + 1) % 6];
+        return sum + Math.hypot(nx - x, ny - y);
+      }, 0);
       poly.style.strokeDasharray  = perim;
       poly.style.strokeDashoffset = perim;
-      requestAnimationFrame(()=> poly.style.strokeDashoffset = "0");
+      requestAnimationFrame(() => poly.style.strokeDashoffset = "0");
+
       return pts;
     }
 
-    // draw hexagons & centres
-    let verts = [];
-    branches.forEach((b,i)=>{
-      const cx = R1 + i*spacing, cy = R1;
-      verts = verts.concat(drawHex(cx,cy));
+    // 7) DRAW ALL THREE HEXES + CENTRE ICONS, COLLECT ALL CORNERS
+    let allVerts = [];
+    branches.forEach((b, i) => {
+      const cx = R1 + i * spacing, cy = R1;
+      allVerts = allVerts.concat(drawHexagon(cx, cy));
+
+      // centre icon → A-Level branch page
       const ctr = document.createElement("a");
-      ctr.className = `centre ${b.cls}`;
-      ctr.href      = `${BASE}/${b.key}`;
-      ctr.title     = b.title;
+      ctr.className  = `centre ${b.cls}`;
+      ctr.href       = `${BASE}/a-level/${b.key}`;
+      ctr.title      = b.title;
       ctr.style.left = cx + "px";
       ctr.style.top  = cy + "px";
-      ctr.innerHTML = `<img src="${b.icon}" alt="${b.title}">`;
+      ctr.innerHTML  = `<img src="${b.icon}" alt="${b.title}">`;
       cont.appendChild(ctr);
     });
 
-    // dedupe → 14 unique vertices
+    // 8) DEDUPE → EXACTLY 14 UNIQUE PERIPHERAL POINTS
     const unique = [];
-    const tol = 1;
-    verts.forEach(pt=>{
-      if (!unique.some(u=>Math.abs(u[0]-pt[0])<tol && Math.abs(u[1]-pt[1])<tol)) {
+    const tol = 1; 
+    allVerts.forEach(pt => {
+      if (!unique.some(u => Math.abs(u[0] - pt[0]) < tol && Math.abs(u[1] - pt[1]) < tol)) {
         unique.push(pt);
       }
     });
 
-    // place numbered nodes
-    unique.forEach(([x,y],i)=>{
+    // 9) PLACE & NUMBER EACH NODE (links to /a-level/{branch}/topic-{n})
+    unique.forEach(([x, y], i) => {
+      // determine which branch this node belongs to (optional)
+      const branchIndex = Math.min(Math.floor(i / 5), branches.length - 1);
+      const b = branches[branchIndex];
+
       const node = document.createElement("a");
-      node.className = `node ${branches[Math.floor(i/5)]?.cls || branches[0].cls}`;
-      node.href      = `${BASE}/${branches[0].key}/${topics[i].key}`;
-      node.title     = `Topic ${topics[i].label}`;
+      node.className  = `node ${b.cls}`;
+      node.href       = `${BASE}/a-level/${b.key}/${topics[i].key}`;
+      node.title      = `Topic ${topics[i].label}`;
       node.style.left = x + "px";
       node.style.top  = y + "px";
       node.textContent = topics[i].label;
       cont.appendChild(node);
-      setTimeout(()=>{
+
+      // staggered fade-in
+      setTimeout(() => {
         node.style.opacity   = "1";
-        node.style.transform = "translate(-50%,-50%) scale(1)";
-      }, 100 + i*60);
+        node.style.transform = "translate(-50%, -50%) scale(1)";
+      }, 100 + i * 60);
     });
   })();
   </script>
