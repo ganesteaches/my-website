@@ -3,110 +3,96 @@
 <head>
   <meta charset="utf-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Ganes Teaches – Grid Layout (Primers Indented)</title>
+  <title>Ganes Teaches – Controllable Widget Dimensions</title>
   <style>
     :root {
-      --widget-size: 1000px;  /* each iframe’s width & height */
-      --gap:         50px;   /* space between rows/columns */
+      /* now you have full control over width and height */
+      --widget-width:  600px;
+      --widget-height: 900px;
+      --gap:           50px;
     }
 
     /* ─── Reset & Base ─── */
-    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0 }
+    *, *::before, *::after { box-sizing: border-box; margin:0; padding:0 }
     body {
-      background: #111;
-      color: #fff;
+      background: transparent;
+      colour: #fff;
       font-family: "Segoe UI", Tahoma, sans-serif;
     }
 
     /* ─── Toolbar centred ─── */
     #toolbar-holder {
       display: flex;
-      justify-content: center;
+      justify-content: centre;
       padding: 1rem 0;
     }
 
     /* ─── Grid container ─── */
     #widgets-container {
       display: grid;
-      grid-template-columns: var(--widget-size) var(--gap) var(--widget-size);
-      grid-template-rows:    var(--widget-size) var(--gap)
-                            var(--widget-size) var(--gap)
-                            var(--widget-size);
+      grid-template-columns: 
+        var(--widget-width) var(--gap) var(--widget-width);
+      grid-template-rows:    
+        var(--widget-height) var(--gap)
+        var(--widget-height) var(--gap)
+        var(--widget-height);
       grid-template-areas:
-        "assess .       ."
-        ".      .       ."
-        ".      primers ."
-        ".      .       ."
-        "revise .       .";
-      justify-content: start;   /* left-align the grid */
+        "assess  .        ."
+        ".       .        ."
+        ".       primers ."
+        ".       .        ."
+        "revise  .        .";
+      justify-content: start;
       padding: var(--gap);
-      /* background: #111; */    /* no need—body is already #111 */
     }
 
-    /* ─── Common widget styling ─── */
+    /* ─── Widget styling uses the two variables ─── */
     .widget {
-      width: var(--widget-size);
-      height: var(--widget-size);
+      width:  var(--widget-width);
+      height: var(--widget-height);
       overflow: hidden;
     }
     .widget iframe {
       width: 100%;
       height: 100%;
       border: none;
-      background: transparent;      /* make iframe window transparent */
+      background: transparent;
       display: block;
     }
 
-    /* ─── Place them in their areas ─── */
+    /* ─── Place them in their grid areas ─── */
     .assess  { grid-area: assess;  }
     .revise  { grid-area: revise;  }
-
-    /* ─── Primers gets extra left shift ─── */
     .primers {
       grid-area: primers;
-      /* shift half its own width (50%) plus 100px more to the left */
-      transform: translateX(calc(-85%));
+      transform: translateX(calc(-50% - 100px));
     }
   </style>
 </head>
 <body>
 
-  <!-- Toolbar will be injected here -->
+  <!-- Toolbar -->
   <header id="toolbar-holder"></header>
 
-  <!-- Three widgets in a triangle, Primers is indented left -->
+  <!-- Your three widgets -->
   <div id="widgets-container">
     <div class="widget assess">
-      <iframe 
-        src="../assess/index.html" 
-        title="Ganes Assess"
-        allowTransparency="true"
-      ></iframe>
+      <iframe src="../assess/index.html" allowTransparency title="Ganes Assess"></iframe>
     </div>
     <div class="widget primers">
-      <iframe 
-        src="../primers/index.html" 
-        title="Ganes Primers"
-        allowTransparency="true"
-      ></iframe>
+      <iframe src="../primers/index.html" allowTransparency title="Ganes Primers"></iframe>
     </div>
     <div class="widget revise">
-      <iframe 
-        src="../revise/index.html" 
-        title="Ganes Revise"
-        allowTransparency="true"
-      ></iframe>
+      <iframe src="../revise/index.html" allowTransparency title="Ganes Revise"></iframe>
     </div>
   </div>
 
   <script>
-    /* fetch + inject the toolbar HTML */
     async function injectToolbar() {
       try {
         const resp = await fetch('/toolbar/index.html');
         if (!resp.ok) throw new Error(resp.status);
-        document.getElementById('toolbar-holder')
-                .innerHTML = await resp.text();
+        document.getElementById('toolbar-holder').innerHTML = await resp.text();
       } catch (err) {
         console.error('Failed to load toolbar:', err);
       }
