@@ -3,53 +3,47 @@
 <head>
   <meta charset="utf-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Ganes Teaches – Grid Layout (Primers Shifted)</title>
+  <title>Ganes Teaches – Grid Layout (Primers Indented)</title>
   <style>
     :root {
-      --widget-size: 950px;  /* each square’s width & height */
+      --widget-size: 950px;  /* each iframe’s width & height */
       --gap:         50px;   /* space between rows/columns */
     }
 
-    /* reset & base */
+    /* ─── Reset & Base ─── */
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0 }
     body {
       background: #111;
-      colour: #fff;
+      color: #fff;
       font-family: "Segoe UI", Tahoma, sans-serif;
     }
 
-    /* ─── Toolbar (centred) ─── */
+    /* ─── Toolbar centred ─── */
     #toolbar-holder {
       display: flex;
-      justify-content: centre;  /* British spelling */
+      justify-content: center;
       padding: 1rem 0;
     }
 
     /* ─── Grid container ─── */
     #widgets-container {
       display: grid;
-      grid-template-columns: 
-        var(--widget-size) /* col1 */ 
-        var(--gap)         /* gutter */ 
-        var(--widget-size) /* col3 */;
-      grid-template-rows: 
-        var(--widget-size) /* row1 */ 
-        var(--gap) 
-        var(--widget-size) /* row3 */ 
-        var(--gap) 
-        var(--widget-size) /* row5 */;
+      grid-template-columns: var(--widget-size) var(--gap) var(--widget-size);
+      grid-template-rows:    var(--widget-size) var(--gap)
+                            var(--widget-size) var(--gap)
+                            var(--widget-size);
       grid-template-areas:
         "assess .       ."
         ".      .       ."
         ".      primers ."
         ".      .       ."
         "revise .       .";
-      justify-content: start;  /* left-align the grid within the page */
+      justify-content: start;   /* left-align the grid */
       padding: var(--gap);
-      background: #111;
+      /* background: #111; */    /* no need—body is already #111 */
     }
 
-    /* ─── Common widget styles ─── */
+    /* ─── Common widget styling ─── */
     .widget {
       width: var(--widget-size);
       height: var(--widget-size);
@@ -59,36 +53,49 @@
       width: 100%;
       height: 100%;
       border: none;
+      background: transparent;      /* make iframe window transparent */
       display: block;
     }
 
-    /* ─── Place them in the named areas ─── */
+    /* ─── Place them in their areas ─── */
     .assess  { grid-area: assess;  }
     .revise  { grid-area: revise;  }
 
-    /* ─── Primers: grid-area plus a 50% left-shift ─── */
+    /* ─── Primers gets extra left shift ─── */
     .primers {
       grid-area: primers;
-      /* shift half its own width (50% of 300px = 150px) to the left */
-      transform: translateX(-75%);
+      /* shift half its own width (50%) plus 100px more to the left */
+      transform: translateX(calc(-75%));
     }
   </style>
 </head>
 <body>
 
-  <!-- Toolbar -->
+  <!-- Toolbar will be injected here -->
   <header id="toolbar-holder"></header>
 
-  <!-- Three widgets in a triangle, with Primers shifted left by 150px -->
+  <!-- Three widgets in a triangle, Primers is indented left -->
   <div id="widgets-container">
     <div class="widget assess">
-      <iframe src="../assess/index.html" title="Ganes Assess"></iframe>
+      <iframe 
+        src="../assess/index.html" 
+        title="Ganes Assess"
+        allowTransparency="true"
+      ></iframe>
     </div>
     <div class="widget primers">
-      <iframe src="../primers/index.html" title="Ganes Primers"></iframe>
+      <iframe 
+        src="../primers/index.html" 
+        title="Ganes Primers"
+        allowTransparency="true"
+      ></iframe>
     </div>
     <div class="widget revise">
-      <iframe src="../revise/index.html" title="Ganes Revise"></iframe>
+      <iframe 
+        src="../revise/index.html" 
+        title="Ganes Revise"
+        allowTransparency="true"
+      ></iframe>
     </div>
   </div>
 
