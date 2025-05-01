@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Composite page (toolbar + assess)</title>
+
+  <!-- Optional: light reset so injected markup inherits nicely -->
+  <style>
+    *,*::before,*::after{box-sizing:border-box}
+    body{margin:0;font-family:system-ui,Segoe UI,Roboto,Helvetica,Arial,sans-serif;}
+
+    /* basic, easily changed layout */
+    header          { position:sticky; top:0; z-index:1000; }
+    #toolbar-holder { width:100%; }
+    #assess-holder  { padding:2rem; }
+  </style>
+</head>
+<body>
+
+  <!-- 1️⃣  Where the toolbar HTML will go -->
+  <header id="toolbar-holder"></header>
+
+  <!-- 2️⃣  Where the Assess page HTML will go -->
+  <main id="assess-holder"></main>
+
+  <script>
+    /*
+      Single helper that fetches a file and drops its contents
+      into a target element.
+    */
+    async function injectHTML(src, targetSelector){
+      try{
+        const resp  = await fetch(src);
+        if(!resp.ok) throw new Error(`${src} – ${resp.status}`);
+        const html  = await resp.text();
+        document.querySelector(targetSelector).innerHTML = html;
+      }catch(err){
+        console.error(err);
+        document.querySelector(targetSelector).textContent =
+          `Couldn’t load ${src}`;
+      }
+    }
+
+    /* Load both fragments once DOM is ready */
+    document.addEventListener('DOMContentLoaded', () => {
+      injectHTML('../toolbar/index.html',  '#toolbar-holder');   // toolbar
+      injectHTML('../assess/index.html',   '#assess-holder');    // Assess page
+    });
+  </script>
+
+</body>
+</html>
