@@ -3,51 +3,54 @@
 <head>
   <meta charset="utf-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Composite page (toolbar + assess)</title>
-
-  <!-- Optional: light reset so injected markup inherits nicely -->
+  <title>Ganes Teaches – Toolbar + Assess</title>
   <style>
-    *,*::before,*::after{box-sizing:border-box}
-    body{margin:0;font-family:system-ui,Segoe UI,Roboto,Helvetica,Arial,sans-serif;}
+    /* reset & base */
+    *,*::before,*::after { box-sizing: border-box; margin: 0; padding: 0 }
+    body {
+      font-family: "Segoe UI", Tahoma, sans-serif;
+      background: #111;
+      colour: #fff;
+    }
 
-    /* basic, easily changed layout */
-    header          { position:sticky; top:0; z-index:1000; }
-    #toolbar-holder { width:100%; }
-    #assess-holder  { padding:2rem; }
+    /* ─── Placement ─── */
+    header#toolbar-holder {
+      width: 100%;
+      /* if you ever need sticky: position: sticky; top: 0; z-index: 100; */
+    }
+    main#assess-holder {
+      width: 100%;
+      clear: both;           /* ensure it sits below any floated content */
+      padding: 2rem 1rem;    /* give it some breathing room */
+    }
   </style>
 </head>
 <body>
 
-  <!-- 1️⃣  Where the toolbar HTML will go -->
+  <!-- 1️⃣ Toolbar goes here -->
   <header id="toolbar-holder"></header>
 
-  <!-- 2️⃣  Where the Assess page HTML will go -->
+  <!-- 2️⃣ Assess page goes here -->
   <main id="assess-holder"></main>
 
   <script>
-    /*
-      Single helper that fetches a file and drops its contents
-      into a target element.
-    */
-    async function injectHTML(src, targetSelector){
-      try{
-        const resp  = await fetch(src);
-        if(!resp.ok) throw new Error(`${src} – ${resp.status}`);
-        const html  = await resp.text();
-        document.querySelector(targetSelector).innerHTML = html;
-      }catch(err){
+    async function injectHTML(src, targetID) {
+      try {
+        const resp = await fetch(src);
+        if (!resp.ok) throw new Error(`${src} returned ${resp.status}`);
+        const html = await resp.text();
+        document.getElementById(targetID).innerHTML = html;
+      } catch (err) {
         console.error(err);
-        document.querySelector(targetSelector).textContent =
-          `Couldn’t load ${src}`;
+        document.getElementById(targetID)
+          .textContent = `Failed to load ${src}`;
       }
     }
 
-    /* Load both fragments once DOM is ready */
     document.addEventListener('DOMContentLoaded', () => {
-      injectHTML('../toolbar/index.html',  '#toolbar-holder');   // toolbar
-      injectHTML('../assess/index.html',   '#assess-holder');    // Assess page
+      injectHTML('/toolbar/index.html',  'toolbar-holder');
+      injectHTML('/assess/index.html',   'assess-holder');
     });
   </script>
-
 </body>
 </html>
