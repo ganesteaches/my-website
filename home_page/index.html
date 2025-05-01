@@ -3,60 +3,65 @@
 <head>
   <meta charset="utf-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Ganes Teaches – Custom Triangular Layout</title>
+  <title>Ganes Teaches – Custom Layout</title>
   <style>
-    /* ─── Position & Size Controls ─── */
+    /* ─── Size & Position Controls ─── */
     :root {
-      --widget-size:   300px;                        /* width & height of each widget */
-      --container-h:   800px;                        /* total height of the widget area */
+      --widget-size:    300px;     /* width & height of each frame */
+      --container-h:    700px;     /* total height of the widget area */
 
-      --assess-top:    50px;                         /* top-left widget */
-      --assess-left:   50px;
+      /* top/left for Assess (top-left corner) */
+      --assess-top:     50px;
+      --assess-left:    50px;
 
-      --primers-top:   200px;                        /* middle-right widget */
-      --primers-left:  calc(100% - var(--widget-size) - 50px);
+      /* top/left for Primers (mid-right) */
+      --primers-top:    300px;     /* ↓ move this up/down */
+      --primers-left:   calc(100% - var(--widget-size) - 50px); /* 50px from right */
 
-      --revise-top:    350px;                        /* bottom-left widget */
-      --revise-left:   50px;
+      /* top/left for Revise (bottom-left) */
+      --revise-top:     400px;
+      --revise-left:    50px;
     }
 
     /* ─── Reset & Base ─── */
-    *,*::before,*::after { box-sizing:border-box; margin:0; padding:0 }
+    *,*::before,*::after { box-sizing: border-box; margin:0; padding:0 }
     body {
-      background:#111;
-      colour:#fff;
-      font-family:"Segoe UI", Tahoma, sans-serif;
+      background: #111;
+      color: #fff;
+      font-family: "Segoe UI", Tahoma, sans-serif;
     }
 
     /* ─── Toolbar (centred) ─── */
     #toolbar-holder {
-      display:flex;
-      justify-content:center;
-      padding:1rem 0;
+      display: flex;
+      justify-content: center;
+      padding: 1rem 0;
     }
 
-    /* ─── Widget Container ─── */
+    /* ─── Container for widgets ─── */
     #widgets-container {
-      position:relative;
-      width:100%;
+      position: relative;
+      width: 100%;
       height: var(--container-h);
-      background:#111;
+      background: #111;
     }
 
-    /* ─── Common widget styles ─── */
+    /* ─── Common widget styling ─── */
     .widget {
-      position:absolute;
+      position: absolute;
       width: var(--widget-size);
       height: var(--widget-size);
+      /* hide any scrollbars inside */
+      overflow: hidden;
     }
     .widget iframe {
-      width:100%;
-      height:100%;
-      border:none;
-      display:block;
+      width: 100%;
+      height: 100%;
+      border: none;
+      display: block;
     }
 
-    /* ─── Individual positions ─── */
+    /* ─── Place each widget using the vars ─── */
     .assess {
       top:  var(--assess-top);
       left: var(--assess-left);
@@ -73,10 +78,10 @@
 </head>
 <body>
 
-  <!-- 1️⃣ Toolbar -->
+  <!-- Toolbar injected here -->
   <header id="toolbar-holder"></header>
 
-  <!-- 2️⃣ Three widgets in a triangle -->
+  <!-- Widgets area -->
   <div id="widgets-container">
     <div class="widget assess">
       <iframe src="../assess/index.html" title="Ganes Assess"></iframe>
@@ -90,7 +95,7 @@
   </div>
 
   <script>
-    /* fetch + inject the toolbar */
+    /* fetch + inject the toolbar HTML */
     async function injectToolbar() {
       try {
         const resp = await fetch('/toolbar/index.html');
