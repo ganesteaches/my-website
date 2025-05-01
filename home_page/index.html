@@ -3,55 +3,56 @@
 <head>
   <meta charset="utf-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Ganes Teaches – Custom Layout</title>
+  <title>Ganes Teaches – Grid Layout</title>
   <style>
-    /* ─── Size & Position Controls ─── */
     :root {
-      --widget-size:    300px;     /* width & height of each frame */
-      --container-h:    700px;     /* total height of the widget area */
-
-      /* top/left for Assess (top-left corner) */
-      --assess-top:     50px;
-      --assess-left:    50px;
-
-      /* top/left for Primers (mid-right) */
-      --primers-top:    300px;     /* ↓ move this up/down */
-      --primers-left:   calc(100% - var(--widget-size) - 50px); /* 50px from right */
-
-      /* top/left for Revise (bottom-left) */
-      --revise-top:     400px;
-      --revise-left:    50px;
+      --widget-size: 900px;  /* size of each square */
+      --gap:         50px;   /* vertical & horizontal gap */
     }
 
-    /* ─── Reset & Base ─── */
-    *,*::before,*::after { box-sizing: border-box; margin:0; padding:0 }
+    /* reset & base */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0 }
     body {
       background: #111;
       color: #fff;
       font-family: "Segoe UI", Tahoma, sans-serif;
     }
 
-    /* ─── Toolbar (centred) ─── */
+    /* toolbar centred at the top */
     #toolbar-holder {
       display: flex;
       justify-content: center;
       padding: 1rem 0;
     }
 
-    /* ─── Container for widgets ─── */
+    /* grid container for the three widgets */
     #widgets-container {
-      position: relative;
-      width: 100%;
-      height: var(--container-h);
+      display: grid;
+      grid-template-columns: 
+        var(--widget-size) /* col1 */ 
+        var(--gap)         /* gutter */ 
+        var(--widget-size) /* col3 (empty) */;
+      grid-template-rows: 
+        var(--widget-size) /* row1 */ 
+        var(--gap)         /* gutter */ 
+        var(--widget-size) /* row3 */
+        var(--gap)
+        var(--widget-size) /* row5 */;
+      grid-template-areas:
+        "assess .       ."
+        ".      .       ."
+        ".      primers ."
+        ".      .       ."
+        "revise .       .";
+      justify-content: start;  /* left-align the whole grid */
+      padding: var(--gap);
       background: #111;
     }
 
-    /* ─── Common widget styling ─── */
+    /* common widget styling */
     .widget {
-      position: absolute;
       width: var(--widget-size);
       height: var(--widget-size);
-      /* hide any scrollbars inside */
       overflow: hidden;
     }
     .widget iframe {
@@ -61,27 +62,18 @@
       display: block;
     }
 
-    /* ─── Place each widget using the vars ─── */
-    .assess {
-      top:  var(--assess-top);
-      left: var(--assess-left);
-    }
-    .primers {
-      top:  var(--primers-top);
-      left: var(--primers-left);
-    }
-    .revise {
-      top:  var(--revise-top);
-      left: var(--revise-left);
-    }
+    /* place each widget into its named grid area */
+    .assess  { grid-area: assess;  }
+    .primers { grid-area: primers; }
+    .revise  { grid-area: revise;  }
   </style>
 </head>
 <body>
 
-  <!-- Toolbar injected here -->
+  <!-- toolbar will be injected here -->
   <header id="toolbar-holder"></header>
 
-  <!-- Widgets area -->
+  <!-- grid of widgets matching your sketch -->
   <div id="widgets-container">
     <div class="widget assess">
       <iframe src="../assess/index.html" title="Ganes Assess"></iframe>
