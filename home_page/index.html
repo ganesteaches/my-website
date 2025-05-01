@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Ganes Teaches – Absolute Positioned Widgets</title>
+  <style>
+    /* ─── Reset & Base ─── */
+    *,*::before,*::after { box-sizing: border-box; margin:0; padding:0 }
+    body {
+      background: #111;
+      color: #fff;
+      font-family: "Segoe UI", Tahoma, sans-serif;
+    }
+
+    /* ─── Toolbar (centred) ─── */
+    #toolbar-holder {
+      width: 100%;
+      display: flex;
+      justify-content: centre;  /* British spelling */
+      padding: 1rem 0;
+    }
+
+    /* ─── Container for widgets ─── */
+    #widgets-container {
+      position: relative;       /* establishes containing block */
+      width: 100%;
+      height: 80vh;            /* adjust total area height as needed */
+      overflow: hidden;        /* prevent scrollbars if you like */
+      background: #111;
+    }
+
+    /* ─── Common widget styles ─── */
+    .widget {
+      position: absolute;      /* now we can place it anywhere */
+      width: 600px;            /* control your own size */
+      height: 900px;
+    }
+    .widget iframe {
+      width: 100%;
+      height: 100%;
+      border: none;
+    }
+
+    /* ─── Precise positions ─── */
+    /* Assess top-left corner */
+    .assess  { top:   20px; left:  20px; }
+
+    /* Primers mid-right */
+    .primers { top:  200px; right: 20px; }
+
+    /* Revise bottom-left */
+    .revise  { bottom: 20px; left:  20px; }
+  </style>
+</head>
+<body>
+
+  <!-- 1️⃣ Toolbar -->
+  <header id="toolbar-holder"></header>
+
+  <!-- 2️⃣ Absolute-positioned widgets -->
+  <div id="widgets-container">
+    <div class="widget assess">
+      <iframe src="../assess/index.html" title="Ganes Assess"></iframe>
+    </div>
+    <div class="widget primers">
+      <iframe src="../primers/index.html" title="Ganes Primers"></iframe>
+    </div>
+    <div class="widget revise">
+      <iframe src="../revise/index.html" title="Ganes Revise"></iframe>
+    </div>
+  </div>
+
+  <script>
+    /* fetch + inject the toolbar */
+    async function injectToolbar() {
+      try {
+        const resp = await fetch('/toolbar/index.html');
+        if (!resp.ok) throw new Error(resp.status);
+        document.getElementById('toolbar-holder')
+                .innerHTML = await resp.text();
+      } catch (e) {
+        console.error('Couldn’t load toolbar:', e);
+      }
+    }
+    document.addEventListener('DOMContentLoaded', injectToolbar);
+  </script>
+</body>
+</html>
