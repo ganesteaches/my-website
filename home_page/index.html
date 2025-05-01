@@ -3,39 +3,42 @@
 <head>
   <meta charset="utf-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Ganes Teaches – Toolbar + Zig-Zag Widgets</title>
+  <title>Ganes Teaches – Custom Layout</title>
   <style>
-    /* ─── Sizing Controls ─── */
+    /* ───── Size & Position Controls ───── */
     :root {
-      --widget-size: 400px;   /* change this once to resize ALL widgets */
+      --widget-size:     300px;    /* width & height of each widget */
+      --container-height: 800px;   /* height of the whole widget area */
+      --offset:          10%;      /* distance from edges */
     }
 
-    /* ─── Reset & Base ─── */
-    *,*::before,*::after { box-sizing: border-box; margin: 0; padding: 0 }
+    /* ───── Reset & Base ───── */
+    *,*::before,*::after { box-sizing: border-box; margin:0; padding:0 }
     body {
-      font-family: "Segoe UI", Tahoma, sans-serif;
       background: #111;
-      colour: #fff;
+      color: #fff;
+      font-family: "Segoe UI", Tahoma, sans-serif;
     }
 
-    /* ─── Toolbar (centred) ─── */
+    /* ───── Toolbar (centred) ───── */
     #toolbar-holder {
       width: 100%;
       display: flex;
-      justify-content: centre;  /* British spelling */
+      justify-content: center;
       padding: 1rem 0;
     }
 
-    /* ─── Zig-Zag Container ─── */
+    /* ───── Container for absolute widgets ───── */
     #widgets-container {
-      display: flex;
-      flex-direction: column;
-      gap: 2rem;       /* vertical spacing between widgets */
-      padding: 1rem;
+      position: relative;
+      width: 100%;
+      height: var(--container-height);
+      background: #111;
     }
 
-    /* ─── Widget Common Styles ─── */
+    /* ───── Common widget styling ───── */
     .widget {
+      position: absolute;
       width: var(--widget-size);
       height: var(--widget-size);
     }
@@ -46,18 +49,32 @@
       display: block;
     }
 
-    /* ─── Positioning ─── */
-    .assess  { align-self: flex-start; }  /* left */
-    .primers { align-self: flex-end;   }  /* right */
-    .revise  { align-self: flex-start; }  /* left */
+    /* ───── Precise positions ───── */
+    /* 1) Assess → top-left */
+    .assess {
+      top:    var(--offset);
+      left:   var(--offset);
+    }
+
+    /* 2) Primers → top-right */
+    .primers {
+      top:    var(--offset);
+      right:  var(--offset);
+    }
+
+    /* 3) Revise → bottom-left */
+    .revise {
+      bottom: var(--offset);
+      left:   var(--offset);
+    }
   </style>
 </head>
 <body>
 
-  <!-- 1️⃣ Toolbar goes here -->
+  <!-- Toolbar will be injected here -->
   <header id="toolbar-holder"></header>
 
-  <!-- 2️⃣ Widgets in a vertical zig-zag -->
+  <!-- Widget area -->
   <div id="widgets-container">
     <div class="widget assess">
       <iframe src="../assess/index.html" title="Ganes Assess"></iframe>
@@ -71,15 +88,15 @@
   </div>
 
   <script>
-    /* fetch + inject the toolbar */
+    /* Fetch & inject the toolbar HTML */
     async function injectToolbar() {
       try {
         const resp = await fetch('/toolbar/index.html');
         if (!resp.ok) throw new Error(resp.status);
         document.getElementById('toolbar-holder')
                 .innerHTML = await resp.text();
-      } catch (e) {
-        console.error('Couldn’t load toolbar:', e);
+      } catch (err) {
+        console.error('Failed to load toolbar:', err);
       }
     }
     document.addEventListener('DOMContentLoaded', injectToolbar);
