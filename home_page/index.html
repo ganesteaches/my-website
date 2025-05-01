@@ -3,10 +3,16 @@
 <head>
   <meta charset="utf-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Ganes Teaches – Toolbar + Three Sections</title>
+  <title>Ganes Teaches – Toolbar + Widgets</title>
   <style>
+    /* ─── Dimension Controls ─── */
+    :root {
+      --widget-width:  400px;   /* change this to resize width */
+      --widget-height: 400px;   /* change this to resize height */
+    }
+
     /* ─── Reset & Base ─── */
-    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0 }
+    *,*::before,*::after { box-sizing: border-box; margin: 0; padding: 0 }
     body {
       background: #111;
       colour: #fff;
@@ -17,11 +23,11 @@
     #toolbar-holder {
       width: 100%;
       display: flex;
-      justify-content: centre;   /* centre the injected <nav> */
+      justify-content: centre;
       padding: 1rem 0;
     }
 
-    /* ─── Grid Layout for Sections ─── */
+    /* ─── Grid Layout ─── */
     .sections {
       display: grid;
       grid-template-columns: 1fr 1fr;
@@ -33,25 +39,24 @@
       gap: 2rem;
       padding: 1rem;
     }
-    .assess  { grid-area: assess;  }
-    .primers { grid-area: primers; }
-    .revise  { grid-area: revise;  }
+    .assess  { grid-area: assess;  display: flex; justify-content: centre; }
+    .primers { grid-area: primers; display: flex; justify-content: centre; }
+    .revise  { grid-area: revise;  display: flex; justify-content: centre; }
 
-    /* ─── Common iframe styling ─── */
+    /* ─── Widget (iframe) Styling ─── */
     .sections iframe {
-      width: 100%;
-      height: 400px;     /* adjust as needed */
+      width: var(--widget-width);
+      height: var(--widget-height);
       border: none;
-      display: block;    /* ensure it fills its cell */
     }
   </style>
 </head>
-
 <body>
-  <!-- 1️⃣ Toolbar goes here -->
+
+  <!-- Toolbar -->
   <header id="toolbar-holder"></header>
 
-  <!-- 2️⃣ Three sections in a zig-zag -->
+  <!-- Three widgets in a zig-zag -->
   <div class="sections">
     <div class="assess">
       <iframe src="../assess/index.html" title="Ganes Assess"></iframe>
