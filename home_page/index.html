@@ -3,60 +3,80 @@
 <head>
   <meta charset="utf-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Ganes Teaches – Custom Layout</title>
+  <title>Ganes Teaches – Custom Triangular Layout</title>
   <style>
+    /* ─── Position & Size Controls ─── */
     :root {
-      --assess-x:   10%;
-      --assess-y:   10%;
-      --primers-x:  60%;  /* ← tweak this to move Primers left/right */
-      --primers-y:  10%;
-      --revise-x:   10%;
-      --revise-y:   60%;
-      --widget-size: 300px;
+      --widget-size:   300px;                        /* width & height of each widget */
+      --container-h:   800px;                        /* total height of the widget area */
+
+      --assess-top:    50px;                         /* top-left widget */
+      --assess-left:   50px;
+
+      --primers-top:   200px;                        /* middle-right widget */
+      --primers-left:  calc(100% - var(--widget-size) - 50px);
+
+      --revise-top:    350px;                        /* bottom-left widget */
+      --revise-left:   50px;
     }
 
+    /* ─── Reset & Base ─── */
     *,*::before,*::after { box-sizing:border-box; margin:0; padding:0 }
     body {
-      background:#111; color:#fff;
+      background:#111;
+      colour:#fff;
       font-family:"Segoe UI", Tahoma, sans-serif;
     }
 
+    /* ─── Toolbar (centred) ─── */
     #toolbar-holder {
-      display:flex; justify-content:center;
+      display:flex;
+      justify-content:center;
       padding:1rem 0;
     }
 
+    /* ─── Widget Container ─── */
     #widgets-container {
       position:relative;
       width:100%;
-      height:800px;
+      height: var(--container-h);
+      background:#111;
     }
 
+    /* ─── Common widget styles ─── */
     .widget {
       position:absolute;
-      width:var(--widget-size);
-      height:var(--widget-size);
+      width: var(--widget-size);
+      height: var(--widget-size);
     }
     .widget iframe {
-      width:100%; height:100%; border:none; display:block;
+      width:100%;
+      height:100%;
+      border:none;
+      display:block;
     }
 
+    /* ─── Individual positions ─── */
     .assess {
-      top:  var(--assess-y);
-      left: var(--assess-x);
+      top:  var(--assess-top);
+      left: var(--assess-left);
     }
     .primers {
-      top:  var(--primers-y);
-      left: var(--primers-x);
+      top:  var(--primers-top);
+      left: var(--primers-left);
     }
     .revise {
-      top:  var(--revise-y);
-      left: var(--revise-x);
+      top:  var(--revise-top);
+      left: var(--revise-left);
     }
   </style>
 </head>
 <body>
+
+  <!-- 1️⃣ Toolbar -->
   <header id="toolbar-holder"></header>
+
+  <!-- 2️⃣ Three widgets in a triangle -->
   <div id="widgets-container">
     <div class="widget assess">
       <iframe src="../assess/index.html" title="Ganes Assess"></iframe>
@@ -68,15 +88,17 @@
       <iframe src="../revise/index.html" title="Ganes Revise"></iframe>
     </div>
   </div>
+
   <script>
+    /* fetch + inject the toolbar */
     async function injectToolbar() {
       try {
         const resp = await fetch('/toolbar/index.html');
         if (!resp.ok) throw new Error(resp.status);
         document.getElementById('toolbar-holder')
                 .innerHTML = await resp.text();
-      } catch (e) {
-        console.error('Failed to load toolbar:', e);
+      } catch (err) {
+        console.error('Failed to load toolbar:', err);
       }
     }
     document.addEventListener('DOMContentLoaded', injectToolbar);
