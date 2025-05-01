@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Ganes Teaches – Home</title>
+  <style>
+    body {
+      margin: 0;
+      background: #111;
+      colour: #fff;
+    }
+    /* centre the injected toolbar */
+    #toolbar-holder {
+      width: 100%;
+      display: flex;
+      justify-content: centre;
+    }
+    /* make sure the nav inside it stays its natural width */
+    #toolbar-holder > nav { }
+
+    /* lay out the three module iframes */
+    #modules {
+      display: flex;
+      flex-wrap: wrap;
+      height: calc(100vh - 60px); /* subtract toolbar height */
+    }
+    #modules iframe {
+      flex: 1 1 33%;
+      border: none;
+      height: 100%;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- toolbar -->
+  <header id="toolbar-holder"></header>
+
+  <!-- three product embeds -->
+  <div id="modules">
+    <iframe src="/assess/index.html" title="Ganes Assess"></iframe>
+    <iframe src="/primers/index.html" title="Ganes Primers"></iframe>
+    <iframe src="/revise/index.html" title="Ganes Revise"></iframe>
+  </div>
+
+  <script>
+    async function injectHTML(src, targetID) {
+      try {
+        const resp = await fetch(src);
+        if (!resp.ok) throw new Error(`${src} → ${resp.status}`);
+        const html = await resp.text();
+        document.getElementById(targetID).innerHTML = html;
+      } catch (err) {
+        console.error(err);
+        document.getElementById(targetID)
+          .textContent = `Failed to load ${src}`;
+      }
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+      injectHTML('/toolbar/index.html', 'toolbar-holder');
+    });
+  </script>
+
+</body>
+</html>
