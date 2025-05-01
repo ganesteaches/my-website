@@ -3,14 +3,19 @@
 <head>
   <meta charset="utf-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Ganes Teaches – Absolute Positioned Widgets</title>
+  <title>Ganes Teaches – Toolbar + Zig-Zag Widgets</title>
   <style>
+    /* ─── Sizing Controls ─── */
+    :root {
+      --widget-size: 400px;   /* change this once to resize ALL widgets */
+    }
+
     /* ─── Reset & Base ─── */
-    *,*::before,*::after { box-sizing: border-box; margin:0; padding:0 }
+    *,*::before,*::after { box-sizing: border-box; margin: 0; padding: 0 }
     body {
-      background: #111;
-      color: #fff;
       font-family: "Segoe UI", Tahoma, sans-serif;
+      background: #111;
+      colour: #fff;
     }
 
     /* ─── Toolbar (centred) ─── */
@@ -21,44 +26,38 @@
       padding: 1rem 0;
     }
 
-    /* ─── Container for widgets ─── */
+    /* ─── Zig-Zag Container ─── */
     #widgets-container {
-      position: relative;       /* establishes containing block */
-      width: 100%;
-      height: 80vh;            /* adjust total area height as needed */
-      overflow: hidden;        /* prevent scrollbars if you like */
-      background: #111;
+      display: flex;
+      flex-direction: column;
+      gap: 2rem;       /* vertical spacing between widgets */
+      padding: 1rem;
     }
 
-    /* ─── Common widget styles ─── */
+    /* ─── Widget Common Styles ─── */
     .widget {
-      position: absolute;      /* now we can place it anywhere */
-      width: 600px;            /* control your own size */
-      height: 900px;
+      width: var(--widget-size);
+      height: var(--widget-size);
     }
     .widget iframe {
       width: 100%;
       height: 100%;
       border: none;
+      display: block;
     }
 
-    /* ─── Precise positions ─── */
-    /* Assess top-left corner */
-    .assess  { top:   20px; left:  20px; }
-
-    /* Primers mid-right */
-    .primers { top:  200px; right: 20px; }
-
-    /* Revise bottom-left */
-    .revise  { bottom: 20px; left:  20px; }
+    /* ─── Positioning ─── */
+    .assess  { align-self: flex-start; }  /* left */
+    .primers { align-self: flex-end;   }  /* right */
+    .revise  { align-self: flex-start; }  /* left */
   </style>
 </head>
 <body>
 
-  <!-- 1️⃣ Toolbar -->
+  <!-- 1️⃣ Toolbar goes here -->
   <header id="toolbar-holder"></header>
 
-  <!-- 2️⃣ Absolute-positioned widgets -->
+  <!-- 2️⃣ Widgets in a vertical zig-zag -->
   <div id="widgets-container">
     <div class="widget assess">
       <iframe src="../assess/index.html" title="Ganes Assess"></iframe>
