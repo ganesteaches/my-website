@@ -8,7 +8,7 @@
     :root {
       /* icon sizes and hover/glow controls */
       --icon-size-top:      24px;
-      --icon-size-dropdown: 16px;
+      --icon-size-dropdown: 16px;   /* adjust this to control dropdown-icon size */
       --hover-scale:        1.3;
       --glow-colour:        #ffd580;
     }
@@ -18,7 +18,7 @@
       background: transparent;
       border-bottom: 1px solid #444;
       display: flex;
-      justify-content: center;
+      justify-content: centre;
       padding: 0 16px;
     }
     #main-nav ul {
@@ -26,7 +26,7 @@
       margin: 0;
       padding: 0;
       display: flex;
-      align-items: center;
+      align-items: centre;
       gap: 20px;
     }
     #main-nav > ul > li {
@@ -36,13 +36,13 @@
     /* Links & hover effects */
     #main-nav a {
       display: inline-flex;
-      align-items: center;
+      align-items: centre;
       gap: 8px;
       padding: 14px 10px;
       text-decoration: none;
-      colour: inherit;           /* British spelling in comment */
+      color: inherit;           /* note British spelling in comment */
       font-weight: 600;
-      transition: colour .2s ease;
+      transition: color .2s ease;
       user-select: none;
     }
     #main-nav a:hover img {
@@ -51,7 +51,7 @@
       transition: transform .2s ease, filter .2s ease;
     }
     #main-nav a:hover {
-      colour: var(--glow-colour);
+      color: var(--glow-colour);
     }
 
     /* top-level icon size */
@@ -88,12 +88,12 @@
     }
     .dropdown a {
       display: inline-flex;
-      align-items: center;
+      align-items: centre;
       gap: 8px;
       padding: 6px 12px;
       border-radius: 8px;
       white-space: nowrap;
-      transition: background .2s ease, colour .2s ease;
+      transition: background .2s ease, color .2s ease;
     }
     .dropdown img {
       width: var(--icon-size-dropdown);
@@ -107,7 +107,7 @@
     /* Colour variants */
     .assess  .dropdown a:hover { background: rgba(173,216,230,.3); }
     .primers .dropdown a:hover { background: rgba(255,229,180,.3); }
-    .revise  .dropdown a:hover { background: rgba(255,255,255,.3); colour: #000; }
+    .revise  .dropdown a:hover { background: rgba(255,255,255,.3); color: #000; }
   </style>
 </head>
 <body>
@@ -121,31 +121,11 @@
         </a>
         <div class="dropdown">
           <ul>
-            <li>
-              <a href="https://www.ganesteaches.com/ganes-assess/biology" target="_blank">
-                <img src="../biology_list_icon.png" alt=""/>Biology
-              </a>
-            </li>
-            <li>
-              <a href="https://www.ganesteaches.com/ganes-assess/chemistry" target="_blank">
-                <img src="../chemistry_list_icon.png" alt=""/>Chemistry
-              </a>
-            </li>
-            <li>
-              <a href="https://www.ganesteaches.com/ganes-assess/physics" target="_blank">
-                <img src="../physics_list_icon.png" alt=""/>Physics
-              </a>
-            </li>
-            <li>
-              <a href="https://www.ganesteaches.com/ganes-assess/mathematics" target="_blank">
-                <img src="../mathematics_list_icon.png" alt=""/>Mathematics
-              </a>
-            </li>
-            <li>
-              <a href="https://www.ganesteaches.com/ganes-assess/further-maths" target="_blank">
-                <img src="../further_mathematics_list_icon.png" alt=""/>Further Maths
-              </a>
-            </li>
+            <li><a href="https://www.ganesteaches.com/ganes-assess/biology"     target="_blank"><img src="../biology_list_icon.png"             alt=""/>Biology</a></li>
+            <li><a href="https://www.ganesteaches.com/ganes-assess/chemistry"   target="_blank"><img src="../chemistry_list_icon.png"           alt=""/>Chemistry</a></li>
+            <li><a href="https://www.ganesteaches.com/ganes-assess/physics"     target="_blank"><img src="../physics_list_icon.png"             alt=""/>Physics</a></li>
+            <li><a href="https://www.ganesteaches.com/ganes-assess/mathematics" target="_blank"><img src="../mathematics_list_icon.png"         alt=""/>Mathematics</a></li>
+            <li><a href="https://www.ganesteaches.com/ganes-assess/further-maths" target="_blank"><img src="../further_mathematics_list_icon.png" alt=""/>Further Maths</a></li>
           </ul>
         </div>
       </li>
@@ -157,31 +137,11 @@
         </a>
         <div class="dropdown">
           <ul>
-            <li>
-              <a href="https://www.ganesteaches.com/ganes-primers/biology" target="_blank">
-                <img src="../front_biology_list_icon.png" alt=""/>Biology
-              </a>
-            </li>
-            <li>
-              <a href="https://www.ganesteaches.com/ganes-primers/chemistry" target="_blank">
-                <img src="../front_chemistry_list_icon.png" alt=""/>Chemistry
-              </a>
-            </li>
-            <li>
-              <a href="https://www.ganesteaches.com/ganes-primers/physics" target="_blank">
-                <img src="../front_physics_list_icon.png" alt=""/>Physics
-              </a>
-            </li>
-            <li>
-              <a href="https://www.ganesteaches.com/ganes-primers/mathematics" target="_blank">
-                <img src="../front_mathematics_list_icon.png" alt=""/>Mathematics
-              </a>
-            </li>
-            <li>
-              <a href="https://www.ganesteaches.com/ganes-primers/further-maths" target="_blank">
-                <img src="../front_further_mathematics_list_icon.png" alt=""/>Further Maths
-              </a>
-            </li>
+            <li><a href="https://www.ganesteaches.com/ganes-primers/biology"     target="_blank"><img src="../front_biology_list_icon.png"       alt=""/>Biology</a></li>
+            <li><a href="https://www.ganesteaches.com/ganes-primers/chemistry"   target="_blank"><img src="../front_chemistry_list_icon.png"     alt=""/>Chemistry</a></li>
+            <li><a href="https://www.ganesteaches.com/ganes-primers/physics"     target="_blank"><img src="../front_physics_list_icon.png"       alt=""/>Physics</a></li>
+            <li><a href="https://www.ganesteaches.com/ganes-primers/mathematics" target="_blank"><img src="../front_mathematics_list_icon.png"   alt=""/>Mathematics</a></li>
+            <li><a href="https://www.ganesteaches.com/ganes-primers/further-maths" target="_blank"><img src="../front_further_mathematics_list_icon.png" alt=""/>Further Maths</a></li>
           </ul>
         </div>
       </li>
@@ -193,31 +153,11 @@
         </a>
         <div class="dropdown">
           <ul>
-            <li>
-              <a href="https://www.ganesteaches.com/ganes-revise/biology" target="_blank">
-                <img src="../right_biology_list_icon.png" alt=""/>Biology
-              </a>
-            </li>
-            <li>
-              <a href="https://www.ganesteaches.com/ganes-revise/chemistry" target="_blank">
-                <img src="../right_chemistry_list_icon.png" alt=""/>Chemistry
-              </a>
-            </li>
-            <li>
-              <a href="https://www.ganesteaches.com/ganes-revise/physics" target="_blank">
-                <img src="../right_physics_list_icon.png" alt=""/>Physics
-              </a>
-            </li>
-            <li>
-              <a href="https://www.ganesteaches.com/ganes-revise/mathematics" target="_blank">
-                <img src="../right_mathematics_list_icon.png" alt=""/>Mathematics
-              </a>
-            </li>
-            <li>
-              <a href="https://www.ganesteaches.com/ganes-revise/further-maths" target="_blank">
-                <img src="../right_further_mathematics_list_icon.png" alt=""/>Further Maths
-              </a>
-            </li>
+            <li><a href="https://www.ganesteaches.com/ganes-revise/biology"     target="_blank"><img src="../right_biology_list_icon.png"         alt=""/>Biology</a></li>
+            <li><a href="https://www.ganesteaches.com/ganes-revise/chemistry"   target="_blank"><img src="../right_chemistry_list_icon.png"       alt=""/>Chemistry</a></li>
+            <li><a href="https://www.ganesteaches.com/ganes-revise/physics"     target="_blank"><img src="../right_physics_list_icon.png"         alt=""/>Physics</a></li>
+            <li><a href="https://www.ganesteaches.com/ganes-revise/mathematics" target="_blank"><img src="../right_mathematics_list_icon.png"     alt=""/>Mathematics</a></li>
+            <li><a href="https://www.ganesteaches.com/ganes-revise/further-maths" target="_blank"><img src="../right_further_mathematics_list_icon.png"  alt=""/>Further Maths</a></li>
           </ul>
         </div>
       </li>
