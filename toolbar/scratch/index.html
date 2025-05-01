@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <style>
+    /* ---------- Global reset & base ---------- */
+    *, *::before, *::after { box-sizing: border-box; }
+    body {
+      margin: 0;
+      font-family: "Segoe UI", Tahoma, sans-serif;
+      background: #111;
+      color: #fff;
+    }
+
+    /* ---------- Icon-size controls ---------- */
+    :root {
+      --icon-size-top:      24px;   /* icons visible on the toolbar */
+      --icon-size-dropdown: 20px;   /* icons inside the dropdowns   */
+      --hover-scale:        1.3;    /* how much icons grow on hover */
+      --glow-colour:        #ffd580;
+    }
+
+    /* ---------- Toolbar layout ---------- */
+    #main-nav {
+      background: rgba(0, 0, 0, .8);
+      backdrop-filter: blur(6px);
+      border-bottom: 1px solid #444;
+      display: flex;
+      justify-content: centre;
+      padding: 0 16px;
+    }
+    #main-nav ul {
+      list-style: none;
+      margin: 0;
+      padding: 0;
+      display: flex;
+      align-items: centre;
+      gap: 20px;
+    }
+    #main-nav>ul>li { position: relative; }
+
+    /* ---------- Links & Hover Effects ---------- */
+    #main-nav a {
+      display: inline-flex;
+      align-items: centre;
+      gap: 8px;
+      padding: 14px 10px;
+      text-decoration: none;
+      colour: inherit;
+      font-weight: 600;
+      transition: colour .2s ease;
+      user-select: none;
+    }
+    /* enlarge and glow the icon on hover */
+    #main-nav a:hover img {
+      transform: scale(var(--hover-scale));
+      filter: drop-shadow(0 0 8px var(--glow-colour));
+      transition: transform .2s ease, filter .2s ease;
+    }
+    #main-nav a:hover { colour: var(--glow-colour); }
+
+    /* size the three top-level icons */
+    #main-nav>ul>li>a>img {
+      width: var(--icon-size-top);
+      height: var(--icon-size-top);
+    }
+
+    /* ---------- Dropdown behaviour ---------- */
+    .dropdown {
+      position: absolute;
+      left: 50%; top: 100%;
+      transform: translate(-50%, 10px);
+      opacity: 0; visibility: hidden;
+      transition: transform .35s ease, opacity .35s ease;
+      z-index: 20;
+    }
+    #main-nav li:hover > .dropdown,
+    .dropdown:hover {
+      transform: translate(-50%, 0);
+      opacity: 1; visibility: visible;
+    }
+    .dropdown ul {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      padding: 12px;
+      background: rgba(0, 0, 0, .7);
+      border: 1px solid #444;
+      border-radius: 8px;
+    }
+    .dropdown a {
+      display: inline-flex;
+      align-items: centre;
+      gap: 8px;
+      padding: 6px 12px;
+      border-radius: 8px;
+      white-space: nowrap;
+      transition: background .2s ease, colour .2s ease;
+    }
+    .dropdown a:hover img {
+      transform: scale(var(--hover-scale));
+      filter: drop-shadow(0 0 6px var(--glow-colour));
+    }
+
+    /* ---------- Colour variants ---------- */
+    .assess  .dropdown a:hover { background: rgba(173,216,230,.3); }
+    .primers .dropdown a:hover { background: rgba(255,229,180,.3); }
+    .revise  .dropdown a:hover { background: rgba(255,255,255,.3); colour: #000; }
+
+    /* ---------- Responsive tweaks ---------- */
+    @media(max-width:768px) {
+      #main-nav ul { flex-wrap: wrap; }
+    }
+  </style>
+</head>
+
+<body>
+  <nav id="main-nav">
+    <ul>
+
+      <!-- Ganes Assess -->
+      <li class="assess">
+        <a href="https://www.ganesteaches.com/ganes-assess" target="_blank">
+          <img src="../ganes_assess.png" alt=""/>Ganes Assess
+        </a>
+        <div class="dropdown">
+          <ul>
+            <li><a href="https://www.ganesteaches.com/ganes-assess/biology"       target="_blank"><img src="../biology_list_icon.png"             alt=""/>Biology</a></li>
+            <li><a href="https://www.ganesteaches.com/ganes-assess/chemistry"     target="_blank"><img src="../chemistry_list_icon.png"           alt=""/>Chemistry</a></li>
+            <li><a href="https://www.ganesteaches.com/ganes-assess/physics"       target="_blank"><img src="../physics_list_icon.png"             alt=""/>Physics</a></li>
+            <li><a href="https://www.ganesteaches.com/ganes-assess/mathematics"   target="_blank"><img src="../mathematics_list_icon.png"         alt=""/>Mathematics</a></li>
+            <li><a href="https://www.ganesteaches.com/ganes-assess/further-maths" target="_blank"><img src="../further_mathematics_list_icon.png" alt=""/>Further Maths</a></li>
+          </ul>
+        </div>
+      </li>
+
+      <!-- Ganes Primers -->
+      <li class="primers">
+        <a href="https://www.ganesteaches.com/ganes-primers" target="_blank">
+          <img src="../ganes_primers.png" alt=""/>Ganes Primers
+        </a>
+        <div class="dropdown">
+          <ul>
+            <li><a href="https://www.ganesteaches.com/ganes-primers/biology"       target="_blank"><img src="../front_biology_list_icon.png"       alt=""/>Biology</a></li>
+            <li><a href="https://www.ganesteaches.com/ganes-primers/chemistry"     target="_blank"><img src="../front_chemistry_list_icon.png"     alt=""/>Chemistry</a></li>
+            <li><a href="https://www.ganesteaches.com/ganes-primers/physics"       target="_blank"><img src="../front_physics_list_icon.png"       alt=""/>Physics</a></li>
+            <li><a href="https://www.ganesteaches.com/ganes-primers/mathematics"   target="_blank"><img src="../front_mathematics_list_icon.png"   alt=""/>Mathematics</a></li>
+            <li><a href="https://www.ganesteaches.com/ganes-primers/further-maths" target="_blank"><img src="../front_further_mathematics_list_icon.png" alt=""/>Further Maths</a></li>
+          </ul>
+        </div>
+      </li>
+
+      <!-- Ganes Revise -->
+      <li class="revise">
+        <a href="https://www.ganesteaches.com/ganes-revise" target="_blank">
+          <img src="../ganes_revise.png" alt=""/>Ganes Revise
+        </a>
+        <div class="dropdown">
+          <ul>
+            <li><a href="https://www.ganesteaches.com/ganes-revise/biology"       target="_blank"><img src="../right_biology_list_icon.png"           alt=""/>Biology</a></li>
+            <li><a href="https://www.ganesteaches.com/ganes-revise/chemistry"     target="_blank"><img src="../right_chemistry_list_icon.png"         alt=""/>Chemistry</a></li>
+            <li><a href="https://www.ganesteaches.com/ganes-revise/physics"       target="_blank"><img src="../right_physics_list_icon.png"           alt=""/>Physics</a></li>
+            <li><a href="https://www.ganesteaches.com/ganes-revise/mathematics"   target="_blank"><img src="../right_mathematics_list_icon.png"       alt=""/>Mathematics</a></li>
+            <li><a href="https://www.ganesteaches.com/ganes-revise/further-maths" target="_blank"><img src="../right_further_mathematics_list_icon.png" alt=""/>Further Maths</a></li>
+          </ul>
+        </div>
+      </li>
+
+      <!-- New: Periodic Table -->
+      <li>
+        <a href="https://www.ganesteaches.com/periodic-table" target="_blank">
+          <img src="../periodic_table_icon.png" alt=""/>Periodic Table
+        </a>
+      </li>
+
+      <!-- New: Timetable -->
+      <li>
+        <a href="https://www.ganesteaches.com/timetable" target="_blank">
+          <img src="../timetable_icon.png" alt=""/>Timetable
+        </a>
+      </li>
+
+    </ul>
+  </nav>
+</body>
+</html>
