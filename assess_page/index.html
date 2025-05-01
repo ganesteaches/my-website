@@ -5,52 +5,34 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Ganes Teaches – Toolbar + Assess</title>
   <style>
-    /* reset & base */
-    *,*::before,*::after { box-sizing: border-box; margin: 0; padding: 0 }
-    body {
-      font-family: "Segoe UI", Tahoma, sans-serif;
-      background: #111;
-      colour: #fff;
-    }
-
-    /* ─── Placement ─── */
-    header#toolbar-holder {
+    body { margin:0; background:#111; }
+    #toolbar-holder { width:100%; }
+    #assess-frame {
       width: 100%;
-      /* if you ever need sticky: position: sticky; top: 0; z-index: 100; */
-    }
-    main#assess-holder {
-      width: 100%;
-      clear: both;           /* ensure it sits below any floated content */
-      padding: 2rem 1rem;    /* give it some breathing room */
+      height: calc(100vh - 60px); /* or whatever fits */
+      border: none;
+      display: block;            /* ensure it’s on its own line */
     }
   </style>
 </head>
 <body>
 
-  <!-- 1️⃣ Toolbar goes here -->
+  <!-- toolbar via fetch (as before) -->
   <header id="toolbar-holder"></header>
 
-  <!-- 2️⃣ Assess page goes here -->
-  <main id="assess-holder"></main>
+  <!-- Assess page isolated in an iframe -->
+  <iframe id="assess-frame" src="/assess/index.html"></iframe>
 
   <script>
+    // same injectHTML() for the toolbar...
     async function injectHTML(src, targetID) {
-      try {
-        const resp = await fetch(src);
-        if (!resp.ok) throw new Error(`${src} returned ${resp.status}`);
-        const html = await resp.text();
-        document.getElementById(targetID).innerHTML = html;
-      } catch (err) {
-        console.error(err);
-        document.getElementById(targetID)
-          .textContent = `Failed to load ${src}`;
-      }
+      const resp = await fetch(src);
+      document.getElementById(targetID).innerHTML = await resp.text();
     }
-
-    document.addEventListener('DOMContentLoaded', () => {
-      injectHTML('../toolbar/index.html',  'toolbar-holder');
-      injectHTML('../assess/index.html',   'assess-holder');
-    });
+    document.addEventListener('DOMContentLoaded', () =>
+      injectHTML('../toolbar/index.html', 'toolbar-holder')
+    );
   </script>
+
 </body>
 </html>
