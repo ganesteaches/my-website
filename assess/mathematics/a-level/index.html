@@ -3,59 +3,83 @@
 <head>
   <meta charset="utf-8">
   <title>Subject Icons</title>
-
-  <!-- ----------  BASIC RESET  ---------- -->
   <meta name="viewport" content="width=device-width, initial-scale=1">
+
   <style>
-    /* Reset a few browser defaults */
-    *, *::before, *::after{box-sizing:border-box;margin:0;padding:0;}
+    /* ----------  COLOUR & SIZE VARS  ---------- */
+    :root{
+      --accent: #2193ff;   /* electric-blue outline / glow */
+      --tile-size: 200px;  /* change this to scale everything together */
+    }
+
+    /* ----------  BASIC RESET  ---------- */
+    *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
 
     /* ----------  PAGE LAYOUT  ---------- */
     body{
       min-height:100vh;
       display:flex;
-      align-items:center;          /* NB: must be US-spelt ‘center’ in CSS */
+      align-items:center;          /* NB: US spelling for CSS keyword   */
       justify-content:center;
-      background:#2d2d2d;          /* dark backdrop as per your screenshot */
+      background:transparent;      /* fully see-through page background */
       font-family:system-ui,sans-serif;
     }
 
     .icon-row{
       display:flex;
-      gap:3rem;                    /* space between tiles */
+      gap:4rem;                    /* distance between tiles            */
       padding:2rem;
+      perspective:1000px;          /* gives the hover-tilt depth        */
     }
 
     /* ----------  ICON TILE  ---------- */
     .tile{
-      width:140px;                 /* overall tile size – tweak to taste   */
-      aspect-ratio:1/1;            /* forces a perfect square              */
-      border-radius:16px;
-      background:#0d0d0f;
-      box-shadow:
-        0 4px 8px rgba(0,0,0,.6),
-        0 0 0 2px #2193ff,
-        0 0 6px 2px #2193ff;
+      width:var(--tile-size);
+      aspect-ratio:1/1;            /* perfect square                    */
+      border-radius:18px;
+      background:rgba(13,13,15,.85); /* slight translucency = faux 3-D   */
       display:flex;
       align-items:center;
       justify-content:center;
       overflow:hidden;
-      transition:transform .25s ease;
+      cursor:pointer;
+
+      /* static glow (base) */
+      box-shadow:
+        0 0 0 2px var(--accent),
+        0 0 6px  2px var(--accent);
+
+      /* “breathing” glow animation */
+      animation:pulse 3.5s ease-in-out infinite;
+      transition:transform .35s cubic-bezier(.22,1,.36,1);
     }
 
-    .tile:hover{transform:translateY(-6px);} /* gentle lift on hover */
+    .tile:hover{
+      transform:
+        translateY(-12px)          /* lift up */
+        rotateY(12deg)             /* gentle 3-D twist */
+        rotateX(3deg);
+    }
 
-    /* ----------  ACTUAL ICON ---------- */
+    /* ----------  ICON IMAGE  ---------- */
     .tile img{
-      width:82%;                   /* any value ≤ 100 % works               */
-      height:82%;                  /*                                      */
-      object-fit:contain;          /* ✱ keeps the aspect ratio – no squash! */
+      width:84%;
+      height:84%;
+      object-fit:contain;          /* keeps original aspect ratio       */
       object-position:center;
+      pointer-events:none;         /* stops drag ghost when clicked     */
     }
 
-    /* ----------  MOBILE STACKING  ---------- */
-    @media(max-width:600px){
-      .icon-row{flex-direction:column;gap:2rem;}
+    /* ----------  ANIMATIONS  ---------- */
+    @keyframes pulse{
+      0%  {box-shadow:0 0 0 2px var(--accent), 0 0 6px 2px var(--accent);}
+      50% {box-shadow:0 0 0 4px var(--accent), 0 0 14px 4px var(--accent);}
+      100%{box-shadow:0 0 0 2px var(--accent), 0 0 6px 2px var(--accent);}
+    }
+
+    /* ----------  MOBILE ­– stack vertically ---------- */
+    @media(max-width:650px){
+      .icon-row{flex-direction:column;gap:3rem;}
     }
   </style>
 </head>
