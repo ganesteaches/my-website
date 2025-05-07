@@ -4,9 +4,7 @@
   <meta charset="UTF-8">
   <title>Ganes Assess – Animated Hexagon</title>
   <style>
-    :root{
-      --r1:230px; --r2:320px; --icon:100px; --bubble:70px;
-    }
+    :root{ --r1:230px; --r2:320px; --icon:100px; --bubble:70px; }
     *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
     html,body{width:100%;height:100%;}
     body{
@@ -84,6 +82,7 @@
   (function(){
     const BASE        = 'https://www.ganesteaches.com/ganes-assess';
     const NODE_SHRINK = 0.85;
+    const DEFAULT_QUALS = ['GCSE','A Level','IB'];
 
     const subjects = [
       { label:'Biology',       key:'biology',             icon:'../biology_list_icon.png',             cls:'science', angle:30  },
@@ -91,9 +90,9 @@
       { label:'Physics',       key:'physics',             icon:'../physics_list_icon.png',             cls:'science', angle:270 },
       { label:'Mathematics',   key:'mathematics',         icon:'../mathematics_list_icon.png',         cls:'maths',   angle:330 },
       { label:'Further Maths', key:'further-mathematics', icon:'../further_mathematics_list_icon.png', cls:'maths',   angle:150 },
-      { label:'University',    key:'misc',                icon:'../misc_list_icon.png',                cls:'misc',    angle:90  }
+      { label:'University',    key:'misc',                icon:'../misc_list_icon.png',                cls:'misc',    angle:90,
+        quals:['Chemistry','Aptitude','Entrance'] }   // ← CUSTOM bubbles here
     ];
-    const quals = ['GCSE','A Level','IB'];
 
     const chart = document.getElementById('chart');
     const svg   = document.getElementById('outline');
@@ -132,10 +131,11 @@
       sub.el = node;
 
       /* qualification bubbles */
-      sub.bubbles = quals.map((q,i)=>{
+      const qualsHere = sub.quals || DEFAULT_QUALS;
+      sub.bubbles = qualsHere.map((q,i)=>{
         const qlower = q.toLowerCase();
-        const urlKey  = qlower.replace(/\s+/g,'-');  // ➜ a-level for URL
-        const iconKey = qlower.replace(/\s+/g,'');   // ➜ alevel  for icon
+        const urlKey  = qlower.replace(/\s+/g,'-');  // “A Level” → “a-level”
+        const iconKey = qlower.replace(/\s+/g,'');   // “A Level” → “alevel”
 
         const off = -30 + i*30;
         const br  = (sub.angle + off) * Math.PI/180;
