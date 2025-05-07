@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>Subject Icons</title>
+
+  <!-- ----------  BASIC RESET  ---------- -->
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <style>
+    /* Reset a few browser defaults */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    /* ----------  LAYOUT  ---------- */
+    body{
+      min-height: 100vh;
+      display: flex;
+      align-items: centre;          /* UK spelling in comments 🙂 */
+      justify-content: centre;
+      background: #2d2d2d;          /* matches the dark grey in your capture */
+      font-family: system-ui, sans-serif;
+    }
+
+    .icon-row{
+      display: flex;
+      gap: 3rem;                    /* space between tiles */
+      padding: 2rem;
+    }
+
+    /* ----------  ICON TILE  ---------- */
+    .tile{
+      position: relative;
+      width: 128px;                 /* adjust to taste / original asset size */
+      height: 128px;
+      border-radius: 16px;
+      background: #0d0d0f;          /* very dark base */
+      box-shadow:
+        0 4px 8px rgba(0,0,0,.6),   /* soft shadow for depth */
+        0 0 0 2px #2193ff,          /* electric-blue outline */
+        0 0 6px 2px #2193ff;        /* faint glow, like your render */
+      overflow: hidden;             /* keeps img tidy */
+      display: flex;
+      align-items: centre;
+      justify-content: centre;
+      transition: transform .25s ease;
+    }
+
+    .tile:hover{
+      transform: translateY(-6px);  /* gentle lift on hover */
+    }
+
+    /* Make sure the PNG/SVG fills the tile but preserves its own padding */
+    .tile img{
+      max-width: 70%;
+      height: auto;
+    }
+  </style>
+</head>
+<body>
+
+  <!--  ----------  ROW OF TILES  ---------- -->
+  <div class="icon-row">
+    <figure class="tile">
+      <img src="mech_icon.png" alt="Mechanics icon: interlocking gears">
+    </figure>
+
+    <figure class="tile">
+      <img src="stats_icon.png" alt="Statistics icon: bar chart with rising trend">
+    </figure>
+
+    <figure class="tile">
+      <img src="pure_icon.png" alt="Pure mathematics icon: scientific calculator">
+    </figure>
+  </div>
+
+</body>
+</html>
