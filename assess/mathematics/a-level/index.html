@@ -7,92 +7,75 @@
 
   <style>
     :root{
-      --tile-size: 200px;          /* change once to scale everything */
+      --icon-size: 200px;          /* change once to scale everything */
     }
 
-    /* ----------  BASIC RESET  ---------- */
+    /* --- RESET --- */
     *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
 
-    /* ----------  PAGE LAYOUT  ---------- */
+    /* --- PAGE LAYOUT --- */
     body{
       min-height:100vh;
       display:flex;
-      align-items:center;          /* NB: US spelling required in CSS */
+      align-items:center;          /* US spelling */
       justify-content:center;
-      background:transparent;      /* fully transparent page */
+      background:transparent;
       font-family:system-ui,sans-serif;
-      color:#fff;                  /* default text colour now white    */
+      color:#ffffff;               /* white captions */
     }
 
     .icon-row{
       display:flex;
       gap:4rem;
       padding:2rem;
-      perspective:1000px;          /* gives hover-tilt depth          */
+      perspective:1000px;          /* depth for 3-D hover tilt */
     }
 
-    /* ----------  LINK & FIGURE WRAPPER ---------- */
+    /* --- LINK + FIGURE WRAPPER --- */
     .icon-link{
-      text-decoration:none;        /* no blue underline               */
-      color:inherit;               /* captions stay white             */
+      text-decoration:none;
+      color:inherit;               /* captions inherit white */
     }
 
     figure{
       display:flex;
       flex-direction:column;
       align-items:center;
-      gap:.75rem;                  /* space between icon & caption    */
+      gap:.75rem;
     }
 
     figcaption{
       font-size:1.1rem;
       letter-spacing:.02em;
       text-transform:capitalize;
-      color:#ffffff;               /* explicit white, guards against browser defaults */
     }
 
-    /* ----------  ICON TILE  ---------- */
-    .tile{
-      width:var(--tile-size);
-      aspect-ratio:1/1;            /* perfect square                  */
-      border-radius:18px;
-      background:rgba(13,13,15,.85);
-      display:flex;
-      align-items:center;
-      justify-content:center;
-      overflow:hidden;
-      cursor:pointer;
+    /* --- ACTUAL ICON --- */
+    .icon{
+      width:var(--icon-size);
+      height:var(--icon-size);
+      object-fit:contain;          /* keep aspect ratio */
+      object-position:center;
       transition:transform .35s cubic-bezier(.22,1,.36,1);
+      /* remove pointer events so clicks land on the <a> easily */
+      pointer-events:none;
     }
 
-    .tile:hover{
+    /* 3-D lift & tilt */
+    .icon-link:hover .icon{
       transform:
         translateY(-12px)
         rotateY(12deg)
         rotateX(3deg);
     }
 
-    /* ----------  SOFT GLOW COLOURS (no inner border) ---------- */
-    .tile--white{
-      box-shadow:0 0 14px 4px #ffffff;
-    }
-    .tile--orange{
-      box-shadow:0 0 14px 4px #ff8800;
-    }
-    .tile--blue{
-      box-shadow:0 0 14px 4px #2193ff;
-    }
+    /* --- GLOW COLOURS --- */
+    /* drop-shadow hugs non-transparent pixels – no square border */
+    .icon--white { filter: drop-shadow(0 0 10px #ffffff); }
+    .icon--orange{ filter: drop-shadow(0 0 10px #ff8800); }
+    .icon--blue  { filter: drop-shadow(0 0 10px #2193ff); }
 
-    /* ----------  ICON IMAGE  ---------- */
-    .tile img{
-      width:84%;
-      height:84%;
-      object-fit:contain;          /* preserves aspect ratio          */
-      object-position:center;
-      pointer-events:none;
-    }
-
-    /* ----------  MOBILE STACK ---------- */
+    /* --- MOBILE STACK --- */
     @media(max-width:650px){
       .icon-row{flex-direction:column;gap:3rem;}
     }
@@ -107,9 +90,8 @@
        href="https://www.ganesteaches.com/ganes-assess/mathematics/a-level/pure"
        target="_blank" rel="noopener">
       <figure>
-        <div class="tile tile--white">
-          <img src="pure_icon.png" alt="Pure mathematics icon">
-        </div>
+        <img src="pure_icon.png" alt="Pure mathematics icon"
+             class="icon icon--white">
         <figcaption>Pure</figcaption>
       </figure>
     </a>
@@ -119,9 +101,8 @@
        href="https://www.ganesteaches.com/ganes-assess/mathematics/a-level/mechanics"
        target="_blank" rel="noopener">
       <figure>
-        <div class="tile tile--orange">
-          <img src="mech_icon.png" alt="Mechanics icon">
-        </div>
+        <img src="mech_icon.png" alt="Mechanics icon"
+             class="icon icon--orange">
         <figcaption>Mechanics</figcaption>
       </figure>
     </a>
@@ -131,9 +112,8 @@
        href="https://www.ganesteaches.com/ganes-assess/mathematics/a-level/statistics"
        target="_blank" rel="noopener">
       <figure>
-        <div class="tile tile--blue">
-          <img src="stats_icon.png" alt="Statistics icon">
-        </div>
+        <img src="stats_icon.png" alt="Statistics icon"
+             class="icon icon--blue">
         <figcaption>Statistics</figcaption>
       </figure>
     </a>
