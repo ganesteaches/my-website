@@ -2,82 +2,82 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>Chemistry Branch Hexagon Chain</title>
+  <title>Mathematics Branch Hexagon Chain</title>
   <style>
     :root {
-      --r1:     150px;  /* hexagon “radius” */
-      --centre: 180px;  /* diameter of centre icon */
-      --icon:    50px;  /* diameter of each peripheral node */
-    }
-    *, *::before, *::after { box-sizing: border-box; margin:0; padding:0 }
-    html, body { width:100%; height:100% }
-    body {
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      background: #111;
-      font-family: system-ui, sans-serif;
-    }
-    .container {
-      position: relative;
-      /* dimensions set in JS */
-    }
-    .container svg {
-      position: absolute;
-      inset: 0;
-      pointer-events: none;
+      --r1:     150px;   /* hexagon “radius” */
+      --centre: 180px;   /* diameter of centre icon */
+      --icon:    50px;   /* diameter of each peripheral node */
     }
 
-    /* centre icons */
-    .centre {
-      position: absolute;
-      width: var(--centre);
-      height: var(--centre);
-      border-radius: 50%;
-      overflow: visible;
-      transform: translate(-50%, -50%);
-      z-index: 3;
+    *, *::before, *::after { box-sizing:border-box; margin:0; padding:0 }
+    html, body            { width:100%; height:100% }
+    body{
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      background:#111;
+      font-family:system-ui, sans-serif;
     }
-    .centre.organic   { box-shadow: 0 0 24px #4ade80 }
-    .centre.inorganic { box-shadow: 0 0 24px #fbbf24 }
-    .centre.physical  { box-shadow: 0 0 24px #60a5fa }
-    .centre img {
+
+    .container{ position:relative; /* width/height set in JS */ }
+    .container svg{
+      position:absolute;
+      inset:0;
+      pointer-events:none;
+    }
+
+    /* ─── centre icons ───────────────────────────────────────────── */
+    .centre{
+      position:absolute;
+      width:var(--centre);
+      height:var(--centre);
+      border-radius:50%;
+      overflow:visible;
+      transform:translate(-50%,-50%);
+      z-index:3;
+    }
+    .centre.pure       { box-shadow:0 0 24px #4ade80 } /* green  */
+    .centre.statistics { box-shadow:0 0 24px #fbbf24 } /* amber  */
+    .centre.mechanics  { box-shadow:0 0 24px #60a5fa } /* blue   */
+
+    .centre img{
       width:100%; height:100%;
-      object-fit: cover;
+      object-fit:cover;
       border-radius:50%;
     }
 
-    /* numbered peripheral nodes */
-    .node {
-      position: absolute;
-      width: var(--icon);
-      height: var(--icon);
-      border-radius: 50%;
-      background: #111;
-      border: 2px solid #fff;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 14px;
-      font-weight: 600;
-      color: #fff;
-      opacity: 0;
-      transform: translate(-50%, -50%) scale(.5);
-      transition: transform .4s ease, opacity .4s ease;
-      z-index: 1;
+    /* ─── peripheral numbered nodes ─────────────────────────────── */
+    .node{
+      position:absolute;
+      width:var(--icon);
+      height:var(--icon);
+      border-radius:50%;
+      background:#111;
+      border:2px solid #fff;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      font-size:14px;
+      font-weight:600;
+      colour:#fff;
+      opacity:0;
+      transform:translate(-50%, -50%) scale(.5);
+      transition:transform .4s ease, opacity .4s ease;
+      z-index:1;
     }
-    .node.organic   { box-shadow: 0 0 12px #4ade80 }
-    .node.inorganic { box-shadow: 0 0 12px #fbbf24 }
-    .node.physical  { box-shadow: 0 0 12px #60a5fa }
+    .node.pure       { box-shadow:0 0 12px #4ade80 }
+    .node.statistics { box-shadow:0 0 12px #fbbf24 }
+    .node.mechanics  { box-shadow:0 0 12px #60a5fa }
 
-    /* hexagon outline */
-    .hexagon {
-      stroke: #374151;
-      stroke-width: 2;
-      fill: none;
-      stroke-dasharray: 1000;
-      stroke-dashoffset: 1000;
-      transition: stroke-dashoffset 1s ease;
+    /* ─── hexagon outline ───────────────────────────────────────── */
+    .hexagon{
+      stroke:#374151;
+      stroke-width:2;
+      fill:none;
+      stroke-dasharray:1000;
+      stroke-dashoffset:1000;
+      transition:stroke-dashoffset 1s ease;
     }
   </style>
 </head>
@@ -85,33 +85,33 @@
   <div class="container" id="container"></div>
 
   <script>
-  (function() {
-    // 1) your real assess‐chemistry base URL:
-    const BASE    = "https://www.ganesteaches.com/assess/chemistry";
+  (function () {
+    /* 1) base URL for maths assessments */
+    const BASE    = "https://www.ganesteaches.com/assess/mathematics";
     const R1      = parseFloat(getComputedStyle(document.documentElement).getPropertyValue("--r1"));
     const spacing = Math.sqrt(3) * R1;
 
-    // 2) define the three A-Level branches
+    /* 2) the three A-Level branches */
     const branches = [
-      { key:"organic",   cls:"organic",   icon:"pure_icon.png",    title:"Pure Mathematics"   },
-      { key:"inorganic", cls:"inorganic", icon:"stats_icon.png",  title:"Statistics" },
-      { key:"physical",  cls:"physical",  icon:"mech_icon.png",   title:"Mechanics"  }
+      { key:"pure",       cls:"pure",       icon:"pure_icon.png",  title:"Pure Mathematics" },
+      { key:"statistics", cls:"statistics", icon:"stats_icon.png", title:"Statistics"       },
+      { key:"mechanics",  cls:"mechanics",  icon:"mech_icon.png",  title:"Mechanics"        }
     ];
 
-    // 3) numbered topics 1–14
+    /* 3) numbered topics 1–14 */
     const topics = Array.from({ length: 14 }, (_, i) => ({
-      label: String(i + 1),
-      key:   `topic-${i + 1}`
+      label:String(i + 1),
+      key:  `topic-${i + 1}`
     }));
 
-    // 4) size the container
+    /* 4) size the container */
     const cont   = document.getElementById("container");
     const totalW = 2 * R1 + 2 * spacing;
     const totalH = 2 * R1;
     cont.style.width  = totalW + "px";
     cont.style.height = totalH + "px";
 
-    // 5) single SVG for all hexagons
+    /* 5) single SVG for all hexagons */
     const svgNS = "http://www.w3.org/2000/svg";
     const svg   = document.createElementNS(svgNS, "svg");
     svg.setAttribute("viewBox", `0 0 ${totalW} ${totalH}`);
@@ -119,22 +119,24 @@
     svg.style.height = "100%";
     cont.appendChild(svg);
 
-    // 6) draw one hexagon at (cx,cy) and return its 6 corner points
+    /* 6) draw one hexagon and return its corner points */
     function drawHexagon(cx, cy) {
-      const pts = Array.from({ length: 6 }, (_, i) => {
+      const pts = Array.from({ length:6 }, (_, i) => {
         const ang = (-90 + i * 60) * Math.PI / 180;
         return [ cx + R1 * Math.cos(ang), cy + R1 * Math.sin(ang) ];
       });
+
       const poly = document.createElementNS(svgNS, "polygon");
       poly.setAttribute("points", pts.map(p => p.join(",")).join(" "));
       poly.classList.add("hexagon");
       svg.appendChild(poly);
 
-      // animate the dash
-      const perim = pts.reduce((sum, [x,y], i) => {
-        const [nx,ny] = pts[(i+1)%6];
-        return sum + Math.hypot(nx-x, ny-y);
+      /* dash animation */
+      const perim = pts.reduce((sum, [x, y], i) => {
+        const [nx, ny] = pts[(i + 1) % 6];
+        return sum + Math.hypot(nx - x, ny - y);
       }, 0);
+
       poly.style.strokeDasharray  = perim;
       poly.style.strokeDashoffset = perim;
       requestAnimationFrame(() => poly.style.strokeDashoffset = "0");
@@ -142,13 +144,14 @@
       return pts;
     }
 
-    // 7) draw all three hexagons + centres, collect all corner points
+    /* 7) draw the three hexagons + centre icons, collect vertices */
     let allVerts = [];
     branches.forEach((b, i) => {
-      const cx = R1 + i * spacing, cy = R1;
-      allVerts = allVerts.concat(drawHexagon(cx, cy));
+      const cx = R1 + i * spacing,
+            cy = R1;
+      allVerts.push(...drawHexagon(cx, cy));
 
-      // centre icon → links to /assess/chemistry/a-level/<branch>
+      /* centre anchor */
       const ctr = document.createElement("a");
       ctr.className  = `centre ${b.cls}`;
       ctr.href       = `${BASE}/a-level/${b.key}`;
@@ -159,19 +162,19 @@
       cont.appendChild(ctr);
     });
 
-    // 8) dedupe → exactly 14 unique peripheral positions
+    /* 8) deduplicate – we need 14 distinct peripheral points */
     const unique = [];
-    const tol = 1; // px tolerance
+    const tol = 1; // px
     allVerts.forEach(pt => {
-      if (!unique.some(u => Math.abs(u[0]-pt[0])<tol && Math.abs(u[1]-pt[1])<tol)) {
+      if (!unique.some(u => Math.abs(u[0] - pt[0]) < tol && Math.abs(u[1] - pt[1]) < tol)) {
         unique.push(pt);
       }
     });
 
-    // 9) place & number each node: /assess/chemistry/a-level/<branch>/topic-<n>
-    unique.forEach(([x,y], i) => {
-      // decide which branch this node lives under
-      const branchIndex = i < 6 ? 0 : (i < 10 ? 1 : 2);
+    /* 9) place & label each node */
+    unique.forEach(([x, y], i) => {
+      /* which branch this node belongs to */
+      const branchIndex = i < 6 ? 0 : i < 10 ? 1 : 2;
       const b = branches[branchIndex];
 
       const node = document.createElement("a");
@@ -183,7 +186,7 @@
       node.textContent = topics[i].label;
       cont.appendChild(node);
 
-      // staggered fade-in
+      /* staggered fade-in */
       setTimeout(() => {
         node.style.opacity   = "1";
         node.style.transform = "translate(-50%, -50%) scale(1)";
