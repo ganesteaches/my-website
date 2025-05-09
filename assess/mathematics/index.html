@@ -7,7 +7,7 @@
   :root {
     --r1: 187.5px; /* hexagon “radius” (150 × 1.25)    */
     --centre: 180px; /* centre‑icon diameter              */
-    --icon: 67.5px; /* peripheral‑node diameter (25 % smaller) */
+    --icon: 67.5px;  /* peripheral‑node diameter (25 % smaller) */
   }
 
   *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
@@ -25,16 +25,38 @@
     position: absolute; width: var(--centre); height: var(--centre);
     border-radius: 50%; overflow: visible;
     transform: translate(-50%, -50%); z-index: 3;
+    transition: box-shadow .3s ease;
   }
   .centre.pure       { box-shadow: 0 0 24px #ffffff; }
   .centre.statistics { box-shadow: 0 0 24px #ffb347; }
   .centre.mechanics  { box-shadow: 0 0 24px #a2d2ff; }
+  /* intensified glow on hover */
+  .centre.pure:hover       { box-shadow: 0 0 34px #ffffff; }
+  .centre.statistics:hover { box-shadow: 0 0 34px #ffb347; }
+  .centre.mechanics:hover  { box-shadow: 0 0 34px #a2d2ff; }
 
   .centre img {
     width: 100%; height: 100%; object-fit: cover; border-radius: 50%;
     transition: transform .3s ease;
   }
   .centre:hover img { transform: scale(1.1); }
+
+  /* label beneath each centre icon */
+  .centre::after {
+    content: attr(data-label);
+    position: absolute;
+    top: calc(100% + 6px);
+    left: 50%; transform: translateX(-50%);
+    font-size: 14px; font-weight: 700; color: #fff;
+    background: rgba(255, 255, 255, 0.1);
+    padding: 2px 8px; border-radius: 6px;
+    transition: background-color .25s ease, color .25s ease, box-shadow .25s ease;
+  }
+  .centre:hover::after {
+    background: #FFE5B4; /* highlight colour like example */
+    color: #000;
+    box-shadow: 0 0 8px rgba(255, 229, 180, 0.6);
+  }
 
   /* ── peripheral topic nodes ───────────────────────────────────── */
   .node {
@@ -89,6 +111,7 @@ function slugify (str) {
   const branches = [
     {
       key: 'pure', cls: 'pure', icon: 'pure_icon.png', title: 'Pure Mathematics', posIndex: 1,
+      label: 'Pure',
       topics: [
         { label: 'Proof & Algebraic',      full: 'Proof & Algebraic Techniques' },
         { label: 'Coordination Geometry',  full: 'Coordination Geometry' },
@@ -100,6 +123,7 @@ function slugify (str) {
     },
     {
       key: 'statistics', cls: 'statistics', icon: 'stats_icon.png', title: 'Statistics', posIndex: 0,
+      label: 'Statistics',
       topics: [
         { label: 'Sampling',          full: 'Statistical sampling' },
         { label: 'Data Presentation', full: 'Data presentation & interpretation' },
@@ -109,6 +133,7 @@ function slugify (str) {
     },
     {
       key: 'mechanics', cls: 'mechanics', icon: 'mech_icon.png', title: 'Mechanics', posIndex: 2,
+      label: 'Mechanics',
       topics: [
         { label: 'Units',      full: 'Quantities and units in mechanics' },
         { label: 'Kinematics', full: 'Kinematics' },
@@ -167,6 +192,7 @@ function slugify (str) {
     ctr.className = `centre ${b.cls}`;
     ctr.href = `${BASE}/a-level/${b.key}`;
     ctr.title = b.title;
+    ctr.setAttribute('data-label', b.label);
     ctr.style.left = cx + 'px';
     ctr.style.top = cy + 'px';
     ctr.innerHTML = `<img src="${b.icon}" alt="${b.title}">`;
@@ -196,19 +222,4 @@ function slugify (str) {
 
     const node = document.createElement('a');
     node.className = `node ${b.cls}`;
-    node.href = `${BASE}/a-level/${b.key}/${slug}`;
-    node.title = t.full;
-    node.style.left = x + 'px';
-    node.style.top = y + 'px';
-    node.setAttribute('data-label', t.label);
-    cont.appendChild(node);
-
-    setTimeout(() => {
-      node.style.opacity = '1';
-      node.style.transform = 'translate(-50%, -50%) scale(1)';
-    }, 100 + i * 60);
-  });
-})();
-</script>
-</body>
-</html>
+    node.href = `${BASE}/a-level/${
