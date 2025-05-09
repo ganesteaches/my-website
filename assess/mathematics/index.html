@@ -15,9 +15,9 @@
   html,body{width:100%;height:100%}
   body{
     display:flex;align-items:center;justify-content:center;
-    background:transparent;            /* page stays transparent  */
+    background:transparent;
     font-family:system-ui,sans-serif;
-    color:#fff;                        /* all text white          */
+    color:#fff;
   }
 
   .container{position:relative}
@@ -30,13 +30,12 @@
     transform:translate(-50%,-50%);z-index:3;
     transition:box-shadow .3s ease;
   }
+  /* idle glow keeps its category colour …                                */
   .centre.pure       {box-shadow:0 0 24px #fff}
   .centre.statistics {box-shadow:0 0 24px #ffb347}
   .centre.mechanics  {box-shadow:0 0 24px #a2d2ff}
-
-  .centre.pure:hover       {box-shadow:0 0 34px #fff}
-  .centre.statistics:hover {box-shadow:0 0 34px #ffb347}
-  .centre.mechanics:hover  {box-shadow:0 0 34px #a2d2ff}
+  /* … but hovering any centre icon is now a uniform grey glow            */
+  .centre:hover{box-shadow:0 0 34px #9ca3af!important}
 
   .centre img{
     width:100%;height:100%;object-fit:cover;border-radius:50%;
@@ -44,7 +43,7 @@
   }
   .centre:hover img{transform:scale(1.1)}
 
-  /* enlarged titles placed even lower (120 px below the circle) */
+  /* titles beneath the three centre icons */
   .centre::after{
     content:attr(data-label);
     position:absolute;
@@ -54,17 +53,14 @@
     background:rgba(255,255,255,0.08);
     padding:4px 16px;border-radius:8px;
     color:#fff;
-
-    /* ── MOD 1: light-grey outline in the idle state ── */
-    border:2px solid #d1d5db;          /* slate-300 */
-    transition:background-color .25s,color .25s,box-shadow .25s,border-color .25s;
+    border:2px solid #d1d5db;                /* light-grey outline */
+    transition:background-color .25s,color .25s,border-color .25s,
+               box-shadow .25s;
   }
   .centre:hover::after{
     background:#FFE5B4;
-    color:#000;                        /* black while hovered   */
-
-    /* ── MOD 2: orange outline while the banner is yellow ── */
-    border-color:#ff8c00;              /* bright orange */
+    color:#000;
+    border-color:#ff8c00;                    /* orange while hovered */
     box-shadow:0 0 10px rgba(255,229,180,.7);
   }
 
@@ -76,15 +72,14 @@
     opacity:0;transform:translate(-50%,-50%) scale(.5);
     transition:transform .35s ease,opacity .35s ease;z-index:1;
   }
+  /* idle glows keep their category tint */
   .node.pure       {box-shadow:0 0 12px #fff}
   .node.statistics {box-shadow:0 0 12px #ffb347}
   .node.mechanics  {box-shadow:0 0 12px #a2d2ff}
-
+  /* hover glow is now neutral grey for every topic node */
   .node:hover{
     transform:translate(-50%,-50%) scale(1.15);
-
-    /* ── MOD 3: uniform black highlight on hover ── */
-    box-shadow:0 0 18px #000;
+    box-shadow:0 0 18px #9ca3af;
   }
 
   .node::after{
@@ -100,7 +95,6 @@
 
   /* ─────────── hexagon outline ─────────── */
   .hexagon{
-    /* ── MOD 4: light-grey edges instead of dark slate ── */
     stroke:#d1d5db;stroke-width:2;fill:none;
     stroke-dasharray:1000;stroke-dashoffset:1000;
     transition:stroke-dashoffset 1s ease;
@@ -113,45 +107,73 @@
 
 <script>
 /* string → URL slug */
-const slugify = s => s.toLowerCase()
-                      .replace(/[^a-z0-9]+/g,'-')
-                      .replace(/(^-|-$)/g,'');
+const slugify = s =>
+  s.toLowerCase()
+   .replace(/[^a-z0-9]+/g, '-')
+   .replace(/(^-|-$)/g, '');
 
-(function(){
-  const BASE   = 'https://www.ganesteaches.com/ganes-assess/mathematics';
-  const R1     = parseFloat(getComputedStyle(document.documentElement)
-                            .getPropertyValue('--r1'));
+(function () {
+  const BASE    = 'https://www.ganesteaches.com/ganes-assess/mathematics';
+  const R1      = parseFloat(getComputedStyle(document.documentElement)
+                             .getPropertyValue('--r1'));
   const spacing = Math.sqrt(3) * R1;
 
   const branches = [
-    {key:'pure',cls:'pure',icon:'pure_icon.png',title:'Pure Mathematics',label:'Pure',posIndex:1,dir:1,
-     topics:[
-       {label:'Proof & Algebraic',full:'Proof & Algebraic Techniques'},
-       {label:'Coordination Geometry',full:'Coordination Geometry'},
-       {label:'Sequence',full:'Sequence'},
-       {label:'Trigonometry',full:'Trigonometry'},
-       {label:'Calculus',full:'Calculus'},
-       {label:'Numerical Methods',full:'Approximation & Numerical Methods'}]},
-    {key:'statistics',cls:'statistics',icon:'stats_icon.png',title:'Statistics',label:'Statistics',posIndex:0,dir:-1,
-     topics:[
-       {label:'Sampling',full:'Statistical sampling'},
-       {label:'Data Presentation',full:'Data presentation & interpretation'},
-       {label:'Probability',full:'Probability'},
-       {label:'Distributions',full:'Statistical distributions'}]},
-    {key:'mechanics',cls:'mechanics',icon:'mech_icon.png',title:'Mechanics',label:'Mechanics',posIndex:2,dir:-1,
-     topics:[
-       {label:'Units',full:'Quantities and units in mechanics'},
-       {label:'Kinematics',full:'Kinematics'},
-       {label:'Forces',full:'Forces & Newton’s laws'},
-       {label:'Moments',full:'Moments'}]}
+    {
+      key:  'pure',
+      cls:  'pure',
+      icon: 'pure_icon.png',
+      title:'Pure Mathematics',
+      label:'Pure',
+      posIndex:1,
+      dir: 1,
+      topics:[
+        {label:'Proof & Algebraic',full:'Proof & Algebraic Techniques'},
+        {label:'Coordination Geometry',full:'Coordination Geometry'},
+        {label:'Sequence',full:'Sequence'},
+        {label:'Trigonometry',full:'Trigonometry'},
+        {label:'Calculus',full:'Calculus'},
+        {label:'Numerical Methods',full:'Approximation & Numerical Methods'}
+      ]
+    },
+    {
+      key:  'statistics',
+      cls:  'statistics',
+      icon: 'stats_icon.png',
+      title:'Statistics',
+      label:'Statistics',
+      posIndex:0,
+      dir:-1,
+      topics:[
+        {label:'Sampling',full:'Statistical sampling'},
+        {label:'Data Presentation',full:'Data presentation & interpretation'},
+        {label:'Probability',full:'Probability'},
+        {label:'Distributions',full:'Statistical distributions'}
+      ]
+    },
+    {
+      key:  'mechanics',
+      cls:  'mechanics',
+      icon: 'mech_icon.png',
+      title:'Mechanics',
+      label:'Mechanics',
+      posIndex:2,
+      dir:-1,
+      topics:[
+        {label:'Units',full:'Quantities and units in mechanics'},
+        {label:'Kinematics',full:'Kinematics'},
+        {label:'Forces',full:'Forces & Newton’s laws'},
+        {label:'Moments',full:'Moments'}
+      ]
+    }
   ];
 
   /* size container */
   const cont   = document.getElementById('container');
   const totalW = 2 * R1 + 2 * spacing,
         totalH = 2 * R1;
-  cont.style.width  = totalW + 'px';
-  cont.style.height = totalH + 'px';
+  cont.style.width  = `${totalW}px`;
+  cont.style.height = `${totalH}px`;
 
   /* SVG */
   const svgNS = 'http://www.w3.org/2000/svg';
@@ -161,71 +183,76 @@ const slugify = s => s.toLowerCase()
   svg.style.height = '100%';
   cont.appendChild(svg);
 
-  /* draw hexagon (dir ±1) */
-  function drawHex (cx, cy, dir){
-    const pts = Array.from({length:6}, (_, i)=>{
+  /* draw one hexagon, return its six vertices */
+  function drawHex (cx, cy, dir) {
+    const pts = Array.from({ length: 6 }, (_, i) => {
       const ang = (-90 + dir * i * 60) * Math.PI / 180;
       return [cx + R1 * Math.cos(ang), cy + R1 * Math.sin(ang)];
     });
+
     const poly = document.createElementNS(svgNS, 'polygon');
     poly.setAttribute('points', pts.map(p => p.join(',')).join(' '));
     poly.classList.add('hexagon');
     svg.appendChild(poly);
 
-    const perim = pts.reduce((s, [x, y], i)=>{
-                   const [nx, ny] = pts[(i+1)%6];
-                   return s + Math.hypot(nx - x, ny - y);
-                 }, 0);
-    poly.style.strokeDasharray  = perim;
+    /* animate the outline */
+    const perim = pts.reduce((s, [x, y], i) => {
+      const [nx, ny] = pts[(i + 1) % 6];
+      return s + Math.hypot(nx - x, ny - y);
+    }, 0);
+    poly.style.strokeDasharray = perim;
     poly.style.strokeDashoffset = perim;
-    requestAnimationFrame(()=> poly.style.strokeDashoffset = '0');
+    requestAnimationFrame(() => (poly.style.strokeDashoffset = '0'));
     return pts;
   }
 
-  /* outlines & centre icons */
+  /* build the three branches */
   let verts = [];
-  branches.forEach(b=>{
+  branches.forEach(b => {
     const cx = R1 + b.posIndex * spacing,
           cy = R1;
     verts.push(...drawHex(cx, cy, b.dir));
 
+    /* centre icon */
     const centre = document.createElement('a');
-    centre.className = `centre ${b.cls}`;
-    centre.href      = `${BASE}/a-level/${b.key}`;
-    centre.title     = b.title;
-    centre.setAttribute('data-label', b.label);
-    centre.style.left = cx + 'px';
-    centre.style.top  = cy + 'px';
-    centre.innerHTML  = `<img src="${b.icon}" alt="${b.title}">`;
+    centre.className   = `centre ${b.cls}`;
+    centre.href        = `${BASE}/a-level/${b.key}`;
+    centre.title       = b.title;
+    centre.dataset.label = b.label;
+    centre.style.left  = `${cx}px`;
+    centre.style.top   = `${cy}px`;
+    centre.innerHTML   = `<img src="${b.icon}" alt="${b.title}">`;
     cont.appendChild(centre);
   });
 
-  /* deduplicate vertices → 14 points */
+  /* deduplicate the 18 vertices down to 14 unique positions */
   const unique = [], tol = 1;
-  verts.forEach(p=>{
-    if(!unique.some(u=>Math.abs(u[0]-p[0])<tol &&
-                       Math.abs(u[1]-p[1])<tol)){ unique.push(p); }
+  verts.forEach(p => {
+    if (!unique.some(u =>
+          Math.abs(u[0] - p[0]) < tol && Math.abs(u[1] - p[1]) < tol))
+      unique.push(p);
   });
 
-  /* topic nodes */
-  const counts=[0,0,0];
-  unique.forEach(([x,y],i)=>{
-    const bi = i < 6 ? 0 : (i < 10 ? 1 : 2);
-    const b  = branches[bi];
+  /* add the topic nodes */
+  const counts = [0, 0, 0];
+  unique.forEach(([x, y], i) => {
+    const bi  = i < 6 ? 0 : (i < 10 ? 1 : 2);
+    const b   = branches[bi];
     const idx = counts[bi]++;
-    if(idx >= b.topics.length) return;
+    if (idx >= b.topics.length) return;
 
-    const {label, full} = b.topics[idx];
+    const { label, full } = b.topics[idx];
     const node = document.createElement('a');
-    node.className = `node ${b.cls}`;
-    node.href      = `${BASE}/a-level/${b.key}/${slugify(full)}`;
-    node.title     = full;
-    node.style.left = x + 'px';
-    node.style.top  = y + 'px';
-    node.setAttribute('data-label', label);
+    node.className   = `node ${b.cls}`;
+    node.href        = `${BASE}/a-level/${b.key}/${slugify(full)}`;
+    node.title       = full;
+    node.style.left  = `${x}px`;
+    node.style.top   = `${y}px`;
+    node.dataset.label = label;
     cont.appendChild(node);
 
-    setTimeout(()=>{
+    /* fade-in animation */
+    setTimeout(() => {
       node.style.opacity  = '1';
       node.style.transform = 'translate(-50%,-50%) scale(1)';
     }, 100 + i * 60);
