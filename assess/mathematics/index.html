@@ -5,9 +5,9 @@
 <title>Mathematics Branch Hexagon Chain</title>
 <style>
   :root{
-    --r1:     150px;    /* hexagon “radius”                */
-    --centre: 180px;    /* diameter of centre icons        */
-    --icon:   110px;    /* diameter of each topic node     */
+    --r1:     187.5px;   /* hexagon “radius” (150 × 1.25)    */
+    --centre: 180px;     /* centre-icon diameter              */
+    --icon:    90px;     /* peripheral-node diameter (smaller)*/
   }
 
   *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
@@ -26,9 +26,9 @@
     border-radius:50%;overflow:visible;
     transform:translate(-50%,-50%);z-index:3;
   }
-  .centre.pure       {box-shadow:0 0 24px #4ade80;} /* green */
-  .centre.statistics {box-shadow:0 0 24px #fbbf24;} /* amber */
-  .centre.mechanics  {box-shadow:0 0 24px #60a5fa;} /* blue  */
+  .centre.pure       {box-shadow:0 0 24px #4ade80;}
+  .centre.statistics {box-shadow:0 0 24px #fbbf24;}
+  .centre.mechanics  {box-shadow:0 0 24px #60a5fa;}
 
   .centre img{width:100%;height:100%;object-fit:cover;border-radius:50%;}
 
@@ -37,7 +37,7 @@
     position:absolute;width:var(--icon);height:var(--icon);
     border-radius:50%;background:#111;border:2px solid #fff;
     display:flex;align-items:center;justify-content:center;
-    font-size:11px;font-weight:600;color:#fff;text-align:center;
+    font-size:10px;font-weight:600;color:#fff;text-align:center;
     line-height:1.15;white-space:normal;padding:4px;
     opacity:0;transform:translate(-50%,-50%) scale(.5);
     transition:transform .4s ease, opacity .4s ease;z-index:1;
@@ -66,65 +66,62 @@ function slugify(str){
 }
 
 (function(){
-  /* 1) base URL for maths assessments */
+  /* 1) base URL */
   const BASE    = "https://www.ganesteaches.com/assess/mathematics";
   const R1      = parseFloat(getComputedStyle(document.documentElement).getPropertyValue("--r1"));
   const spacing = Math.sqrt(3)*R1;
 
-  /* 2) branches — draw pure first (so it gets 6 unique vertices) but *position* it in the middle */
+  /* 2) branches — Pure drawn first so it gets six peripheral nodes */
   const branches = [
-    {   /* drawn 1st (gets 6 nodes) → centre hex */
+    { /* centre (middle) */
       key:"pure", cls:"pure", icon:"pure_icon.png", title:"Pure Mathematics",
-      posIndex:1,   /* middle visual position */
+      posIndex:1,
       topics:[
-        {label:"Proof & Algebraic",            full:"Proof & Algebraic Techniques"},
-        {label:"Coord. Geom & Vectors",        full:"Coordinate Geometry & Vectors"},
-        {label:"Sequences & Series",           full:"Sequences & Series"},
-        {label:"Trigonometry",                 full:"Trigonometry"},
-        {label:"Calculus",                     full:"Calculus"},
-        {label:"Numerical Methods",            full:"Approximation & Numerical Methods"}
+        {label:"Proof & Algebraic",      full:"Proof & Algebraic Techniques"},
+        {label:"Coordination Geometry",  full:"Coordination Geometry"},
+        {label:"Sequence",               full:"Sequence"},
+        {label:"Trigonometry",           full:"Trigonometry"},
+        {label:"Calculus",               full:"Calculus"},
+        {label:"Numerical Methods",      full:"Approximation & Numerical Methods"}
       ]
     },
-    {   /* drawn 2nd (gets 4 nodes) → left hex */
+    { /* left */
       key:"statistics", cls:"statistics", icon:"stats_icon.png", title:"Statistics",
-      posIndex:0,   /* left visual position */
+      posIndex:0,
       topics:[
-        {label:"Sampling",             full:"Statistical sampling"},
-        {label:"Data Presentation",    full:"Data presentation & interpretation"},
-        {label:"Probability",          full:"Probability"},
-        {label:"Distributions",        full:"Statistical distributions"}
+        {label:"Sampling",        full:"Statistical sampling"},
+        {label:"Data Presentation",full:"Data presentation & interpretation"},
+        {label:"Probability",     full:"Probability"},
+        {label:"Distributions",   full:"Statistical distributions"}
       ]
     },
-    {   /* drawn 3rd (gets 4 nodes) → right hex */
-      key:"mechanics", cls:"mechanics", icon:"mech_icon.png",  title:"Mechanics",
-      posIndex:2,   /* right visual position */
+    { /* right */
+      key:"mechanics", cls:"mechanics", icon:"mech_icon.png", title:"Mechanics",
+      posIndex:2,
       topics:[
-        {label:"Units",        full:"Quantities and units in mechanics"},
-        {label:"Kinematics",   full:"Kinematics"},
-        {label:"Forces",       full:"Forces & Newton’s laws"},
-        {label:"Moments",      full:"Moments"}
+        {label:"Units",      full:"Quantities and units in mechanics"},
+        {label:"Kinematics", full:"Kinematics"},
+        {label:"Forces",     full:"Forces & Newton’s laws"},
+        {label:"Moments",    full:"Moments"}
       ]
     }
   ];
 
-  /* 3) build the full ordered topic list (matches vertex order: 6,4,4) */
-  const orderedTopics = branches.flatMap(b => b.topics);
-
-  /* 4) size the container */
+  /* 3) size the container */
   const cont   = document.getElementById("container");
   const totalW = 2*R1 + 2*spacing;
   const totalH = 2*R1;
   cont.style.width  = totalW + "px";
   cont.style.height = totalH + "px";
 
-  /* 5) single SVG for all hexagons */
+  /* 4) single SVG for all hexagons */
   const svgNS = "http://www.w3.org/2000/svg";
   const svg   = document.createElementNS(svgNS,"svg");
   svg.setAttribute("viewBox",`0 0 ${totalW} ${totalH}`);
   svg.style.width="100%";svg.style.height="100%";
   cont.appendChild(svg);
 
-  /* 6) draw one hexagon and return its 6 corner points */
+  /* 5) draw one hexagon and return its six corner points */
   function drawHexagon(cx,cy){
     const pts = Array.from({length:6},(_,i)=>{
       const ang = (-90+i*60)*Math.PI/180;
@@ -135,7 +132,7 @@ function slugify(str){
     poly.classList.add("hexagon");
     svg.appendChild(poly);
 
-    /* dash-draw animation */
+    /* dash animation */
     const perim = pts.reduce((sum,[x,y],i)=>{
       const [nx,ny]=pts[(i+1)%6];
       return sum+Math.hypot(nx-x,ny-y);
@@ -147,14 +144,13 @@ function slugify(str){
     return pts;
   }
 
-  /* 7) draw all three hexagons (but pure first), collect vertices */
+  /* 6) draw three hexagons (Pure first) and add the centres */
   let allVerts=[];
-  branches.forEach((b,drawOrder)=>{
+  branches.forEach(b=>{
     const cx = R1 + b.posIndex*spacing,
           cy = R1;
     allVerts.push(...drawHexagon(cx,cy));
 
-    /* centre icon link */
     const ctr = document.createElement("a");
     ctr.className=`centre ${b.cls}`;
     ctr.href     =`${BASE}/a-level/${b.key}`;
@@ -165,43 +161,40 @@ function slugify(str){
     cont.appendChild(ctr);
   });
 
-  /* 8) deduplicate → we need exactly 14 distinct peripheral points */
+  /* 7) deduplicate vertices → 14 distinct points */
   const unique=[];
-  const tol=1; // px
+  const tol=1;
   allVerts.forEach(pt=>{
     if(!unique.some(u=>Math.abs(u[0]-pt[0])<tol && Math.abs(u[1]-pt[1])<tol)){
       unique.push(pt);
     }
   });
 
-  /* 9) place each node with correct branch/topic information */
-  const branchCounters = [0,0,0]; // track which topic we’re on in each branch
+  /* 8) place each topic node */
+  const branchCounters=[0,0,0];
 
   unique.forEach(([x,y],i)=>{
-    /* decide which branch this node belongs to based on index ranges 6-4-4 */
     const branchIndex = i < 6 ? 0 : (i < 10 ? 1 : 2);
-    const branch      = branches[branchIndex];
-    const topicIdx    = branchCounters[branchIndex]++;
+    const b   = branches[branchIndex];
+    const idx = branchCounters[branchIndex]++;
 
-    /* if there are more vertices than topics, just skip making a node */
-    if(topicIdx >= branch.topics.length) return;
+    if(idx >= b.topics.length) return;
 
-    const topic       = branch.topics[topicIdx];
-    const slug        = slugify(topic.full);
+    const t   = b.topics[idx];
+    const slug= slugify(t.full);
 
     const node = document.createElement("a");
-    node.className  = `node ${branch.cls}`;
-    node.href       = `${BASE}/a-level/${branch.key}/${slug}`;
-    node.title      = topic.full;
-    node.style.left = x+"px";
-    node.style.top  = y+"px";
-    node.textContent = topic.label;
+    node.className = `node ${b.cls}`;
+    node.href      = `${BASE}/a-level/${b.key}/${slug}`;
+    node.title     = t.full;
+    node.style.left= x+"px";
+    node.style.top = y+"px";
+    node.textContent = t.label;
     cont.appendChild(node);
 
-    /* staggered fade-in */
     setTimeout(()=>{
-      node.style.opacity  = "1";
-      node.style.transform= "translate(-50%, -50%) scale(1)";
+      node.style.opacity  ="1";
+      node.style.transform="translate(-50%, -50%) scale(1)";
     },100 + i*60);
   });
 })();
