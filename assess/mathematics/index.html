@@ -48,17 +48,23 @@
   .centre::after{
     content:attr(data-label);
     position:absolute;
-    top:calc(100% + 160px);          /* ← move farther down here */
+    top:calc(100% + 160px);
     left:50%;transform:translateX(-50%);
     font-size:42px;font-weight:700;
     background:rgba(255,255,255,0.08);
     padding:4px 16px;border-radius:8px;
     color:#fff;
-    transition:background-color .25s,color .25s,box-shadow .25s;
+
+    /* ── MOD 1: light-grey outline in the idle state ── */
+    border:2px solid #d1d5db;          /* slate-300 */
+    transition:background-color .25s,color .25s,box-shadow .25s,border-color .25s;
   }
   .centre:hover::after{
     background:#FFE5B4;
-    color:#000;                      /* black while hovered       */
+    color:#000;                        /* black while hovered   */
+
+    /* ── MOD 2: orange outline while the banner is yellow ── */
+    border-color:#ff8c00;              /* bright orange */
     box-shadow:0 0 10px rgba(255,229,180,.7);
   }
 
@@ -76,7 +82,9 @@
 
   .node:hover{
     transform:translate(-50%,-50%) scale(1.15);
-    box-shadow:0 0 18px currentColor;
+
+    /* ── MOD 3: uniform black highlight on hover ── */
+    box-shadow:0 0 18px #000;
   }
 
   .node::after{
@@ -92,7 +100,8 @@
 
   /* ─────────── hexagon outline ─────────── */
   .hexagon{
-    stroke:#374151;stroke-width:2;fill:none;
+    /* ── MOD 4: light-grey edges instead of dark slate ── */
+    stroke:#d1d5db;stroke-width:2;fill:none;
     stroke-dasharray:1000;stroke-dashoffset:1000;
     transition:stroke-dashoffset 1s ease;
   }
@@ -104,14 +113,17 @@
 
 <script>
 /* string → URL slug */
-const slugify=s=>s.toLowerCase().replace(/[^a-z0-9]+/g,'-').replace(/(^-|-$)/g,'');
+const slugify = s => s.toLowerCase()
+                      .replace(/[^a-z0-9]+/g,'-')
+                      .replace(/(^-|-$)/g,'');
 
 (function(){
-  const BASE='https://www.ganesteaches.com/ganes-assess/mathematics';
-  const R1=parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--r1'));
-  const spacing=Math.sqrt(3)*R1;
+  const BASE   = 'https://www.ganesteaches.com/ganes-assess/mathematics';
+  const R1     = parseFloat(getComputedStyle(document.documentElement)
+                            .getPropertyValue('--r1'));
+  const spacing = Math.sqrt(3) * R1;
 
-  const branches=[
+  const branches = [
     {key:'pure',cls:'pure',icon:'pure_icon.png',title:'Pure Mathematics',label:'Pure',posIndex:1,dir:1,
      topics:[
        {label:'Proof & Algebraic',full:'Proof & Algebraic Techniques'},
@@ -135,76 +147,88 @@ const slugify=s=>s.toLowerCase().replace(/[^a-z0-9]+/g,'-').replace(/(^-|-$)/g,'
   ];
 
   /* size container */
-  const cont=document.getElementById('container');
-  const totalW=2*R1+2*spacing,totalH=2*R1;
-  cont.style.width = totalW + 'px';
-  cont.style.height= totalH + 'px';
+  const cont   = document.getElementById('container');
+  const totalW = 2 * R1 + 2 * spacing,
+        totalH = 2 * R1;
+  cont.style.width  = totalW + 'px';
+  cont.style.height = totalH + 'px';
 
   /* SVG */
-  const svgNS='http://www.w3.org/2000/svg';
-  const svg=document.createElementNS(svgNS,'svg');
-  svg.setAttribute('viewBox',`0 0 ${totalW} ${totalH}`);
-  svg.style.width='100%';svg.style.height='100%';
+  const svgNS = 'http://www.w3.org/2000/svg';
+  const svg   = document.createElementNS(svgNS, 'svg');
+  svg.setAttribute('viewBox', `0 0 ${totalW} ${totalH}`);
+  svg.style.width  = '100%';
+  svg.style.height = '100%';
   cont.appendChild(svg);
 
   /* draw hexagon (dir ±1) */
-  function drawHex(cx,cy,dir){
-    const pts=Array.from({length:6},(_,i)=>{
-      const ang=(-90+dir*i*60)*Math.PI/180;
-      return[cx+R1*Math.cos(ang),cy+R1*Math.sin(ang)];
+  function drawHex (cx, cy, dir){
+    const pts = Array.from({length:6}, (_, i)=>{
+      const ang = (-90 + dir * i * 60) * Math.PI / 180;
+      return [cx + R1 * Math.cos(ang), cy + R1 * Math.sin(ang)];
     });
-    const poly=document.createElementNS(svgNS,'polygon');
-    poly.setAttribute('points',pts.map(p=>p.join(',')).join(' '));
-    poly.classList.add('hexagon');svg.appendChild(poly);
+    const poly = document.createElementNS(svgNS, 'polygon');
+    poly.setAttribute('points', pts.map(p => p.join(',')).join(' '));
+    poly.classList.add('hexagon');
+    svg.appendChild(poly);
 
-    const perim=pts.reduce((s,[x,y],i)=>{const[nx,ny]=pts[(i+1)%6];return s+Math.hypot(nx-x,ny-y);},0);
-    poly.style.strokeDasharray=perim;poly.style.strokeDashoffset=perim;
-    requestAnimationFrame(()=>poly.style.strokeDashoffset='0');
+    const perim = pts.reduce((s, [x, y], i)=>{
+                   const [nx, ny] = pts[(i+1)%6];
+                   return s + Math.hypot(nx - x, ny - y);
+                 }, 0);
+    poly.style.strokeDasharray  = perim;
+    poly.style.strokeDashoffset = perim;
+    requestAnimationFrame(()=> poly.style.strokeDashoffset = '0');
     return pts;
   }
 
   /* outlines & centre icons */
-  let verts=[];
+  let verts = [];
   branches.forEach(b=>{
-    const cx=R1+b.posIndex*spacing,cy=R1;
-    verts.push(...drawHex(cx,cy,b.dir));
+    const cx = R1 + b.posIndex * spacing,
+          cy = R1;
+    verts.push(...drawHex(cx, cy, b.dir));
 
-    const centre=document.createElement('a');
-    centre.className=`centre ${b.cls}`;
-    centre.href=`${BASE}/a-level/${b.key}`;
-    centre.title=b.title;
-    centre.setAttribute('data-label',b.label);
-    centre.style.left=cx+'px';
-    centre.style.top =cy+'px';
-    centre.innerHTML=`<img src="${b.icon}" alt="${b.title}">`;
+    const centre = document.createElement('a');
+    centre.className = `centre ${b.cls}`;
+    centre.href      = `${BASE}/a-level/${b.key}`;
+    centre.title     = b.title;
+    centre.setAttribute('data-label', b.label);
+    centre.style.left = cx + 'px';
+    centre.style.top  = cy + 'px';
+    centre.innerHTML  = `<img src="${b.icon}" alt="${b.title}">`;
     cont.appendChild(centre);
   });
 
   /* deduplicate vertices → 14 points */
-  const unique=[], tol=1;
+  const unique = [], tol = 1;
   verts.forEach(p=>{
-    if(!unique.some(u=>Math.abs(u[0]-p[0])<tol&&Math.abs(u[1]-p[1])<tol)){unique.push(p);}
+    if(!unique.some(u=>Math.abs(u[0]-p[0])<tol &&
+                       Math.abs(u[1]-p[1])<tol)){ unique.push(p); }
   });
 
   /* topic nodes */
   const counts=[0,0,0];
   unique.forEach(([x,y],i)=>{
-    const bi=i<6 ? 0 : (i<10 ? 1 : 2);
-    const b=branches[bi];
-    const idx=counts[bi]++;
-    if(idx>=b.topics.length) return;
+    const bi = i < 6 ? 0 : (i < 10 ? 1 : 2);
+    const b  = branches[bi];
+    const idx = counts[bi]++;
+    if(idx >= b.topics.length) return;
 
-    const {label,full}=b.topics[idx];
-    const node=document.createElement('a');
-    node.className=`node ${b.cls}`;
-    node.href=`${BASE}/a-level/${b.key}/${slugify(full)}`;
-    node.title=full;
-    node.style.left=x+'px';node.style.top=y+'px';
-    node.setAttribute('data-label',label);
+    const {label, full} = b.topics[idx];
+    const node = document.createElement('a');
+    node.className = `node ${b.cls}`;
+    node.href      = `${BASE}/a-level/${b.key}/${slugify(full)}`;
+    node.title     = full;
+    node.style.left = x + 'px';
+    node.style.top  = y + 'px';
+    node.setAttribute('data-label', label);
     cont.appendChild(node);
 
-    setTimeout(()=>{node.style.opacity='1';node.style.transform='translate(-50%,-50%) scale(1)';},
-               100+i*60);
+    setTimeout(()=>{
+      node.style.opacity  = '1';
+      node.style.transform = 'translate(-50%,-50%) scale(1)';
+    }, 100 + i * 60);
   });
 })();
 </script>
