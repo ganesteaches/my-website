@@ -1,1 +1,124 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>A-Level Maths – Quick Links</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
 
+  <style>
+    :root{
+      --icon-size: 200px;          /* change once to scale everything */
+    }
+
+    /* --- RESET --- */
+    *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+
+    /* --- PAGE LAYOUT --- */
+    body{
+      min-height:100vh;
+      display:flex;
+      align-items:center;          /* US spelling */
+      justify-content:center;
+      background:transparent;
+      font-family:system-ui,sans-serif;
+      color:#ffffff;               /* white captions */
+    }
+
+    .icon-row{
+      display:flex;
+      gap:4rem;
+      padding:2rem;
+      perspective:1000px;          /* depth for 3-D hover tilt */
+    }
+
+    /* --- LINK + FIGURE WRAPPER --- */
+    .icon-link{
+      text-decoration:none;
+      color:inherit;               /* captions inherit white */
+    }
+
+    figure{
+      display:flex;
+      flex-direction:column;
+      align-items:center;
+      gap:.75rem;
+    }
+
+    figcaption{
+      font-size:1.1rem;
+      letter-spacing:.02em;
+      text-transform:capitalize;
+    }
+
+    /* --- ACTUAL ICON --- */
+    .icon{
+      width:var(--icon-size);
+      height:var(--icon-size);
+      object-fit:contain;          /* keep aspect ratio */
+      object-position:center;
+      transition:transform .35s cubic-bezier(.22,1,.36,1);
+      /* remove pointer events so clicks land on the <a> easily */
+      pointer-events:none;
+    }
+
+    /* 3-D lift & tilt */
+    .icon-link:hover .icon{
+      transform:
+        translateY(-12px)
+        rotateY(12deg)
+        rotateX(3deg);
+    }
+
+    /* --- GLOW COLOURS --- */
+    /* drop-shadow hugs non-transparent pixels – no square border */
+    .icon--white { filter: drop-shadow(0 0 10px #ffffff); }
+    .icon--orange{ filter: drop-shadow(0 0 10px #ff8800); }
+    .icon--blue  { filter: drop-shadow(0 0 10px #2193ff); }
+
+    /* --- MOBILE STACK --- */
+    @media(max-width:650px){
+      .icon-row{flex-direction:column;gap:3rem;}
+    }
+  </style>
+</head>
+<body>
+
+  <div class="icon-row">
+
+    <!-- PURE – WHITE GLOW -->
+    <a class="icon-link"
+       href="https://www.ganesteaches.com/ganes-assess/chemistry/a-level/physical"
+       target="_blank" rel="noopener">
+      <figure>
+        <img src="../physical_icon.png" alt="Physical icon"
+             class="icon icon--white">
+        <figcaption>Pure</figcaption>
+      </figure>
+    </a>
+
+    <!-- MECHANICS – ORANGE GLOW -->
+    <a class="icon-link"
+       href="https://www.ganesteaches.com/ganes-assess/chemistry/a-level/inorganic"
+       target="_blank" rel="noopener">
+      <figure>
+        <img src="../inorganic_icon.png" alt="Inorganic icon"
+             class="icon icon--orange">
+        <figcaption>Mechanics</figcaption>
+      </figure>
+    </a>
+
+    <!-- STATISTICS – BLUE GLOW -->
+    <a class="icon-link"
+       href="https://www.ganesteaches.com/ganes-assess/chemistry/a-level/organic"
+       target="_blank" rel="noopener">
+      <figure>
+        <img src="../organic_icon.png" alt="Organic icon"
+             class="icon icon--blue">
+        <figcaption>Statistics</figcaption>
+      </figure>
+    </a>
+
+  </div>
+
+</body>
+</html>
