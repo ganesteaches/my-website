@@ -1,263 +1,287 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8" />
-<title>Mathematics Branch Hexagon Chain</title>
+  <meta charset="UTF-8" />
+  <title>Mathematics Branch Hexagon Chain</title>
 
-<style>
-  :root{
-    --r1:     187.5px;   /* hexagon radius (150 × 1.25)           */
-    --centre: 180px;     /* centre-icon diameter                  */
-    --icon:    67.5px;   /* peripheral-node diameter (25 % smaller)*/
-  }
+  <style>
+    :root {
+      --r1:     187.5px;   /* hexagon radius (150 × 1.25)           */
+      --centre: 180px;     /* centre-icon diameter                  */
+      --icon:    67.5px;   /* peripheral-node diameter (25% smaller)*/
+    }
 
-  *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
-  html,body{width:100%;height:100%}
-  body{
-    display:flex;align-items:center;justify-content:center;
-    background:transparent;
-    font-family:system-ui,sans-serif;
-    color:#fff;
-  }
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0 }
+    html, body { width: 100%; height: 100% }
+    body {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: transparent;
+      font-family: system-ui, sans-serif;
+      color: #fff;
+    }
 
-  .container{position:relative}
-  .container svg{position:absolute;inset:0;pointer-events:none}
+    .container { position: relative }
+    .container svg { position: absolute; inset: 0; pointer-events: none }
 
-  /* ─────────── centre icons ─────────── */
-  .centre{
-    position:absolute;width:var(--centre);height:var(--centre);
-    border-radius:50%;overflow:visible;
-    transform:translate(-50%,-50%);z-index:3;
-    transition:box-shadow .3s ease;
-  }
-  /* idle glow keeps its category colour …                                */
-  .centre.pure       {box-shadow:0 0 24px #fff}
-  .centre.statistics {box-shadow:0 0 24px #ffb347}
-  .centre.mechanics  {box-shadow:0 0 24px #a2d2ff}
-  /* … but hovering any centre icon is now a uniform grey glow            */
-  .centre:hover{box-shadow:0 0 34px #9ca3af!important}
+    /* ─── centre icons ─── */
+    .centre {
+      position: absolute;
+      width: var(--centre);
+      height: var(--centre);
+      border-radius: 50%;
+      overflow: visible;
+      transform: translate(-50%, -50%);
+      z-index: 3;
+      transition: box-shadow .3s ease;
+      display: block;
+      cursor: pointer;
+      outline: none;
+      -webkit-tap-highlight-color: transparent;
+    }
+    .centre.pure       { box-shadow: 0 0 24px #fff }
+    .centre.statistics { box-shadow: 0 0 24px #ffb347 }
+    .centre.mechanics  { box-shadow: 0 0 24px #a2d2ff }
+    .centre:hover      { box-shadow: 0 0 34px #9ca3af !important }
+    .centre:active     { background: transparent }
 
-  .centre img{
-    width:100%;height:100%;object-fit:cover;border-radius:50%;
-    transition:transform .3s ease;
-  }
-  .centre:hover img{transform:scale(1.1)}
+    .centre img {
+      width: 100%; height: 100%;
+      object-fit: cover;
+      border-radius: 50%;
+      transition: transform .3s ease;
+    }
+    .centre:hover img { transform: scale(1.1) }
 
-  /* titles beneath the three centre icons */
-  .centre::after{
-    content:attr(data-label);
-    position:absolute;
-    top:calc(100% + 160px);
-    left:50%;transform:translateX(-50%);
-    font-size:42px;font-weight:700;
-    background:rgba(255,255,255,0.08);
-    padding:4px 16px;border-radius:8px;
-    color:#fff;
-    border:2px solid #d1d5db;                /* light-grey outline */
-    transition:background-color .25s,color .25s,border-color .25s,
-               box-shadow .25s;
-  }
-  .centre:hover::after{
-    background:#FFE5B4;
-    color:#000;
-    border-color:#ff8c00;                    /* orange while hovered */
-    box-shadow:0 0 10px rgba(255,229,180,.7);
-  }
+    .centre::after {
+      content: attr(data-label);
+      position: absolute;
+      top: calc(100% + 160px);
+      left: 50%; transform: translateX(-50%);
+      font-size: 42px; font-weight: 700;
+      background: rgba(255,255,255,0.08);
+      padding: 4px 16px; border-radius: 8px;
+      color: #fff;                    /* default white text */
+      border: 2px solid #d1d5db;
+      transition: background-color .25s, color .25s,
+                  border-color .25s, box-shadow .25s;
+    }
+    .centre:hover::after {
+      background: #FFE5B4;
+      color: #000;                    /* hover turns text black */
+      border-color: #ff8c00;
+      box-shadow: 0 0 10px rgba(255,229,180,.7);
+    }
 
-  /* ─────────── topic circles ─────────── */
-  .node{
-    position:absolute;width:var(--icon);height:var(--icon);
-    border-radius:50%;background:#111;border:2px solid #fff;
-    display:flex;align-items:center;justify-content:center;
-    opacity:0;transform:translate(-50%,-50%) scale(.5);
-    transition:transform .35s ease,opacity .35s ease;z-index:1;
-  }
-  /* idle glows keep their category tint */
-  .node.pure       {box-shadow:0 0 12px #fff}
-  .node.statistics {box-shadow:0 0 12px #ffb347}
-  .node.mechanics  {box-shadow:0 0 12px #a2d2ff}
-  /* hover glow is now neutral grey for every topic node */
-  .node:hover{
-    transform:translate(-50%,-50%) scale(1.15);
-    box-shadow:0 0 18px #9ca3af;
-  }
+    /* ─── topic circles ─── */
+    .node {
+      position: absolute;
+      width: var(--icon);
+      height: var(--icon);
+      border-radius: 50%;
+      background: #111;
+      border: 2px solid #fff;
+      display: flex; align-items: center; justify-content: center;
+      opacity: 0;
+      transform: translate(-50%, -50%) scale(.5);
+      transition: transform .35s ease, opacity .35s ease;
+      z-index: 1;
+      display: block;
+      cursor: pointer;
+      outline: none;
+      -webkit-tap-highlight-color: transparent;
+    }
+    .node.pure       { box-shadow: 0 0 12px #fff }
+    .node.statistics { box-shadow: 0 0 12px #ffb347 }
+    .node.mechanics  { box-shadow: 0 0 12px #a2d2ff }
+    .node:hover      { transform: translate(-50%, -50%) scale(1.15); box-shadow: 0 0 18px #9ca3af }
+    .node:active     { background: transparent }
 
-  .node::after{
-    content:attr(data-label);
-    position:absolute;top:calc(100% + 4px);left:50%;
-    transform:translateX(-50%);
-    font-size:10px;font-weight:600;
-    color:#fff;
-    opacity:.5;pointer-events:none;
-    transition:opacity .3s;
-  }
-  .node:hover::after{opacity:1}
+    .node img {
+      width: 100%; height: 100%;
+      object-fit: cover;
+      border-radius: 50%;
+      transition: transform .3s ease;
+    }
+    .node:hover img { transform: scale(1.1) }
 
-  /* ─────────── hexagon outline ─────────── */
-  .hexagon{
-    stroke:#d1d5db;stroke-width:2;fill:none;
-    stroke-dasharray:1000;stroke-dashoffset:1000;
-    transition:stroke-dashoffset 1s ease;
-  }
-</style>
+    .node::after {
+      content: attr(data-label);
+      position: absolute;
+      top: calc(100% + 4px);
+      left: 50%; transform: translateX(-50%);
+      font-size: 10px; font-weight: 600;
+      color: #fff;                    /* default white text */
+      opacity: .5; pointer-events: none;
+      transition: opacity .3s, color .25s;
+    }
+    .node:hover::after {
+      opacity: 1;
+      color: #000;                    /* hover turns text black */
+    }
+
+    /* ─── hexagon outline ─── */
+    .hexagon {
+      stroke: #d1d5db;
+      stroke-width: 2;
+      fill: none;
+      stroke-dasharray: 1000;
+      stroke-dashoffset: 1000;
+      transition: stroke-dashoffset 1s ease;
+    }
+  </style>
 </head>
 
 <body>
   <div class="container" id="container"></div>
 
-<script>
-/* string → URL slug */
-const slugify = s =>
-  s.toLowerCase()
-   .replace(/[^a-z0-9]+/g, '-')
-   .replace(/(^-|-$)/g, '');
+  <script>
+    // helper to slugify a topic title
+    const slugify = s =>
+      s.toLowerCase()
+       .replace(/[^a-z0-9]+/g, '-')
+       .replace(/(^-|-$)/g, '');
 
-(function () {
-  const BASE    = 'https://www.ganesteaches.com/ganes-assess/mathematics';
-  const R1      = parseFloat(getComputedStyle(document.documentElement)
-                             .getPropertyValue('--r1'));
-  const spacing = Math.sqrt(3) * R1;
+    (function(){
+      // **correct** base URL for your assessments
+      const BASE    = 'https://www.ganesteaches.com/assess/mathematics';
+      const R1      = parseFloat(getComputedStyle(document.documentElement)
+                                 .getPropertyValue('--r1'));
+      const spacing = Math.sqrt(3) * R1;
 
-  const branches = [
-    {
-      key:  'pure',
-      cls:  'pure',
-      icon: 'pure_icon.png',
-      title:'Pure Mathematics',
-      label:'Pure',
-      posIndex:1,
-      dir: 1,
-      topics:[
-        {label:'Proof & Algebraic',full:'Proof & Algebraic Techniques'},
-        {label:'Coordination Geometry',full:'Coordination Geometry'},
-        {label:'Sequence',full:'Sequence'},
-        {label:'Trigonometry',full:'Trigonometry'},
-        {label:'Calculus',full:'Calculus'},
-        {label:'Numerical Methods',full:'Approximation & Numerical Methods'}
-      ]
-    },
-    {
-      key:  'statistics',
-      cls:  'statistics',
-      icon: 'stats_icon.png',
-      title:'Statistics',
-      label:'Statistics',
-      posIndex:0,
-      dir:-1,
-      topics:[
-        {label:'Sampling',full:'Statistical sampling'},
-        {label:'Data Presentation',full:'Data presentation & interpretation'},
-        {label:'Probability',full:'Probability'},
-        {label:'Distributions',full:'Statistical distributions'}
-      ]
-    },
-    {
-      key:  'mechanics',
-      cls:  'mechanics',
-      icon: 'mech_icon.png',
-      title:'Mechanics',
-      label:'Mechanics',
-      posIndex:2,
-      dir:-1,
-      topics:[
-        {label:'Units',full:'Quantities and units in mechanics'},
-        {label:'Kinematics',full:'Kinematics'},
-        {label:'Forces',full:'Forces & Newton’s laws'},
-        {label:'Moments',full:'Moments'}
-      ]
-    }
-  ];
+      const branches = [
+        {
+          key:'pure', cls:'pure', icon:'pure_icon.png',
+          title:'Pure Mathematics', label:'Pure',
+          posIndex:1, dir:1,
+          topics:[
+            {label:'Proof & Algebraic', full:'Proof & Algebraic Techniques'},
+            {label:'Coordinate Geometry', full:'Coordinate Geometry'},
+            {label:'Sequence', full:'Sequence'},
+            {label:'Trigonometry', full:'Trigonometry'},
+            {label:'Calculus', full:'Calculus'},
+            {label:'Numerical Methods', full:'Approximation & Numerical Methods'}
+          ]
+        },
+        {
+          key:'statistics', cls:'statistics', icon:'stats_icon.png',
+          title:'Statistics', label:'Statistics',
+          posIndex:0, dir:-1,
+          topics:[
+            {label:'Sampling', full:'Statistical Sampling'},
+            {label:'Data Presentation', full:'Data Presentation & Interpretation'},
+            {label:'Probability', full:'Probability'},
+            {label:'Distributions', full:'Statistical Distributions'}
+          ]
+        },
+        {
+          key:'mechanics', cls:'mechanics', icon:'mech_icon.png',
+          title:'Mechanics', label:'Mechanics',
+          posIndex:2, dir:-1,
+          topics:[
+            {label:'Units', full:'Quantities & Units in Mechanics'},
+            {label:'Kinematics', full:'Kinematics'},
+            {label:'Forces', full:'Forces & Newton’s Laws'},
+            {label:'Moments', full:'Moments'}
+          ]
+        }
+      ];
 
-  /* size container */
-  const cont   = document.getElementById('container');
-  const totalW = 2 * R1 + 2 * spacing,
-        totalH = 2 * R1;
-  cont.style.width  = `${totalW}px`;
-  cont.style.height = `${totalH}px`;
+      // size the container
+      const cont   = document.getElementById('container');
+      const totalW = 2 * R1 + 2 * spacing,
+            totalH = 2 * R1;
+      cont.style.width  = `${totalW}px`;
+      cont.style.height = `${totalH}px`;
 
-  /* SVG */
-  const svgNS = 'http://www.w3.org/2000/svg';
-  const svg   = document.createElementNS(svgNS, 'svg');
-  svg.setAttribute('viewBox', `0 0 ${totalW} ${totalH}`);
-  svg.style.width  = '100%';
-  svg.style.height = '100%';
-  cont.appendChild(svg);
+      // PVC: create one SVG for all hex outlines
+      const svgNS = 'http://www.w3.org/2000/svg';
+      const svg   = document.createElementNS(svgNS, 'svg');
+      svg.setAttribute('viewBox', `0 0 ${totalW} ${totalH}`);
+      svg.style.width  = '100%';
+      svg.style.height = '100%';
+      cont.appendChild(svg);
 
-  /* draw one hexagon, return its six vertices */
-  function drawHex (cx, cy, dir) {
-    const pts = Array.from({ length: 6 }, (_, i) => {
-      const ang = (-90 + dir * i * 60) * Math.PI / 180;
-      return [cx + R1 * Math.cos(ang), cy + R1 * Math.sin(ang)];
-    });
+      // draw a hexagon, animate, return its corner points
+      function drawHex(cx, cy, dir){
+        const pts = Array.from({ length: 6 }, (_, i) => {
+          const ang = (-90 + dir * i * 60) * Math.PI/180;
+          return [ cx + R1 * Math.cos(ang), cy + R1 * Math.sin(ang) ];
+        });
+        const poly = document.createElementNS(svgNS,'polygon');
+        poly.setAttribute('points', pts.map(p=>p.join(',')).join(' '));
+        poly.classList.add('hexagon');
+        svg.appendChild(poly);
+        // animate dash
+        const perim = pts.reduce((s,[x,y],i)=>{
+          const [nx,ny] = pts[(i+1)%6];
+          return s + Math.hypot(nx-x,ny-y);
+        },0);
+        poly.style.strokeDasharray  = perim;
+        poly.style.strokeDashoffset = perim;
+        requestAnimationFrame(()=> poly.style.strokeDashoffset = '0');
+        return pts;
+      }
 
-    const poly = document.createElementNS(svgNS, 'polygon');
-    poly.setAttribute('points', pts.map(p => p.join(',')).join(' '));
-    poly.classList.add('hexagon');
-    svg.appendChild(poly);
+      // build centres & collect all vertices
+      let verts = [];
+      branches.forEach(b=>{
+        const cx = R1 + b.posIndex * spacing,
+              cy = R1;
+        verts.push(...drawHex(cx, cy, b.dir));
 
-    /* animate the outline */
-    const perim = pts.reduce((s, [x, y], i) => {
-      const [nx, ny] = pts[(i + 1) % 6];
-      return s + Math.hypot(nx - x, ny - y);
-    }, 0);
-    poly.style.strokeDasharray = perim;
-    poly.style.strokeDashoffset = perim;
-    requestAnimationFrame(() => (poly.style.strokeDashoffset = '0'));
-    return pts;
-  }
+        const centre = document.createElement('a');
+        centre.className     = `centre ${b.cls}`;
+        centre.href          = `${BASE}/a-level/${b.key}`;
+        centre.title         = b.title;
+        centre.dataset.label = b.label;
+        centre.style.left    = `${cx}px`;
+        centre.style.top     = `${cy}px`;
+        centre.innerHTML     = `<img src="${b.icon}" alt="${b.title}">`;
+        cont.appendChild(centre);
+      });
 
-  /* build the three branches */
-  let verts = [];
-  branches.forEach(b => {
-    const cx = R1 + b.posIndex * spacing,
-          cy = R1;
-    verts.push(...drawHex(cx, cy, b.dir));
+      // dedupe to get 14 unique peripheral positions
+      const unique = [], tol = 1;
+      verts.forEach(p => {
+        if (!unique.some(u =>
+              Math.abs(u[0]-p[0])<tol && Math.abs(u[1]-p[1])<tol))
+          unique.push(p);
+      });
 
-    /* centre icon */
-    const centre = document.createElement('a');
-    centre.className   = `centre ${b.cls}`;
-    centre.href        = `${BASE}/a-level/${b.key}`;
-    centre.title       = b.title;
-    centre.dataset.label = b.label;
-    centre.style.left  = `${cx}px`;
-    centre.style.top   = `${cy}px`;
-    centre.innerHTML   = `<img src="${b.icon}" alt="${b.title}">`;
-    cont.appendChild(centre);
-  });
+      // place & icon-ify each topic node
+      const counts = [0,0,0];
+      unique.forEach(([x,y], i) => {
+        const bi  = i<6?0:(i<10?1:2),
+              b   = branches[bi],
+              idx = counts[bi]++;
+        if (idx >= b.topics.length) return;
 
-  /* deduplicate the 18 vertices down to 14 unique positions */
-  const unique = [], tol = 1;
-  verts.forEach(p => {
-    if (!unique.some(u =>
-          Math.abs(u[0] - p[0]) < tol && Math.abs(u[1] - p[1]) < tol))
-      unique.push(p);
-  });
+        const {label, full} = b.topics[idx];
+        const node = document.createElement('a');
+        node.className     = `node ${b.cls}`;
+        node.href          = `${BASE}/a-level/${b.key}/${slugify(full)}`;
+        node.title         = full;
+        node.dataset.label = label;
+        node.style.left    = `${x}px`;
+        node.style.top     = `${y}px`;
+        node.innerHTML     = `<img src="topics/${slugify(full)}_icon.png" alt="${full}">`;
+        cont.appendChild(node);
 
-  /* add the topic nodes */
-  const counts = [0, 0, 0];
-  unique.forEach(([x, y], i) => {
-    const bi  = i < 6 ? 0 : (i < 10 ? 1 : 2);
-    const b   = branches[bi];
-    const idx = counts[bi]++;
-    if (idx >= b.topics.length) return;
+        // fade-in
+        setTimeout(()=>{
+          node.style.opacity   = '1';
+          node.style.transform = 'translate(-50%, -50%) scale(1)';
+        }, 100 + i*60);
+      });
 
-    const { label, full } = b.topics[idx];
-    const node = document.createElement('a');
-    node.className   = `node ${b.cls}`;
-    node.href        = `${BASE}/a-level/${b.key}/${slugify(full)}`;
-    node.title       = full;
-    node.style.left  = `${x}px`;
-    node.style.top   = `${y}px`;
-    node.dataset.label = label;
-    cont.appendChild(node);
-
-    /* fade-in animation */
-    setTimeout(() => {
-      node.style.opacity  = '1';
-      node.style.transform = 'translate(-50%,-50%) scale(1)';
-    }, 100 + i * 60);
-  });
-})();
-</script>
+      // remove any JS click handlers so the <a> works as normal
+      // (no preventDefault or manual navigation)
+      // If you still want to open in a new tab, uncomment:
+      // document.querySelectorAll('.centre, .node')
+      //         .forEach(el => el.setAttribute('target','_blank'));
+    })();
+  </script>
 </body>
 </html>
