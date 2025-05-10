@@ -5,251 +5,253 @@
   <title>Mathematics Branch Hexagon Chain</title>
   <style>
     :root {
-      --r1:     187.5px;   /* hexagon radius (150 × 1.25)           */
-      --centre: 180px;     /* centre-icon diameter                  */
-      --icon:    67.5px;   /* peripheral-node diameter (25% smaller)*/
+      --r1:     187.5px;   /* hexagon radius */
+      --centre: 180px;     /* centre-icon diameter */
+      --icon:    67.5px;   /* peripheral node diameter */
     }
-    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0 }
+    *, *::before, *::after { box-sizing: border-box; margin:0; padding:0 }
     html, body { width:100%; height:100% }
     body {
-      display: flex;
-      align-items: centre;
-      justify-content: centre;
-      background: transparent;
-      font-family: system-ui, sans-serif;
-      color: #fff;
+      display:flex; align-items:center; justify-content:center;
+      background:transparent;
+      font-family:system-ui, sans-serif;
+      color:#fff;
     }
-    .container { position: relative }
-    .container svg { position: absolute; inset: 0; pointer-events: none }
+    .container { position:relative }
+    .container svg { position:absolute; inset:0; pointer-events:none }
 
     /* centre icons */
     .centre {
-      position: absolute;
-      width: var(--centre);
-      height: var(--centre);
-      border-radius: 50%;
-      transform: translate(-50%, -50%);
-      overflow: visible;
-      z-index: 3;
-      transition: box-shadow .3s ease;
-      cursor: pointer;
-      -webkit-tap-highlight-color: transparent;
+      position:absolute;
+      width:var(--centre);
+      height:var(--centre);
+      border-radius:50%;
+      transform:translate(-50%, -50%);
+      overflow:visible;
+      z-index:3;
+      transition:box-shadow .3s;
+      cursor:pointer;
+      -webkit-tap-highlight-color:transparent;
     }
-    .centre.pure       { box-shadow: 0 0 24px #fff }
-    .centre.statistics { box-shadow: 0 0 24px #ffb347 }
-    .centre.mechanics  { box-shadow: 0 0 24px #a2d2ff }
-    .centre:hover      { box-shadow: 0 0 34px #9ca3af !important }
+    .centre.pure       { box-shadow:0 0 24px #fff }
+    .centre.statistics { box-shadow:0 0 24px #ffb347 }
+    .centre.mechanics  { box-shadow:0 0 24px #a2d2ff }
+    .centre:hover      { box-shadow:0 0 34px #9ca3af!important }
 
     .centre img {
-      width: 100%; height: 100%;
-      object-fit: cover;
-      border-radius: 50%;
-      transition: transform .3s ease;
+      width:100%; height:100%;
+      object-fit:cover; border-radius:50%;
+      transition:transform .3s;
     }
-    .centre:hover img { transform: scale(1.1) }
+    .centre:hover img { transform:scale(1.1) }
 
     .centre::after {
-      content: attr(data-label);
-      position: absolute;
-      top: calc(100% + 160px);
-      left: 50%; transform: translateX(-50%);
-      font-size: 42px; font-weight: 700;
-      background: rgba(255,255,255,0.08);
-      padding: 4px 16px; border-radius: 8px;
-      color: #fff;
-      border: 2px solid #d1d5db;
-      transition: background-color .25s, color .25s,
-                  border-color .25s, box-shadow .25s;
+      content:attr(data-label);
+      position:absolute;
+      top:calc(100% + 160px);
+      left:50%; transform:translateX(-50%);
+      font-size:42px; font-weight:700;
+      background:rgba(255,255,255,0.08);
+      padding:4px 16px; border-radius:8px;
+      color:#fff;                           /* default white */
+      border:2px solid #d1d5db;
+      transition:background .25s,color .25s,border-color .25s,box-shadow .25s;
     }
     .centre:hover::after {
-      background: #FFE5B4;
-      color: #000;
-      border-color: #ff8c00;
-      box-shadow: 0 0 10px rgba(255,229,180,.7);
+      background:#FFE5B4;
+      color:#000;                           /* hover → black */
+      border-color:#ff8c00;
+      box-shadow:0 0 10px rgba(255,229,180,.7);
     }
 
     /* topic circles */
     .node {
-      position: absolute;
-      width: var(--icon);
-      height: var(--icon);
-      border-radius: 50%;
-      background: #111;
-      border: 2px solid #fff;
-      display: flex; align-items: centre; justify-content: centre;
-      opacity: 0;
-      transform: translate(-50%, -50%) scale(.5);
-      transition: transform .35s ease, opacity .35s ease;
-      z-index: 1;
-      cursor: pointer;
-      -webkit-tap-highlight-color: transparent;
+      position:absolute;
+      width:var(--icon);
+      height:var(--icon);
+      border-radius:50%;
+      background:#111;
+      border:2px solid #fff;
+      display:flex; align-items:center; justify-content:center;
+      opacity:0;
+      transform:translate(-50%,-50%) scale(.5);
+      transition:transform .35s, opacity .35s;
+      z-index:1;
+      cursor:pointer;
+      -webkit-tap-highlight-color:transparent;
     }
-    .node.pure       { box-shadow: 0 0 12px #fff }
-    .node.statistics { box-shadow: 0 0 12px #ffb347 }
-    .node.mechanics  { box-shadow: 0 0 12px #a2d2ff }
-    .node:hover      { transform: translate(-50%, -50%) scale(1.15); box-shadow: 0 0 18px #9ca3af }
+    .node.pure       { box-shadow:0 0 12px #fff }
+    .node.statistics { box-shadow:0 0 12px #ffb347 }
+    .node.mechanics  { box-shadow:0 0 12px #a2d2ff }
+    .node:hover      { transform:translate(-50%,-50%) scale(1.15); box-shadow:0 0 18px #9ca3af }
 
     .node img {
-      width: 100%; height: 100%;
-      object-fit: cover;
-      border-radius: 50%;
-      transition: transform .3s ease;
+      width:100%; height:100%;
+      object-fit:cover; border-radius:50%;
+      transition:transform .3s;
     }
-    .node:hover img { transform: scale(1.1) }
+    .node:hover img { transform:scale(1.1) }
 
     .node::after {
-      content: attr(data-label);
-      position: absolute;
-      top: calc(100% + 4px);
-      left: 50%; transform: translateX(-50%);
-      font-size: 10px; font-weight: 600;
-      color: #fff;
-      opacity: .5; pointer-events: none;
-      transition: opacity .3s, color .25s;
+      content:attr(data-label);
+      position:absolute;
+      top:calc(100% + 4px);
+      left:50%; transform:translateX(-50%);
+      font-size:10px; font-weight:600;
+      color:#fff;                           /* default white */
+      opacity:.5; pointer-events:none;
+      transition:opacity .3s, color .25s;
     }
     .node:hover::after {
-      opacity: 1;
-      color: #000;
+      opacity:1;
+      color:#000;                           /* hover → black */
     }
 
     /* hexagon outline */
     .hexagon {
-      stroke: #d1d5db;
-      stroke-width: 2;
-      fill: none;
-      stroke-dasharray: 1000;
-      stroke-dashoffset: 1000;
-      transition: stroke-dashoffset 1s ease;
+      stroke:#d1d5db; stroke-width:2; fill:none;
+      stroke-dasharray:1000; stroke-dashoffset:1000;
+      transition:stroke-dashoffset 1s;
     }
   </style>
 </head>
 <body>
   <div class="container" id="container"></div>
   <script>
-    const slugify = s => s.toLowerCase()
-                          .replace(/[^a-z0-9]+/g,'-')
-                          .replace(/(^-|-$)/g,'');
     (function(){
       const BASE    = 'https://www.ganesteaches.com/assess/mathematics';
       const R1      = parseFloat(getComputedStyle(document.documentElement)
-                                 .getPropertyValue('--r1'));
+                         .getPropertyValue('--r1'));
       const spacing = Math.sqrt(3) * R1;
 
+      // helper to generate URL-friendly slugs
+      const slugify = s => s.toLowerCase()
+                            .replace(/[^a-z0-9]+/g,'-')
+                            .replace(/(^-|-$)/g,'');
+
+      // branches, with explicit topic-icon filenames
       const branches = [
         {
-          key: 'pure', cls:'pure', icon:'pure_icon.png',
+          key:'pure', cls:'pure', icon:'pure_icon.png',
           title:'Pure Mathematics', label:'Pure',
           posIndex:1, dir:1,
           topics:[
-            {label:'Proof & Algebraic', full:'Proof & Algebraic Techniques'},
-            {label:'Coordinate Geometry', full:'Coordinate Geometry'},
-            {label:'Sequence', full:'Sequence'},
-            {label:'Trigonometry', full:'Trigonometry'},
-            {label:'Calculus', full:'Calculus'},
-            {label:'Numerical Methods', full:'Approximation & Numerical Methods'}
+            { label:'Proof & Algebraic', full:'Proof & Algebraic Techniques', icon:'proof_algebraic_icon.png' },
+            { label:'Coordinate Geometry', full:'Coordinate Geometry', icon:'coordinate_geometry_icon.png' },
+            { label:'Sequence', full:'Sequence', icon:'sequence_icon.png' },
+            { label:'Trigonometry', full:'Trigonometry', icon:'trig_icon.png' },
+            { label:'Calculus', full:'Calculus', icon:'calculus_icon.png' },
+            { label:'Numerical Methods', full:'Approximation & Numerical Methods', icon:'numerical_methods_icon.png' }
           ]
         },
         {
-          key: 'statistics', cls:'statistics', icon:'stats_icon.png',
+          key:'statistics', cls:'statistics', icon:'stats_icon.png',
           title:'Statistics', label:'Statistics',
           posIndex:0, dir:-1,
           topics:[
-            {label:'Sampling', full:'Statistical Sampling'},
-            {label:'Data Presentation', full:'Data Presentation & Interpretation'},
-            {label:'Probability', full:'Probability'},
-            {label:'Distributions', full:'Statistical Distributions'}
+            { label:'Sampling', full:'Statistical Sampling', icon:'sampling_icon.png' },
+            { label:'Data Presentation', full:'Data Presentation & Interpretation', icon:'data_presentation_icon.png' },
+            { label:'Probability', full:'Probability', icon:'probability_icon.png' },
+            { label:'Distributions', full:'Statistical Distributions', icon:'distributions_icon.png' }
           ]
         },
         {
-          key: 'mechanics', cls:'mechanics', icon:'mech_icon.png',
+          key:'mechanics', cls:'mechanics', icon:'mech_icon.png',
           title:'Mechanics', label:'Mechanics',
           posIndex:2, dir:-1,
           topics:[
-            {label:'Units', full:'Quantities & Units in Mechanics'},
-            {label:'Kinematics', full:'Kinematics'},
-            {label:'Forces', full:'Forces & Newton’s Laws'},
-            {label:'Moments', full:'Moments'}
+            { label:'Units', full:'Quantities & Units in Mechanics', icon:'units_icon.png' },
+            { label:'Kinematics', full:'Kinematics', icon:'kinematics_icon.png' },
+            { label:'Forces', full:'Forces & Newton’s Laws', icon:'forces_icon.png' },
+            { label:'Moments', full:'Moments', icon:'moments_icon.png' }
           ]
         }
       ];
 
-      // size container
-      const cont = document.getElementById('container');
+      // size the container
+      const cont   = document.getElementById('container');
       const totalW = 2*R1 + 2*spacing, totalH = 2*R1;
-      cont.style.width = `${totalW}px`;
-      cont.style.height= `${totalH}px`;
+      cont.style.width  = totalW + 'px';
+      cont.style.height = totalH + 'px';
 
-      // svg setup
+      // create one SVG for outlines
       const svgNS = 'http://www.w3.org/2000/svg';
       const svg   = document.createElementNS(svgNS,'svg');
-      svg.setAttribute('viewBox',`0 0 ${totalW} ${totalH}`);
-      svg.style.width='100%'; svg.style.height='100%';
+      svg.setAttribute('viewBox', `0 0 ${totalW} ${totalH}`);
+      svg.style.width  = '100%';
+      svg.style.height = '100%';
       cont.appendChild(svg);
 
-      // draw one hexagon
+      // draw one hexagon, animate, return its 6 corners
       function drawHex(cx, cy, dir){
         const pts = Array.from({length:6},(_,i)=>{
           const ang = (-90 + dir*i*60)*Math.PI/180;
-          return [cx + R1*Math.cos(ang), cy + R1*Math.sin(ang)];
+          return [ cx + R1*Math.cos(ang), cy + R1*Math.sin(ang) ];
         });
         const poly = document.createElementNS(svgNS,'polygon');
         poly.setAttribute('points', pts.map(p=>p.join(',')).join(' '));
         poly.classList.add('hexagon');
         svg.appendChild(poly);
-        // animate
+        // animate dash‐offset
         const perim = pts.reduce((s,[x,y],i)=>{
           const [nx,ny] = pts[(i+1)%6];
-          return s + Math.hypot(nx-x,ny-y);
+          return s + Math.hypot(nx-x, ny-y);
         },0);
-        poly.style.strokeDasharray=perim;
-        poly.style.strokeDashoffset=perim;
-        requestAnimationFrame(()=>poly.style.strokeDashoffset='0');
+        poly.style.strokeDasharray  = perim;
+        poly.style.strokeDashoffset = perim;
+        requestAnimationFrame(()=> poly.style.strokeDashoffset = '0');
         return pts;
       }
 
-      // build centres & collect verts
+      // build centres + collect all hex vertices
       let allVerts = [];
-      branches.forEach(b=>{
+      branches.forEach(b => {
         const cx = R1 + b.posIndex*spacing, cy = R1;
         allVerts.push(...drawHex(cx,cy,b.dir));
-        const ctr = document.createElement('a');
-        ctr.className = `centre ${b.cls}`;
-        ctr.href      = `${BASE}/a-level/${b.key}`;
-        ctr.target    = '_blank';                // remove if you don't want new tab
-        ctr.title     = b.title;
-        ctr.dataset.label = b.label;
-        ctr.style.left= `${cx}px`; ctr.style.top= `${cy}px`;
-        ctr.innerHTML = `<img src="${b.icon}" alt="${b.title}">`;
-        cont.appendChild(ctr);
+
+        const centre = document.createElement('a');
+        centre.className     = `centre ${b.cls}`;
+        centre.href          = `${BASE}/a-level/${b.key}`;
+        centre.target        = '_blank';
+        centre.title         = b.title;
+        centre.dataset.label = b.label;
+        centre.style.left    = cx + 'px';
+        centre.style.top     = cy + 'px';
+        centre.innerHTML     = `<img src="${b.icon}" alt="${b.title}">`;
+        cont.appendChild(centre);
       });
 
-      // dedupe to 14 unique peripheral points
+      // dedupe to get 14 unique peripheral points
       const unique = [], tol=1;
-      allVerts.forEach(pt=>{
-        if(!unique.some(u=>Math.abs(u[0]-pt[0])<tol && Math.abs(u[1]-pt[1])<tol))
-          unique.push(pt);
+      allVerts.forEach(p=>{
+        if (!unique.some(u=> Math.abs(u[0]-p[0])<tol && Math.abs(u[1]-p[1])<tol))
+          unique.push(p);
       });
 
-      // place topic nodes
-      const counts=[0,0,0];
+      // add each topic as a node
+      const counts = [0,0,0];
       unique.forEach(([x,y],i)=>{
-        const bi = i<6?0:(i<10?1:2), b=branches[bi],
-              idx=counts[bi]++;
-        if(idx>=b.topics.length) return;
-        const {label,full} = b.topics[idx];
+        const bi  = i<6?0:(i<10?1:2),
+              b   = branches[bi],
+              idx = counts[bi]++;
+        if (idx >= b.topics.length) return;
+
+        const t = b.topics[idx];
         const node = document.createElement('a');
-        node.className = `node ${b.cls}`;
-        node.href      = `${BASE}/a-level/${b.key}/${slugify(full)}`;
-        node.target    = '_blank';                // remove if undesired
-        node.title     = full;
-        node.dataset.label = label;
-        node.style.left= `${x}px`; node.style.top= `${y}px`;
-        node.innerHTML = `<img src="topics/${slugify(full)}_icon.png" alt="${full}">`;
+        node.className     = `node ${b.cls}`;
+        node.href          = `${BASE}/a-level/${b.key}/${slugify(t.full)}`;
+        node.target        = '_blank';
+        node.title         = t.full;
+        node.dataset.label = t.label;
+        node.style.left    = x + 'px';
+        node.style.top     = y + 'px';
+        node.innerHTML     = `<img src="topics/${t.icon}" alt="${t.full}">`;
         cont.appendChild(node);
+
         setTimeout(()=>{
-          node.style.opacity='1';
-          node.style.transform='translate(-50%, -50%) scale(1)';
-        },100 + i*60);
+          node.style.opacity   = '1';
+          node.style.transform = 'translate(-50%,-50%) scale(1)';
+        }, 100 + i*60);
       });
     })();
   </script>
