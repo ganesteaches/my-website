@@ -1,0 +1,22 @@
+Physical chemistry ― 6 topics
+#	Summary heading	Sub-sections gathered
+P1	Atomic Structure & Moles	3.1.1 Atomic structure – 3.1.2 Amount of substance
+P2	Chemical Bonding Models	3.1.3 Bonding
+P3	Energetics & Thermodynamics	3.1.4 Energetics, 3.1.8 Thermodynamics
+P4	Rates of Reaction	3.1.5 Kinetics, 3.1.9 Rate equations
+P5	Chemical Equilibria & K-Constants	3.1.6 Equilibria/Le Chatelier, 3.1.10 Kp for homogeneous systems
+P6	Redox, Electrochemistry & Acid–Base Theory	3.1.7 Redox equations, 3.1.11 Electrode potentials/cells, 3.1.12 Acids and bases
+
+Inorganic chemistry ― 4 topics
+#	Summary heading	Sub-sections gathered
+I1	Periodicity & Period 3 Oxides	3.2.1 Periodicity, 3.2.4 Period 3 elements/oxides
+I2	Group 2 – The Alkaline Earth Metals	3.2.2 Group 2
+I3	Group 7 – The Halogens	3.2.3 Group 7(17)
+I4	Transition Metals & Aqueous-Ion Chemistry	3.2.5 Transition metals, 3.2.6 Reactions of ions in aqueous solution
+
+Organic chemistry ― 4 topics
+#	Summary heading	Sub-sections gathered
+O1	Foundations: Nomenclature, Hydrocarbons & Stereochemistry	3.3.1 Intro to organic, 3.3.2 Alkanes, 3.3.3 Halogenoalkanes, 3.3.4 Alkenes, 3.3.7 Optical isomerism
+O2	Alcohols, Carbonyls & Carboxylic Derivatives	3.3.5 Alcohols, 3.3.8 Aldehydes/ketones, 3.3.9 Carboxylic acids & derivatives
+O3	Aromatic, Amines & Biological Molecules	3.3.10 Aromatic chemistry, 3.3.11 Amines, 3.3.12 Polymers, 3.3.13 Amino acids/proteins/DNA
+O4	Analytical & Synthetic Techniques	3.3.6 Organic analysis, 3.3.14 Organic synthesis, 3.3.15 NMR spectroscopy, 3.3.16 Chromatography
