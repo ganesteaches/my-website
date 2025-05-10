@@ -6,8 +6,8 @@
   <style>
     :root {
       --r1:     187.5px;   /* hexagon radius */
-      --centre: 180px;     /* diameter of centre icons */
-      --icon:    67.5px;   /* diameter of peripheral nodes */
+      --centre: 180px;     /* centre-icon diameter */
+      --icon:    67.5px;   /* peripheral-node diameter */
     }
 
     *, *::before, *::after {
@@ -15,29 +15,20 @@
       margin: 0;
       padding: 0;
     }
-    html, body {
-      width: 100%;
-      height: 100%;
-    }
+    html, body { width:100%; height:100% }
     body {
       display: flex;
-      align-items: centre;
-      justify-content: centre;
+      align-items: center;
+      justify-content: center;
       background: transparent;
       font-family: system-ui, sans-serif;
-      colour: #fff;
+      color: #fff;
     }
 
-    .container {
-      position: relative;
-    }
-    .container svg {
-      position: absolute;
-      inset: 0;
-      pointer-events: none;
-    }
+    .container { position: relative }
+    .container svg { position: absolute; inset: 0; pointer-events: none }
 
-    /* centre icons */
+    /* ─── centre icons ─── */
     .centre {
       position: absolute;
       width: var(--centre);
@@ -62,9 +53,7 @@
       border-radius: 50%;
       transition: transform .3s ease;
     }
-    .centre:hover img {
-      transform: scale(1.1);
-    }
+    .centre:hover img { transform: scale(1.1) }
 
     .centre::after {
       content: attr(data-label);
@@ -77,18 +66,19 @@
       background: rgba(255,255,255,0.08);
       padding: 4px 16px;
       border-radius: 8px;
-      colour: #fff;                   /* default white */
+      color: #fff;                     /* default white */
       border: 2px solid #d1d5db;
-      transition: background .25s, colour .25s, border-colour .25s, box-shadow .25s;
+      transition: background .25s, color .25s,
+                  border-color .25s, box-shadow .25s;
     }
     .centre:hover::after {
       background: #FFE5B4;
-      colour: #000;                   /* label turns black on hover */
-      border-colour: #ff8c00;
+      color: #000;                     /* centre label goes black on hover */
+      border-color: #ff8c00;
       box-shadow: 0 0 10px rgba(255,229,180,.7);
     }
 
-    /* topic nodes */
+    /* ─── topic circles ─── */
     .node {
       position: absolute;
       width: var(--icon);
@@ -97,8 +87,8 @@
       background: #111;
       border: 2px solid #fff;
       display: flex;
-      align-items: centre;
-      justify-content: centre;
+      align-items: center;
+      justify-content: center;
       opacity: 0;
       transform: translate(-50%, -50%) scale(.5);
       transition: transform .35s ease, opacity .35s ease;
@@ -118,9 +108,7 @@
       border-radius: 50%;
       transition: transform .3s ease;
     }
-    .node:hover img {
-      transform: scale(1.1);
-    }
+    .node:hover img { transform: scale(1.1) }
 
     .node::after {
       content: attr(data-label);
@@ -130,17 +118,17 @@
       transform: translateX(-50%);
       font-size: 10px;
       font-weight: 600;
-      colour: #fff;                   /* always white */
+      color: #fff;                     /* always white */
       opacity: .5;
       pointer-events: none;
       transition: opacity .3s;
     }
     .node:hover::after {
       opacity: 1;
-      /* remains white on hover */
+      color: #fff;                     /* stays white on hover */
     }
 
-    /* hexagon outline */
+    /* ─── hexagon outline ─── */
     .hexagon {
       stroke: #d1d5db;
       stroke-width: 2;
@@ -154,100 +142,99 @@
 <body>
   <div class="container" id="container"></div>
   <script>
-    (function() {
+    (function(){
       const BASE    = 'https://www.ganesteaches.com/assess/mathematics';
       const R1      = parseFloat(getComputedStyle(document.documentElement)
                          .getPropertyValue('--r1'));
       const spacing = Math.sqrt(3) * R1;
 
-      // simple slugify
+      // slugify helper
       const slugify = s => s.toLowerCase()
-                            .replace(/[^a-z0-9]+/g, '-')
-                            .replace(/(^-|-$)/g, '');
+                            .replace(/[^a-z0-9]+/g,'-')
+                            .replace(/(^-|-$)/g,'');
 
+      // branches + topics (with explicit icons)
       const branches = [
         {
-          key: 'pure', cls: 'pure', icon: 'pure_icon.png',
-          title: 'Pure Mathematics', label: 'Pure',
-          posIndex: 1, dir: 1,
-          topics: [
-            { label: 'Proof & Algebraic', full: 'Proof & Algebraic Techniques', icon: 'proof_algebraic_icon.png' },
-            { label: 'Coordinate Geometry', full: 'Coordinate Geometry', icon: 'coordinate_geometry_icon.png' },
-            { label: 'Sequence', full: 'Sequence', icon: 'sequence_icon.png' },
-            { label: 'Trigonometry', full: 'Trigonometry', icon: 'trig_icon.png' },
-            { label: 'Calculus', full: 'Calculus', icon: 'calculus_icon.png' },
-            { label: 'Numerical Methods', full: 'Approximation & Numerical Methods', icon: 'numerical_methods_icon.png' }
+          key:'pure', cls:'pure', icon:'pure_icon.png',
+          title:'Pure Mathematics', label:'Pure',
+          posIndex:1, dir:1,
+          topics:[
+            { label:'Proof & Algebraic', full:'Proof & Algebraic Techniques', icon:'proof_algebraic_icon.png' },
+            { label:'Coordinate Geometry', full:'Coordinate Geometry', icon:'coordinate_geometry_icon.png' },
+            { label:'Sequence', full:'Sequence', icon:'sequence_icon.png' },
+            { label:'Trigonometry', full:'Trigonometry', icon:'trig_icon.png' },
+            { label:'Calculus', full:'Calculus', icon:'calculus_icon.png' },
+            { label:'Numerical Methods', full:'Approximation & Numerical Methods', icon:'numerical_methods_icon.png' }
           ]
         },
         {
-          key: 'statistics', cls: 'statistics', icon: 'stats_icon.png',
-          title: 'Statistics', label: 'Statistics',
-          posIndex: 0, dir: -1,
-          topics: [
-            { label: 'Sampling', full: 'Statistical Sampling', icon: 'sampling_icon.png' },
-            { label: 'Data Presentation', full: 'Data Presentation & Interpretation', icon: 'data_presentation_icon.png' },
-            { label: 'Probability', full: 'Probability', icon: 'probability_icon.png' },
-            { label: 'Distributions', full: 'Statistical Distributions', icon: 'distributions_icon.png' }
+          key:'statistics', cls:'statistics', icon:'stats_icon.png',
+          title:'Statistics', label:'Statistics',
+          posIndex:0, dir:-1,
+          topics:[
+            { label:'Sampling', full:'Statistical Sampling', icon:'sampling_icon.png' },
+            { label:'Data Presentation', full:'Data Presentation & Interpretation', icon:'data_presentation_icon.png' },
+            { label:'Probability', full:'Probability', icon:'probability_icon.png' },
+            { label:'Distributions', full:'Statistical Distributions', icon:'distributions_icon.png' }
           ]
         },
         {
-          key: 'mechanics', cls: 'mechanics', icon: 'mech_icon.png',
-          title: 'Mechanics', label: 'Mechanics',
-          posIndex: 2, dir: -1,
-          topics: [
-            { label: 'Units', full: 'Quantities & Units in Mechanics', icon: 'units_icon.png' },
-            { label: 'Kinematics', full: 'Kinematics', icon: 'kinematics_icon.png' },
-            { label: 'Forces', full: 'Forces & Newton’s Laws', icon: 'forces_icon.png' },
-            { label: 'Moments', full: 'Moments', icon: 'moments_icon.png' }
+          key:'mechanics', cls:'mechanics', icon:'mech_icon.png',
+          title:'Mechanics', label:'Mechanics',
+          posIndex:2, dir:-1,
+          topics:[
+            { label:'Units', full:'Quantities & Units in Mechanics', icon:'units_icon.png' },
+            { label:'Kinematics', full:'Kinematics', icon:'kinematics_icon.png' },
+            { label:'Forces', full:'Forces & Newton’s Laws', icon:'forces_icon.png' },
+            { label:'Moments', full:'Moments', icon:'moments_icon.png' }
           ]
         }
       ];
 
       // size container
       const cont = document.getElementById('container');
-      const totalW = 2 * R1 + 2 * spacing;
-      const totalH = 2 * R1;
+      const totalW = 2*R1 + 2*spacing, totalH = 2*R1;
       cont.style.width  = `${totalW}px`;
       cont.style.height = `${totalH}px`;
 
-      // setup one SVG for outlines
+      // SVG for hex outlines
       const svgNS = 'http://www.w3.org/2000/svg';
-      const svg   = document.createElementNS(svgNS, 'svg');
+      const svg   = document.createElementNS(svgNS,'svg');
       svg.setAttribute('viewBox', `0 0 ${totalW} ${totalH}`);
       svg.style.width  = '100%';
       svg.style.height = '100%';
       cont.appendChild(svg);
 
-      // draw hexagon helper
-      function drawHex(cx, cy, dir) {
-        const pts = Array.from({ length: 6 }, (_, i) => {
-          const ang = (-90 + dir * i * 60) * Math.PI / 180;
-          return [ cx + R1 * Math.cos(ang), cy + R1 * Math.sin(ang) ];
+      // draw one hexagon, animate, return its corners
+      function drawHex(cx, cy, dir){
+        const pts = Array.from({length:6},(_,i)=>{
+          const ang = (-90 + dir*i*60)*Math.PI/180;
+          return [ cx + R1*Math.cos(ang), cy + R1*Math.sin(ang) ];
         });
-        const poly = document.createElementNS(svgNS, 'polygon');
-        poly.setAttribute('points', pts.map(p => p.join(',')).join(' '));
+        const poly = document.createElementNS(svgNS,'polygon');
+        poly.setAttribute('points', pts.map(p=>p.join(',')).join(' '));
         poly.classList.add('hexagon');
         svg.appendChild(poly);
-        const perim = pts.reduce((s, [x, y], i) => {
-          const [nx, ny] = pts[(i + 1) % 6];
-          return s + Math.hypot(nx - x, ny - y);
-        }, 0);
+        const perim = pts.reduce((s,[x,y],i)=>{
+          const [nx,ny] = pts[(i+1)%6];
+          return s + Math.hypot(nx-x,ny-y);
+        },0);
         poly.style.strokeDasharray  = perim;
         poly.style.strokeDashoffset = perim;
-        requestAnimationFrame(() => poly.style.strokeDashoffset = '0');
+        requestAnimationFrame(()=> poly.style.strokeDashoffset = '0');
         return pts;
       }
 
-      // build centres & collect all vertices
+      // build centres & collect all verts
       let allVerts = [];
-      branches.forEach(b => {
-        const cx = R1 + b.posIndex * spacing;
-        const cy = R1;
+      branches.forEach(b=>{
+        const cx = R1 + b.posIndex*spacing, cy = R1;
         allVerts.push(...drawHex(cx, cy, b.dir));
-
         const centre = document.createElement('a');
         centre.className     = `centre ${b.cls}`;
         centre.href          = `${BASE}/a-level/${b.key}`;
+        centre.target        = '_blank';
         centre.title         = b.title;
         centre.dataset.label = b.label;
         centre.style.left    = `${cx}px`;
@@ -256,27 +243,26 @@
         cont.appendChild(centre);
       });
 
-      // dedupe peripheral points to 14 unique
-      const unique = [];
-      const tol = 1;
-      allVerts.forEach(p => {
-        if (!unique.some(u => Math.abs(u[0] - p[0]) < tol && Math.abs(u[1] - p[1]) < tol)) {
+      // dedupe peripheral points down to 14 unique
+      const unique = [], tol = 1;
+      allVerts.forEach(p=>{
+        if (!unique.some(u=>Math.abs(u[0]-p[0])<tol && Math.abs(u[1]-p[1])<tol))
           unique.push(p);
-        }
       });
 
-      // place topic nodes
-      const counts = [0, 0, 0];
-      unique.forEach(([x, y], i) => {
-        const bi  = i < 6 ? 0 : (i < 10 ? 1 : 2);
-        const b   = branches[bi];
-        const idx = counts[bi]++;
+      // place each topic node
+      const counts = [0,0,0];
+      unique.forEach(([x,y],i)=>{
+        const bi  = i<6?0:(i<10?1:2),
+              b   = branches[bi],
+              idx = counts[bi]++;
         if (idx >= b.topics.length) return;
 
         const t = b.topics[idx];
         const node = document.createElement('a');
         node.className     = `node ${b.cls}`;
         node.href          = `${BASE}/a-level/${b.key}/${slugify(t.full)}`;
+        node.target        = '_blank';
         node.title         = t.full;
         node.dataset.label = t.label;
         node.style.left    = `${x}px`;
@@ -284,10 +270,10 @@
         node.innerHTML     = `<img src="topics/${t.icon}" alt="${t.full}">`;
         cont.appendChild(node);
 
-        setTimeout(() => {
+        setTimeout(()=>{
           node.style.opacity   = '1';
-          node.style.transform = 'translate(-50%, -50%) scale(1)';
-        }, 100 + i * 60);
+          node.style.transform = 'translate(-50%,-50%) scale(1)';
+        }, 100 + i*60);
       });
     })();
   </script>
