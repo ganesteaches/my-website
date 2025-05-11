@@ -1,83 +1,85 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
+  <meta charset="UTF-8" />
   <title>Chemistry Branch Hexagon Chain</title>
   <style>
     :root {
-      --r1:     150px;  /* hexagon “radius” */
-      --centre: 180px;  /* diameter of centre icon */
-      --icon:    50px;  /* diameter of each peripheral node */
-    }
-    *, *::before, *::after { box-sizing: border-box; margin:0; padding:0 }
-    html, body { width:100%; height:100% }
-    body {
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      background: #111;
-      font-family: system-ui, sans-serif;
-    }
-    .container {
-      position: relative;
-      /* dimensions set in JS */
-    }
-    .container svg {
-      position: absolute;
-      inset: 0;
-      pointer-events: none;
+      --r1:     187.5px;   /* hexagon radius              */
+      --centre: 180px;     /* centre-icon diameter        */
+      --icon:    67.5px;   /* peripheral-node diameter    */
     }
 
-    /* centre icons */
-    .centre {
-      position: absolute;
-      width: var(--centre);
-      height: var(--centre);
-      border-radius: 50%;
-      overflow: visible;
-      transform: translate(-50%, -50%);
-      z-index: 3;
-    }
-    .centre.organic   { box-shadow: 0 0 24px #4ade80 }
-    .centre.inorganic { box-shadow: 0 0 24px #fbbf24 }
-    .centre.physical  { box-shadow: 0 0 24px #60a5fa }
-    .centre img {
-      width:100%; height:100%;
-      object-fit: cover;
-      border-radius:50%;
+    *, *::before, *::after { box-sizing:border-box;margin:0;padding:0 }
+    html,body { width:100%;height:100% }
+    body{
+      display:flex;align-items:center;justify-content:center;
+      background:transparent;font-family:system-ui,sans-serif;color:#fff;
     }
 
-    /* numbered peripheral nodes */
-    .node {
-      position: absolute;
-      width: var(--icon);
-      height: var(--icon);
-      border-radius: 50%;
-      background: #111;
-      border: 2px solid #fff;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 14px;
-      font-weight: 600;
-      color: #fff;
-      opacity: 0;
-      transform: translate(-50%, -50%) scale(.5);
-      transition: transform .4s ease, opacity .4s ease;
-      z-index: 1;
-    }
-    .node.organic   { box-shadow: 0 0 12px #4ade80 }
-    .node.inorganic { box-shadow: 0 0 12px #fbbf24 }
-    .node.physical  { box-shadow: 0 0 12px #60a5fa }
+    .container { position:relative }
+    .container svg{ position:absolute;inset:0;pointer-events:none }
 
-    /* hexagon outline */
-    .hexagon {
-      stroke: #374151;
-      stroke-width: 2;
-      fill: none;
-      stroke-dasharray: 1000;
-      stroke-dashoffset: 1000;
-      transition: stroke-dashoffset 1s ease;
+    /* ─── centre icons ─── */
+    .centre{
+      position:absolute;width:var(--centre);height:var(--centre);border-radius:50%;
+      transform:translate(-50%,-50%);overflow:visible;z-index:3;
+      transition:box-shadow .3s ease;cursor:pointer;-webkit-tap-highlight-color:transparent;
+    }
+    .centre.physical  { box-shadow:0 0 24px #fff }         /* white glow */
+    .centre.inorganic { box-shadow:0 0 24px #a2d2ff }      /* light-blue glow */
+    .centre.organic   { box-shadow:0 0 24px #ffb347 }      /* peach glow */
+    .centre:hover     { box-shadow:0 0 34px #9ca3af!important }
+
+    .centre img{
+      width:100%;height:100%;object-fit:cover;border-radius:50%;
+      transition:transform .3s ease;
+    }
+    .centre:hover img{ transform:scale(1.1) }
+
+    .centre::after{
+      content:attr(data-label);position:absolute;top:calc(100% + 160px);left:50%;
+      transform:translateX(-50%);font-size:42px;font-weight:700;
+      background:rgba(255,255,255,.08);padding:4px 16px;border-radius:8px;
+      color:#fff;border:2px solid #d1d5db;
+      transition:background .25s,color .25s,border-color .25s,box-shadow .25s;
+    }
+    .centre:hover::after{
+      background:#FFE5B4;color:#000;border-color:#ff8c00;
+      box-shadow:0 0 10px rgba(255,229,180,.7);
+    }
+
+    /* ─── topic circles ─── */
+    .node{
+      position:absolute;width:var(--icon);height:var(--icon);border-radius:50%;
+      background:#111;border:2px solid #fff;display:flex;align-items:center;justify-content:center;
+      opacity:0;transform:translate(-50%,-50%) scale(.5);
+      transition:transform .35s ease,opacity .35s ease;z-index:1;cursor:pointer;
+      -webkit-tap-highlight-color:transparent;
+    }
+    .node.physical  { box-shadow:0 0 12px #fff }
+    .node.inorganic { box-shadow:0 0 12px #a2d2ff }
+    .node.organic   { box-shadow:0 0 12px #ffb347 }
+    .node:hover     { transform:translate(-50%,-50%) scale(1.15);box-shadow:0 0 18px #9ca3af }
+
+    .node img{
+      width:100%;height:100%;object-fit:cover;border-radius:50%;
+      transition:transform .3s ease;
+    }
+    .node:hover img{ transform:scale(1.1) }
+
+    .node::after{
+      content:attr(data-label);position:absolute;top:calc(100% + 4px);left:50%;
+      transform:translateX(-50%);font-size:10px;font-weight:600;
+      color:#fff;opacity:.5;pointer-events:none;transition:opacity .3s;
+    }
+    .node:hover::after{ opacity:1 }
+
+    /* ─── hexagon outline ─── */
+    .hexagon{
+      stroke:#d1d5db;stroke-width:2;fill:none;
+      stroke-dasharray:1000;stroke-dashoffset:1000;
+      transition:stroke-dashoffset 1s ease;
     }
   </style>
 </head>
@@ -85,109 +87,133 @@
   <div class="container" id="container"></div>
 
   <script>
-  (function() {
-    // 1) your real assess‐chemistry base URL:
-    const BASE    = "https://www.ganesteaches.com/assess/chemistry";
-    const R1      = parseFloat(getComputedStyle(document.documentElement).getPropertyValue("--r1"));
-    const spacing = Math.sqrt(3) * R1;
+  (function(){
+    const BASE = 'https://www.ganesteaches.com/assess/chemistry';   // -- update to your site
+    const R1   = parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--r1'));
+    const spacing = Math.sqrt(3)*R1;
 
-    // 2) define the three A-Level branches
+    // slugify helper
+    const slugify = s => s.toLowerCase().replace(/[^a-z0-9]+/g,'-').replace(/(^-|-$)/g,'');
+
+    /* ─── chemistry branches & topics ─── */
     const branches = [
-      { key:"organic",   cls:"organic",   icon:"organic_icon.png",    title:"Organic Chemistry"   },
-      { key:"inorganic", cls:"inorganic", icon:"inorganic_icon.png",  title:"Inorganic Chemistry" },
-      { key:"physical",  cls:"physical",  icon:"physical_icon.png",   title:"Physical Chemistry"  }
+      {                                                                  // CENTRAL
+        key:'physical', cls:'physical', icon:'physical_icon.png',
+        title:'Physical Chemistry', label:'Physical',
+        posIndex:1, dir:1,
+        topics:[
+          { label:'Atomic & Moles',  full:'Atomic Structure and Amount of Substance',               icon:'atomic_moles_icon.png' },
+          { label:'Bonding',         full:'Chemical Bonding Models',                                icon:'bonding_icon.png' },
+          { label:'Energetics',      full:'Energetics and Thermodynamics',                          icon:'energetics_icon.png' },
+          { label:'Rates',           full:'Rates of Reaction & Rate Equations',                     icon:'rates_icon.png' },
+          { label:'Equilibria',      full:'Chemical Equilibria and Equilibrium Constants',          icon:'equilibria_icon.png' },
+          { label:'Redox & Acids',   full:'Redox, Electrochemistry and Acid–Base Theory',           icon:'redox_acidbase_icon.png' }
+        ]
+      },
+      {                                                                  // LEFT
+        key:'inorganic', cls:'inorganic', icon:'inorganic_icon.png',
+        title:'Inorganic Chemistry', label:'Inorganic',
+        posIndex:0, dir:-1,
+        topics:[
+          { label:'Periodicity',   full:'Periodicity & Period-3 Oxides',                    icon:'periodicity_icon.png' },
+          { label:'Group 2',       full:'Group 2 – The Alkaline Earth Metals',              icon:'group2_icon.png' },
+          { label:'Group 7',       full:'Group 7 – The Halogens',                           icon:'group7_icon.png' },
+          { label:'Transition',    full:'Transition Metals & Aqueous-Ion Chemistry',        icon:'transition_icon.png' }
+        ]
+      },
+      {                                                                  // RIGHT
+        key:'organic', cls:'organic', icon:'organic_icon.png',
+        title:'Organic Chemistry', label:'Organic',
+        posIndex:2, dir:-1,
+        topics:[
+          { label:'Foundations', full:'Foundations – Nomenclature, Hydrocarbons & Stereochemistry',      icon:'foundations_icon.png' },
+          { label:'Alcohols & C', full:'Alcohols, Carbonyls & Carboxylic Derivatives',                   icon:'alcohols_carbonyls_icon.png' },
+          { label:'Aromatic/Bio', full:'Aromatic, Amines and Biological Molecules',                      icon:'aromatic_bio_icon.png' },
+          { label:'Analysis',    full:'Analytical & Synthetic Techniques',                               icon:'analysis_synthesis_icon.png' }
+        ]
+      }
     ];
 
-    // 3) numbered topics 1–14
-    const topics = Array.from({ length: 14 }, (_, i) => ({
-      label: String(i + 1),
-      key:   `topic-${i + 1}`
-    }));
+    /* ─── size container ─── */
+    const cont = document.getElementById('container');
+    const totalW = 2*R1 + 2*spacing, totalH = 2*R1;
+    cont.style.width  = `${totalW}px`;
+    cont.style.height = `${totalH}px`;
 
-    // 4) size the container
-    const cont   = document.getElementById("container");
-    const totalW = 2 * R1 + 2 * spacing;
-    const totalH = 2 * R1;
-    cont.style.width  = totalW + "px";
-    cont.style.height = totalH + "px";
-
-    // 5) single SVG for all hexagons
-    const svgNS = "http://www.w3.org/2000/svg";
-    const svg   = document.createElementNS(svgNS, "svg");
-    svg.setAttribute("viewBox", `0 0 ${totalW} ${totalH}`);
-    svg.style.width  = "100%";
-    svg.style.height = "100%";
+    /* ─── SVG for hex outlines ─── */
+    const svgNS = 'http://www.w3.org/2000/svg';
+    const svg   = document.createElementNS(svgNS,'svg');
+    svg.setAttribute('viewBox',`0 0 ${totalW} ${totalH}`);
+    svg.style.width='100%';svg.style.height='100%';
     cont.appendChild(svg);
 
-    // 6) draw one hexagon at (cx,cy) and return its 6 corner points
-    function drawHexagon(cx, cy) {
-      const pts = Array.from({ length: 6 }, (_, i) => {
-        const ang = (-90 + i * 60) * Math.PI / 180;
-        return [ cx + R1 * Math.cos(ang), cy + R1 * Math.sin(ang) ];
+    // draw a hexagon, animate outline, return vertex coords
+    function drawHex(cx,cy,dir){
+      const pts = Array.from({length:6},(_,i)=>{
+        const ang = (-90 + dir*i*60)*Math.PI/180;
+        return [cx + R1*Math.cos(ang), cy + R1*Math.sin(ang)];
       });
-      const poly = document.createElementNS(svgNS, "polygon");
-      poly.setAttribute("points", pts.map(p => p.join(",")).join(" "));
-      poly.classList.add("hexagon");
+      const poly = document.createElementNS(svgNS,'polygon');
+      poly.setAttribute('points',pts.map(p=>p.join(',')).join(' '));
+      poly.classList.add('hexagon');
       svg.appendChild(poly);
 
-      // animate the dash
-      const perim = pts.reduce((sum, [x,y], i) => {
-        const [nx,ny] = pts[(i+1)%6];
-        return sum + Math.hypot(nx-x, ny-y);
-      }, 0);
-      poly.style.strokeDasharray  = perim;
-      poly.style.strokeDashoffset = perim;
-      requestAnimationFrame(() => poly.style.strokeDashoffset = "0");
-
+      const perim = pts.reduce((s,[x,y],i)=>{
+        const [nx,ny]=pts[(i+1)%6]; return s + Math.hypot(nx-x,ny-y);
+      },0);
+      poly.style.strokeDasharray=perim;poly.style.strokeDashoffset=perim;
+      requestAnimationFrame(()=>poly.style.strokeDashoffset='0');
       return pts;
     }
 
-    // 7) draw all three hexagons + centres, collect all corner points
-    let allVerts = [];
-    branches.forEach((b, i) => {
-      const cx = R1 + i * spacing, cy = R1;
-      allVerts = allVerts.concat(drawHexagon(cx, cy));
+    /* ─── build centres & collect all vertices ─── */
+    let allVerts=[];
+    branches.forEach(b=>{
+      const cx=R1 + b.posIndex*spacing, cy=R1;
+      allVerts.push(...drawHex(cx,cy,b.dir));
 
-      // centre icon → links to /assess/chemistry/a-level/<branch>
-      const ctr = document.createElement("a");
-      ctr.className  = `centre ${b.cls}`;
-      ctr.href       = `${BASE}/a-level/${b.key}`;
-      ctr.title      = b.title;
-      ctr.style.left = cx + "px";
-      ctr.style.top  = cy + "px";
-      ctr.innerHTML  = `<img src="${b.icon}" alt="${b.title}">`;
-      cont.appendChild(ctr);
+      const centre=document.createElement('a');
+      centre.className=`centre ${b.cls}`;
+      centre.href=`${BASE}/a-level/${b.key}`;
+      centre.target='_blank';
+      centre.title=b.title;
+      centre.dataset.label=b.label;
+      centre.style.left=`${cx}px`;
+      centre.style.top =`${cy}px`;
+      centre.innerHTML=`<img src="${b.icon}" alt="${b.title}">`;
+      cont.appendChild(centre);
     });
 
-    // 8) dedupe → exactly 14 unique peripheral positions
-    const unique = [];
-    const tol = 1; // px tolerance
-    allVerts.forEach(pt => {
-      if (!unique.some(u => Math.abs(u[0]-pt[0])<tol && Math.abs(u[1]-pt[1])<tol)) {
-        unique.push(pt);
-      }
+    /* ─── dedupe vertices → 14 unique points ─── */
+    const unique=[], tol=1;
+    allVerts.forEach(p=>{
+      if(!unique.some(u=>Math.abs(u[0]-p[0])<tol && Math.abs(u[1]-p[1])<tol))
+        unique.push(p);
     });
 
-    // 9) place & number each node: /assess/chemistry/a-level/<branch>/topic-<n>
-    unique.forEach(([x,y], i) => {
-      // decide which branch this node lives under
-      const branchIndex = i < 6 ? 0 : (i < 10 ? 1 : 2);
-      const b = branches[branchIndex];
+    /* ─── place each topic node ─── */
+    const counts=[0,0,0];          // topic counters for each branch
+    unique.forEach(([x,y],i)=>{
+      const bi = i<6 ? 0 : (i<10 ? 1 : 2);   // 6-4-4 distribution
+      const b  = branches[bi], idx = counts[bi]++;
+      if(idx >= b.topics.length) return;
 
-      const node = document.createElement("a");
-      node.className  = `node ${b.cls}`;
-      node.href       = `${BASE}/a-level/${b.key}/${topics[i].key}`;
-      node.title      = `Topic ${topics[i].label}`;
-      node.style.left = x + "px";
-      node.style.top  = y + "px";
-      node.textContent = topics[i].label;
+      const t=b.topics[idx];
+      const node=document.createElement('a');
+      node.className=`node ${b.cls}`;
+      node.href=`${BASE}/a-level/${b.key}/${slugify(t.full)}`;
+      node.target='_blank';
+      node.title=t.full;
+      node.dataset.label=t.label;
+      node.style.left=`${x}px`;
+      node.style.top =`${y}px`;
+      node.innerHTML=`<img src="topics/${t.icon}" alt="${t.full}">`;
       cont.appendChild(node);
 
-      // staggered fade-in
-      setTimeout(() => {
-        node.style.opacity   = "1";
-        node.style.transform = "translate(-50%, -50%) scale(1)";
-      }, 100 + i * 60);
+      setTimeout(()=>{
+        node.style.opacity='1';
+        node.style.transform='translate(-50%,-50%) scale(1)';
+      },100 + i*60);
     });
   })();
   </script>
