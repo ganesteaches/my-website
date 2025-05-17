@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Pure-Maths Toolbar — 1.5× & Faster Shelf Draw</title>
+
+<style>
+:root{
+  --icon : 120px;      /* 1.5 × 80 px                                  */
+  --gap  : 54px;       /* 1.5 × 36 px                                  */
+  --shelf-thick : 6px; /* 1.5 × 4 px                                   */
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%;width:100%}
+body{
+  display:flex;align-items:flex-start;justify-content:center;
+  font-family:system-ui,sans-serif;
+  background:transparent;
+  padding-top:84px;     /* 1.5 × 56 px                                 */
+}
+
+/* ───── Toolbar wrapper ───── */
+.toolbar{
+  display:flex;gap:var(--gap);position:relative;
+}
+/* shelf bar: draws left→right, now 3× faster (0.8 s / 3 ≈ 0.27 s) */
+.toolbar::after{
+  content:'';
+  position:absolute;left:0;right:0;
+  top:calc(var(--icon) + 24px);          /* 1.5 × 16 px gap           */
+  height:var(--shelf-thick);
+  background:#ffffffb0;
+  border-radius:2px;
+  box-shadow:0 6px 9px rgba(0,0,0,.35);
+  transform-origin:left;
+  transform:scaleX(0);
+  animation:draw .67s ease-out forwards;
+}
+@keyframes draw{to{transform:scaleX(1);}}
+
+/* ───── Toolbar items ───── */
+.toolbar-item{
+  display:flex;flex-direction:column;align-items:center;
+  text-decoration:none;color:inherit;
+  cursor:pointer;position:relative;
+  transition:opacity .25s ease;
+  -webkit-tap-highlight-color:transparent;
+}
+.toolbar-item .icon{
+  width:var(--icon);height:var(--icon);
+  border-radius:50%;overflow:hidden;background:none;
+  box-shadow:0 0 14px rgba(255,255,255,.3);
+  transition:transform .25s ease;
+}
+.toolbar-item .icon img{width:100%;height:100%;object-fit:cover;display:block;}
+.toolbar-item .label{
+  margin-top:36px;                     /* 1.5 × 24 px                */
+  font-size:1rem;                      /* bump slightly for clarity  */
+  font-weight:500;
+  color:#fff;
+  opacity:.5;
+  transition:opacity .25s;
+  pointer-events:none;
+}
+
+/* Hover effects */
+.toolbar-item:hover .icon {transform:scale(1.25);}
+.toolbar-item:hover .label{opacity:1;}
+.toolbar:hover .toolbar-item:not(:hover) .icon {opacity:.6;}
+.toolbar:hover .toolbar-item:not(:hover) .label{opacity:.3;}
+
+/* ───── Satellite dots ───── */
+.toolbar-item .sat{
+  pointer-events:none;position:absolute;top:50%;left:50%;
+  width:8px;height:8px;margin:-4px 0 0 -4px;   /* slightly larger dot   */
+  border-radius:50%;background:#fff;opacity:0;
+  animation:orbit 2.2s linear infinite;
+}
+@keyframes orbit{
+  0%  {transform:rotate(0deg)   translate(0,-48px) rotate(0deg);}  /* 1.5 × */
+  100%{transform:rotate(360deg) translate(0,-48px) rotate(-360deg);}
+}
+</style>
+</head>
+
+<body>
+  <!-- ───── Toolbar markup ───── -->
+  <nav class="toolbar">
+
+    <a class="toolbar-item" href="proof.html" title="Proof &amp; Algebraic Techniques">
+      <span class="icon"><img src="../topics/proof_algebraic_icon.png"   alt="Proof & Algebraic"></span>
+      <span class="label">Algebraic Techniques</span>
+    </a>
+
+    <a class="toolbar-item" href="coordinate.html" title="Coordinate Geometry">
+      <span class="icon"><img src="../topics/coordinate_geometry_icon.png" alt="Coordinate Geometry"></span>
+      <span class="label">Coordinate Geometry&nbsp;Geo</span>
+    </a>
+
+    <a class="toolbar-item" href="sequence.html" title="Sequence">
+      <span class="icon"><img src="../topics/sequence_icon.png" alt="Sequence"></span>
+      <span class="label">Sequence</span>
+    </a>
+
+    <a class="toolbar-item" href="trig.html" title="Trigonometry">
+      <span class="icon"><img src="../topics/trig_icon.png" alt="Trigonometry"></span>
+      <span class="label">Trigonometry</span>
+    </a>
+
+    <a class="toolbar-item" href="calculus.html" title="Calculus">
+      <span class="icon"><img src="../topics/calculus_icon.png" alt="Calculus"></span>
+      <span class="label">Calculus</span>
+    </a>
+
+    <a class="toolbar-item" href="numerical.html" title="Approximation &amp; Numerical Methods">
+      <span class="icon"><img src="../topics/numerical_methods_icon.png" alt="Numerical Methods"></span>
+      <span class="label">Numerical Methods</span>
+    </a>
+
+  </nav>
+
+<!-- ───── Orbiting-satellites script ───── -->
+<script>
+(function(){
+  const DOTS  = 6, SPEED = 2.2, SIZE = 8;      // SIZE ↑ for larger toolbar
+
+  function makeDot(i){
+    const d = document.createElement('span');
+    d.className = 'sat';
+    d.style.width = d.style.height = SIZE + 'px';
+    d.style.animationDelay = `${-(i * SPEED) / DOTS}s`;
+    return d;
+  }
+
+  document.querySelectorAll('.toolbar-item .icon').forEach(icon=>{
+    let dots=null;
+    icon.addEventListener('mouseenter',()=>{
+      if(dots) return;
+      dots = Array.from({length:DOTS},(_,i)=>makeDot(i));
+      dots.forEach(dot=>{dot.style.opacity='1';icon.appendChild(dot);});
+    });
+    icon.addEventListener('mouseleave',()=>{
+      if(!dots) return;
+      dots.forEach(dot=>{
+        dot.style.opacity='0';
+        dot.addEventListener('transitionend',()=>dot.remove(),{once:true});
+      });
+      dots=null;
+    });
+  });
+})();
+</script>
+</body>
+</html>
